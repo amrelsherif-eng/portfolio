@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { lenis } from "../Navbar";
 
 export function initialFX() {
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   document.body.style.overflowY = "auto";
   if (lenis) {
     lenis.start();
@@ -20,6 +21,13 @@ export function initialFX() {
     type: "chars,lines",
     linesClass: "split-line",
   });
+  if (reducedMotion) {
+    gsap.set("body", { backgroundColor: "#0a0d10" });
+    gsap.set(landingText.chars, { opacity: 1, y: 0, filter: "blur(0px)" });
+    gsap.set(".landing-info-h2", { opacity: 1, y: 0 });
+    gsap.set([".header", ".icons-section", ".nav-fade"], { opacity: 1 });
+    return;
+  }
   gsap.fromTo(
     landingText.chars,
     { opacity: 0, y: 80, filter: "blur(5px)" },
