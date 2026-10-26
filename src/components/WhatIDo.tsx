@@ -94,6 +94,11 @@ const WhatIDo = () => {
               <p>
                 {config.skills.develop.details}
               </p>
+              <ul className="what-highlights">
+                {config.skills.develop.highlights.map((point, index) => (
+                  <li key={index}>{point}</li>
+                ))}
+              </ul>
               <div className="what-label">Skillset &amp; tools</div>
               <div className="what-content-flex">
                 {config.skills.develop.tools.map((tool, index) => (
@@ -128,6 +133,11 @@ const WhatIDo = () => {
               <p>
                 {config.skills.design.details}
               </p>
+              <ul className="what-highlights">
+                {config.skills.design.highlights.map((point, index) => (
+                  <li key={index}>{point}</li>
+                ))}
+              </ul>
               <div className="what-label">Skillset &amp; tools</div>
               <div className="what-content-flex">
                 {config.skills.design.tools.map((tool, index) => (
@@ -162,6 +172,11 @@ const WhatIDo = () => {
               <p>
                 {config.skills.mobile.details}
               </p>
+              <ul className="what-highlights">
+                {config.skills.mobile.highlights.map((point, index) => (
+                  <li key={index}>{point}</li>
+                ))}
+              </ul>
               <div className="what-label">Skillset &amp; tools</div>
               <div className="what-content-flex">
                 {config.skills.mobile.tools.map((tool, index) => (

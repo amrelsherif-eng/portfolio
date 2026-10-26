@@ -162,20 +162,35 @@ export const config = {
         develop: {
             title: "NETWORK & CLOUD",
             description: "Routing, switching & AWS cloud",
-            details: "My main track: CCNA in progress (subnetting, OSPF, VLANs and ACLs in Packet Tracer) plus two AWS Academy Graduate badges covering EC2, S3, VPC and IAM. Linux is next.",
-            tools: ["Cisco Networking", "OSPF", "VLAN", "Subnetting", "AWS", "EC2", "VPC", "Linux"]
+            details: "My main track: Cisco routing and switching plus AWS cloud, with Linux next.",
+            highlights: [
+                "CCNA v7 trainee at NTI (120 h), exam 200‑301 next",
+                "Cloud Architect intern, AWS track (120 h)",
+                "AWS Academy Graduate: Foundations + Architecting"
+            ],
+            tools: ["Subnetting", "OSPF", "VLAN", "ACLs", "Packet Tracer", "AWS", "VPC", "Linux"]
         },
         design: {
             title: "EMBEDDED & ECE",
             description: "Microcontrollers & control systems",
-            details: "ESP32 firmware for the WeatherLink team project, a Raspberry Pi 5 Li-Fi graduation project, and industrial training: PID auto-tuning, actuator boards and calibration.",
-            tools: ["ESP32", "Raspberry Pi", "Arduino", "C / C++", "IoT", "PID", "Proteus"]
+            details: "The engineering side: microcontrollers, IoT and industrial control.",
+            highlights: [
+                "Auto-tuned a PID controller, stable at 100 °C",
+                "WeatherLink: ESP32-S3 + Flutter team project",
+                "Li-Fi graduation project (design phase)"
+            ],
+            tools: ["ESP32", "Raspberry Pi", "Arduino", "C / C++", "IoT", "PID", "Proteus", "Calibration"]
         },
         mobile: {
             title: "MOBILE APPS",
             description: "Flutter apps & team leadership",
-            details: "DEPI Flutter track (~120 h): Dart, BLoC, Firebase and REST APIs. Team Leader of a 20-trainee group and of the DevSync project team.",
-            tools: ["Flutter", "Dart", "Firebase", "BLoC", "REST APIs", "Git", "Team Leadership"]
+            details: "Where I learned to ship software in a team, and to lead one.",
+            highlights: [
+                "DEPI Flutter track: ~120 technical hours",
+                "Team Leader of a 20-trainee group",
+                "Led the 5-member team behind DevSync"
+            ],
+            tools: ["Flutter", "Dart", "BLoC", "Firebase", "REST APIs", "Git", "Gemini API", "Leadership"]
         }
     }
 };
