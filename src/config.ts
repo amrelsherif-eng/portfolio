@@ -144,7 +144,7 @@ export const config = {
             title: "Flutter & Dart Specialization",
             category: "Mobile",
             technologies: "Flutter, Dart, Git",
-            image: "/images/placeholder.webp",
+            image: "/images/projects/flutter-specialization.webp",
             description: "Packt Flutter & Dart Specialization on Coursera: 5 apps and 55 commits of hands-on practice.",
             link: "https://github.com/amrelsherif-eng/Flutter-Dart-Specialization-Packt"
         }
