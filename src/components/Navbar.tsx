@@ -11,13 +11,14 @@ export let lenis: Lenis | null = null;
 
 const Navbar = () => {
   useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // Initialize Lenis smooth scroll
     lenis = new Lenis({
       duration: 1.7,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
-      smoothWheel: true,
+      smoothWheel: !reducedMotion,
       wheelMultiplier: 1.7,
       touchMultiplier: 2,
       infinite: false,
@@ -48,6 +49,7 @@ const Navbar = () => {
               lenis.scrollTo(target, {
                 offset: 0,
                 duration: 1.5,
+                immediate: reducedMotion,
               });
             }
           }
