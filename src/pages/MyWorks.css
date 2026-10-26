@@ -1,0 +1,302 @@
+.works-page {
+  height: 100vh;
+  height: 100svh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #0a0d10;
+  color: #e6edf3;
+  padding: 80px 48px 120px;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+@media screen and (max-width: 699px) {
+  .works-page {
+    padding: 40px 24px 80px;
+  }
+}
+
+.works-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 64px auto;
+  box-sizing: border-box;
+}
+
+.works-back-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.works-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  min-height: 44px;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accentColor);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 9999px;
+  background: rgba(0, 240, 255, 0.04);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+@media (hover: hover) {
+  .works-back-btn:hover {
+    background: var(--accentColor);
+    color: #0a0d10 !important;
+    border-color: var(--accentColor);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+  }
+}
+
+.works-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(40px, 7vw, 96px);
+  font-weight: 700;
+  line-height: 1.08;
+  color: #fff;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.02em;
+  word-wrap: break-word;
+}
+
+@media screen and (min-width: 480px) {
+  .works-title {
+    font-size: clamp(48px, 7vw, 96px);
+  }
+}
+
+.works-title span {
+  color: var(--accentColor);
+}
+
+.works-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #b7c0c8;
+  margin: 0 auto;
+  max-width: 560px;
+}
+
+@media screen and (min-width: 768px) {
+  .works-subtitle {
+    font-size: 18px;
+  }
+}
+
+.works-grid-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 1099px) {
+  .works-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 699px) {
+  .works-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.works-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.works-card:focus-within {
+  border-color: rgba(0, 240, 255, 0.45);
+}
+
+@media (hover: hover) {
+  .works-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0, 240, 255, 0.45);
+    box-shadow: 0 16px 36px rgba(0, 240, 255, 0.18);
+  }
+
+  .works-card:hover .works-card-img {
+    transform: scale(1.04);
+  }
+}
+
+.works-card-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.works-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.works-card-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  font-family: var(--monoFont);
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(10, 13, 16, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  z-index: 2;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.works-card-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 480px) {
+  .works-card-content {
+    padding: 20px 16px;
+  }
+}
+
+.works-card-body {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.works-card-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+.works-card-category {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--accentColor);
+  letter-spacing: 0.08em;
+  margin: 0 0 14px 0;
+}
+
+.works-card-desc {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #b7c0c8;
+  margin: 0 0 20px 0;
+}
+
+.works-card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.works-tech-chip {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  line-height: 1.3;
+  color: rgba(230, 237, 243, 0.85);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.works-card-footer {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+
+.works-card-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  min-height: 44px;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0a0d10 !important;
+  background: var(--accentColor);
+  border: 1px solid var(--accentColor);
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+@media (hover: hover) {
+  .works-card-btn:hover {
+    color: #0a0d10 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 240, 255, 0.4);
+  }
+}
+
+.works-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  min-height: 44px;
+  box-sizing: border-box;
+  font-family: var(--monoFont);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent2Color);
+  background: rgba(255, 179, 0, 0.08);
+  border: 1px solid rgba(255, 179, 0, 0.35);
+  border-radius: 9999px;
+  letter-spacing: 0.03em;
+}

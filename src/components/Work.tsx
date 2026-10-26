@@ -1,8 +1,10 @@
 import "./styles/Work.css";
+import "./styles/WorkCta.css";
 import WorkImage from "./WorkImage";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { config } from "../config";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -86,10 +88,21 @@ const Work = () => {
           <div className="work-box work-box-cta">
             <div className="see-all-works">
               <h3>Want to see more?</h3>
-              <p>Labs, code and write-ups live on my GitHub</p>
-              <a href={config.contact.github} target="_blank" rel="noopener noreferrer" className="see-all-btn" data-cursor="disable">
-                Open GitHub →
-              </a>
+              <p>Every project in one place — plus labs and code on GitHub.</p>
+              <div className="see-all-actions">
+                <Link to="/works" className="see-all-btn" data-cursor="disable">
+                  See all works →
+                </Link>
+                <a
+                  href={config.contact.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="see-all-btn-ghost"
+                  data-cursor="disable"
+                >
+                  GitHub ↗
+                </a>
+              </div>
             </div>
           </div>
         </div>
