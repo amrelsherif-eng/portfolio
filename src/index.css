@@ -15,9 +15,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
+  /* text must be selectable so visitors can copy email/phone */
   --accentColor: #00f0ff;
   --accent2Color: #ffb300;
   --monoFont: "JetBrains Mono", monospace;

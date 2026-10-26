@@ -101,3 +101,10 @@ div.resume-button span {
     margin-top: -1.5px;
   }
 }
+
+/* ---- Phase 1: the vertical RESUME tab covered content on tablet/phone; CV link lives in Contact ---- */
+@media only screen and (max-width: 1024px) {
+  .resume-button {
+    display: none;
+  }
+}

@@ -99,3 +99,25 @@
     line-height: 2.7rem;
   }
 }
+
+/* ---- Phase 1: readable About text on tablet/phone (was 28–33px bold) ---- */
+@media only screen and (max-width: 1024px) {
+  .about-section {
+    padding-top: 24px;
+  }
+  .about-me {
+    width: 640px;
+    max-width: calc(100% - 30px);
+  }
+  .about-me h3 {
+    font-size: 16px;
+    letter-spacing: 5px;
+  }
+  .about-me p {
+    font-size: 19px;
+    line-height: 1.6;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    word-spacing: 1px;
+  }
+}

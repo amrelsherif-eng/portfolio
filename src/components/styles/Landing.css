@@ -597,3 +597,14 @@ h2.landing-info-h2 {
 @media screen and (max-width: 1024px) {
   .landing-info h2.landing-role { justify-content: center; }
 }
+
+/* ---- Phase 1: remove the half-screen gap under the hero on tablet/phone ---- */
+@media only screen and (max-width: 1024px) {
+  .landing-section,
+  .landing-container {
+    min-height: 0 !important;
+  }
+  .landing-section {
+    padding-top: 64px; /* room for the fixed header */
+  }
+}
