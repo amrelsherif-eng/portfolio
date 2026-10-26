@@ -86,7 +86,8 @@ export default async function handler(req: ChatRequest, res: ChatResponse) {
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: systemInstruction }] },
             contents: contents.map(({ role, text }) => ({ role, parts: [{ text }] })),
-            generationConfig: { temperature: 0.4, maxOutputTokens: 1024 },
+            // the model's hidden "thinking" counts toward this limit: keep it roomy so replies are never cut off
+            generationConfig: { temperature: 0.4, maxOutputTokens: 4096 },
           }),
           signal: controller.signal,
         } as Parameters<typeof runtime.fetch>[1]);
@@ -100,7 +101,9 @@ export default async function handler(req: ChatRequest, res: ChatResponse) {
         return respond(res, 502, { reply: "Sherif couldn't answer just now. Please try again shortly." });
       }
       const result = await response.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
-      const reply = result.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("").trim();
+      // the chat shows plain text, so drop any markdown bold/bullets the model still adds
+      const reply = result.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("")
+        .replace(/\*\*(.+?)\*\*/g, "$1").replace(/^\s*[*-]\s+/gm, "• ").trim();
       return respond(res, 200, { reply: reply || "I don't have an answer for that right now. You can email Amr at amrelsherif.eng@gmail.com." });
     }
     return respond(res, 503, { reply: "Sherif is very busy right now. Please try again in a minute, or email amrelsherif.eng@gmail.com." });
