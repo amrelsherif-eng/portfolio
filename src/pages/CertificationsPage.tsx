@@ -44,7 +44,7 @@ const CertificationsPage = () => {
           Certifi<span>cations</span>
         </h1>
         <p className="certs-page-subtitle">
-          Verified credentials, programs and training.
+          Credentials, programs and training — newest first in each group.
         </p>
       </header>
 
