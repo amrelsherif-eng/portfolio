@@ -497,14 +497,14 @@
   .what-noTouch:focus-visible,
   .what-noTouch:hover,
   .what-content-active {
-    min-height: 58%;
+    min-height: 52%;
   }
   .what-noTouch:focus-visible~.what-content,
   .what-noTouch:hover~.what-content,
   .what-box-in:has(.what-noTouch:focus-visible) .what-noTouch:not(:focus-visible),
   .what-box-in:hover .what-noTouch:not(:hover),
   .what-content.what-sibling {
-    min-height: 21%;
+    min-height: 24%;
   }
   /* closed cards: fade the clipped text instead of cutting it mid-line */
   .what-content .what-content-in {

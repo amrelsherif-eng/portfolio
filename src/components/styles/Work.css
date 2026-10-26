@@ -377,3 +377,31 @@
 .work-info .work-label {
   font-family: "Space Grotesk", sans-serif;
 }
+
+/* ---- Desktop windows under 820px tall (e.g. 1536x700 laptops at 125% scaling):
+        scale the card so it always fits on screen ---- */
+@media only screen and (min-width: 1025px) and (max-height: 820px) {
+  .work-box {
+    padding: 48px 64px;
+    gap: 28px;
+  }
+  .work-title {
+    margin-bottom: 10px;
+  }
+  .work-title .work-num {
+    font-size: 40px;
+    line-height: 40px;
+  }
+  .work-info .work-desc {
+    margin: 2px 0 12px;
+  }
+  .work-image img {
+    max-height: clamp(110px, calc(100vh - 500px), 230px);
+  }
+}
+/* narrower cards (1025-1400px) wrap the text into more lines -> leave the image less room */
+@media only screen and (min-width: 1025px) and (max-width: 1400px) and (max-height: 820px) {
+  .work-image img {
+    max-height: clamp(90px, calc(100vh - 560px), 230px);
+  }
+}

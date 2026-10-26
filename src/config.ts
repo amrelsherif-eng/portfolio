@@ -162,20 +162,20 @@ export const config = {
         develop: {
             title: "NETWORK & CLOUD",
             description: "Routing, switching & AWS cloud",
-            details: "My main track: CCNA in progress (subnetting, OSPF and VLANs in Packet Tracer) plus two AWS Academy Graduate badges. Linux is next.",
-            tools: ["Cisco Networking", "OSPF", "VLAN", "Subnetting", "AWS", "VPC", "Linux"]
+            details: "My main track: CCNA in progress (subnetting, OSPF, VLANs and ACLs in Packet Tracer) plus two AWS Academy Graduate badges covering EC2, S3, VPC and IAM. Linux is next.",
+            tools: ["Cisco Networking", "OSPF", "VLAN", "Subnetting", "AWS", "EC2", "VPC", "Linux"]
         },
         design: {
             title: "EMBEDDED & ECE",
             description: "Microcontrollers & control systems",
-            details: "ESP32 firmware for the WeatherLink team project, a Raspberry Pi 5 Li-Fi graduation project, and PID tuning in industrial training.",
-            tools: ["ESP32", "Raspberry Pi", "Arduino", "C / C++", "IoT", "PID"]
+            details: "ESP32 firmware for the WeatherLink team project, a Raspberry Pi 5 Li-Fi graduation project, and industrial training: PID auto-tuning, actuator boards and calibration.",
+            tools: ["ESP32", "Raspberry Pi", "Arduino", "C / C++", "IoT", "PID", "Proteus"]
         },
         mobile: {
             title: "MOBILE APPS",
             description: "Flutter apps & team leadership",
-            details: "DEPI Flutter track (~120 h): BLoC, Firebase and REST APIs. Led a 20-trainee group and the DevSync project team.",
-            tools: ["Flutter", "Dart", "Firebase", "BLoC", "REST APIs", "Team Leadership"]
+            details: "DEPI Flutter track (~120 h): Dart, BLoC, Firebase and REST APIs. Team Leader of a 20-trainee group and of the DevSync project team.",
+            tools: ["Flutter", "Dart", "Firebase", "BLoC", "REST APIs", "Git", "Team Leadership"]
         }
     }
 };
