@@ -55,13 +55,16 @@
   box-sizing: border-box;
 }
 
+.what-noTouch:focus-visible,
 .what-noTouch:hover,
 .what-content-active {
   min-height: 56%;
   padding: 30px 50px;
 }
 
+.what-noTouch:focus-visible~.what-content,
 .what-noTouch:hover~.what-content,
+.what-box-in:has(.what-noTouch:focus-visible) .what-noTouch:not(:focus-visible),
 .what-box-in:hover .what-noTouch:not(:hover),
 .what-content.what-sibling {
   min-height: 22%;
@@ -81,7 +84,7 @@
   letter-spacing: 0.7px;
 }
 
-.what-content h4 {
+.what-content .what-sub {
   font-weight: 300;
   letter-spacing: 1px;
   margin: 0px;
@@ -182,6 +185,7 @@
   height: 10px;
 }
 
+.what-noTouch:focus-visible .what-arrow::before,
 .what-noTouch:hover .what-arrow::before,
 .what-content-active .what-arrow::before {
   transform: translate(-50%, -20%) rotate(-225deg);
@@ -234,7 +238,7 @@
   overflow: hidden;
 }
 
-.what-content-in h5 {
+.what-content-in .what-label {
   font-weight: 300;
   opacity: 0.5;
   font-size: 12px;
@@ -298,12 +302,15 @@
     font-size: 13px;
   }
 
+  .what-noTouch:focus-visible,
   .what-noTouch:hover,
   .what-content-active {
     padding: 20px 30px;
   }
 
+  .what-noTouch:focus-visible~.what-content,
   .what-noTouch:hover~.what-content,
+  .what-box-in:has(.what-noTouch:focus-visible) .what-noTouch:not(:focus-visible),
   .what-box-in:hover .what-noTouch:not(:hover),
   .what-content.what-sibling {
     padding: 10px 30px;
@@ -345,13 +352,16 @@
     font-size: 14px;
   }
 
+  .what-noTouch:focus-visible,
   .what-noTouch:hover,
   .what-content-active {
     min-height: 67%;
     padding: 50px;
   }
 
+  .what-noTouch:focus-visible~.what-content,
   .what-noTouch:hover~.what-content,
+  .what-box-in:has(.what-noTouch:focus-visible) .what-noTouch:not(:focus-visible),
   .what-box-in:hover .what-noTouch:not(:hover),
   .what-content.what-sibling {
     min-height: 33%;
@@ -393,14 +403,16 @@
     height: 450px;
   }
 
-  .what-content h5,
+  .what-content .what-label,
   .what-content-flex {
     opacity: 0;
     transition: 0.3s;
   }
 
-  .what-noTouch:hover h5,
-  .what-content-active h5,
+  .what-noTouch:focus-visible .what-label,
+  .what-noTouch:hover .what-label,
+  .what-content-active .what-label,
+  .what-noTouch:focus-visible .what-content-flex,
   .what-noTouch:hover .what-content-flex,
   .what-content-active .what-content-flex {
     opacity: 1;
@@ -414,6 +426,7 @@
     font-size: 11px;
   }
 
+  .what-noTouch:focus-visible,
   .what-noTouch:hover,
   .what-content-active {
     padding: 10px 30px;
@@ -423,7 +436,9 @@
     font-size: 11px;
   }
 
+  .what-noTouch:focus-visible~.what-content,
   .what-noTouch:hover~.what-content,
+  .what-box-in:has(.what-noTouch:focus-visible) .what-noTouch:not(:focus-visible),
   .what-box-in:hover .what-noTouch:not(:hover),
   .what-content.what-sibling {
     padding: 5px 30px;
@@ -451,5 +466,21 @@
   .what-box h2 {
     font-size: 7rem;
     line-height: 6.8rem;
+  }
+}
+/* ---- Phase 3: former <h4>/<h5> now <p>; keep their heading look ---- */
+.what-content-in .what-sub,
+.what-content-in .what-label {
+  font-family: "Space Grotesk", sans-serif;
+}
+.what-content-in .what-label {
+  margin-top: 1.67em;
+}
+
+/* ---- Phase 3: nothing below 12px ---- */
+@media only screen and (max-width: 768px) {
+  .what-content p,
+  .what-tags {
+    font-size: 12px;
   }
 }

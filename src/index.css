@@ -221,3 +221,10 @@ html, body { overflow-x: clip; }
     scroll-behavior: auto !important;
   }
 }
+
+/* Visible keyboard focus on every interactive element */
+:where(a, button, [role="button"], input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 3px;
+  border-radius: 4px;
+}

@@ -68,15 +68,15 @@ const Work = () => {
             <div className="work-box" key={project.id}>
               <div className="work-info">
                 <div className="work-title">
-                  <h3>0{index + 1}</h3>
+                  <span className="work-num" aria-hidden="true">0{index + 1}</span>
 
                   <div>
-                    <h4>{project.title}</h4>
+                    <h3 className="work-name">{project.title}</h3>
                     <p>{project.category}</p>
                   </div>
                 </div>
                 <p className="work-desc">{project.description}</p>
-                <h4>Stack</h4>
+                <div className="work-label">Stack</div>
                 <p className="work-stack">{project.technologies}</p>
               </div>
               <WorkImage image={project.image} alt={project.title} link={project.link} />

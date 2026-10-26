@@ -20,7 +20,7 @@ const Contact = () => {
 
     // Animate title from bottom
     contactTimeline.fromTo(
-      ".contact-section h3",
+      ".contact-section .contact-name",
       {
         opacity: 0,
         y: 50,
@@ -59,34 +59,34 @@ const Contact = () => {
   return (
     <div className="contact-section section-container" id="contact">
       <div className="contact-container">
-        <h3>{config.developer.fullName}</h3>
+        <h2 className="contact-name">{config.developer.fullName}</h2>
         <div className="contact-flex">
           <div className="contact-box">
-            <h4>Email</h4>
+            <div className="contact-label">Email</div>
             <p>
               <a href={`mailto:${config.contact.email}`} data-cursor="disable">
                 {config.contact.email}
               </a>
             </p>
-            <h4>WhatsApp</h4>
+            <div className="contact-label">WhatsApp</div>
             <p>
               <a href={config.contact.whatsapp} target="_blank" rel="noopener noreferrer" data-cursor="disable">
                 +20 101 394 6047
               </a>
             </p>
-            <h4>Resume</h4>
+            <div className="contact-label">Resume</div>
             <p>
               <a href="/cv/Amr-Elsherif-CV.pdf" target="_blank" rel="noopener noreferrer" data-cursor="disable">
                 Download CV (PDF)
               </a>
             </p>
-            <h4>Location</h4>
+            <div className="contact-label">Location</div>
             <p>
               <span>{config.social.location}</span>
             </p>
           </div>
           <div className="contact-box">
-            <h4>Social</h4>
+            <div className="contact-label">Social</div>
             <a
               href={config.contact.github}
               target="_blank"
@@ -116,12 +116,12 @@ const Contact = () => {
             </a>
           </div>
           <div className="contact-box">
-            <h2>
+            <div className="contact-credit">
               Designed and Developed <br /> by <span>{config.developer.fullName}</span>
-            </h2>
-            <h5>
+            </div>
+            <div className="contact-year">
               <MdCopyright /> {new Date().getFullYear()}
-            </h5>
+            </div>
           </div>
         </div>
       </div>

@@ -19,7 +19,7 @@ const Landing = ({ children }: PropsWithChildren) => {
       <div className="landing-section" id="landingDiv">
         <div className="landing-container">
           <div className="landing-intro">
-            <h2>Hello! I'm</h2>
+            <p className="landing-hello">Hello! I'm</p>
             <h1>
               {firstName.toUpperCase()}
               {' '}
@@ -28,13 +28,13 @@ const Landing = ({ children }: PropsWithChildren) => {
             </h1>
           </div>
           <div className="landing-info">
-            <h3>CCNA Track · AWS · Linux</h3>
-            <h2 className="landing-info-h2 landing-role">
+            <p className="landing-tagline">CCNA Track · AWS · Linux</p>
+            <p className="landing-info-h2 landing-role">
               <span className="landing-role-word" key={role}>
                 {ROLES[role]}
               </span>
               <span className="landing-role-tail">Engineer</span>
-            </h2>
+            </p>
             <p className="landing-role-sub">Aspiring DevOps · ECE '27</p>
           </div>
           {/* Mobile photo - shows only on mobile when 3D character is hidden */}

@@ -83,15 +83,15 @@
     /* Third: Subtitles */
   }
 
-  .landing-info h3 {
+  .landing-info .landing-tagline {
     text-align: center;
     display: none;
     /* Hide 'An' if not needed, or keep it static */
   }
 
   /* Force static positioning to prevent overlaps */
-  .landing-info h2,
-  h2.landing-info-h2,
+  .landing-info .landing-info-h2,
+  .landing-info .landing-info-h2,
   .landing-h2-1,
   .landing-h2-info {
     position: static !important;
@@ -325,7 +325,7 @@
   left: 0;
 }
 
-.landing-intro h2 {
+.landing-intro .landing-hello {
   margin: 0;
   color: var(--accentColor);
   font-size: 22px;
@@ -355,7 +355,7 @@
   z-index: 9;
 }
 
-.landing-info h3 {
+.landing-info .landing-tagline {
   font-size: 22px;
   letter-spacing: 2px;
   font-weight: 300;
@@ -363,7 +363,7 @@
   margin: 0;
 }
 
-.landing-info h2 {
+.landing-info .landing-info-h2 {
   margin: 0;
   margin-top: -20px;
   margin-left: 20px;
@@ -389,7 +389,7 @@
   white-space: nowrap;
 }
 
-h2.landing-info-h2 {
+.landing-info .landing-info-h2 {
   color: #22e4f2;
   font-size: 36px;
   width: 150%;
@@ -428,11 +428,11 @@ h2.landing-info-h2 {
     z-index: 0;
   }
 
-  .landing-info h3 {
+  .landing-info .landing-tagline {
     font-size: 18px;
   }
 
-  .landing-intro h2 {
+  .landing-intro .landing-hello {
     font-size: 18px;
   }
 
@@ -441,12 +441,12 @@ h2.landing-info-h2 {
     line-height: 30px;
   }
 
-  .landing-info h2 {
+  .landing-info .landing-info-h2 {
     font-size: 35px;
     line-height: 40px;
   }
 
-  h2.landing-info-h2 {
+  .landing-info .landing-info-h2 {
     font-size: 38px;
   }
 }
@@ -456,7 +456,7 @@ h2.landing-info-h2 {
     height: 80vh;
   }
 
-  .landing-intro h2 {
+  .landing-intro .landing-hello {
     font-size: 25px;
   }
 
@@ -465,16 +465,16 @@ h2.landing-info-h2 {
     line-height: 35px;
   }
 
-  .landing-info h3 {
+  .landing-info .landing-tagline {
     font-size: 25px;
   }
 
-  .landing-info h2 {
+  .landing-info .landing-info-h2 {
     font-size: 45px;
     line-height: 42px;
   }
 
-  h2.landing-info-h2 {
+  .landing-info .landing-info-h2 {
     font-size: 55px;
   }
 }
@@ -530,7 +530,7 @@ h2.landing-info-h2 {
 }
 
 @media screen and (min-width: 1600px) {
-  .landing-intro h2 {
+  .landing-intro .landing-hello {
     font-size: 35px;
   }
 
@@ -539,21 +539,21 @@ h2.landing-info-h2 {
     line-height: 55px;
   }
 
-  .landing-info h3 {
+  .landing-info .landing-tagline {
     font-size: 35px;
   }
 
-  .landing-info h2 {
+  .landing-info .landing-info-h2 {
     font-size: 65px;
     line-height: 62px;
   }
 
-  h2.landing-info-h2 {
+  .landing-info .landing-info-h2 {
     font-size: 75px;
   }
 }
 /* ---- Hero role line (rewritten: one clean rotating word, no overlap) ---- */
-.landing-info h2.landing-role {
+.landing-info .landing-role {
   display: flex;
   align-items: baseline;
   gap: 0.35em;
@@ -564,7 +564,7 @@ h2.landing-info-h2 {
   line-height: 1.1;
   color: #fff;
 }
-.landing-info h2.landing-role::after {
+.landing-info .landing-role::after {
   display: none;
 }
 .landing-role-word {
@@ -576,7 +576,7 @@ h2.landing-info-h2 {
 .landing-role-tail {
   font-weight: 400;
 }
-.landing-info h3 {
+.landing-info .landing-tagline {
   font-family: var(--monoFont);
   font-size: 13px;
   letter-spacing: 2px;
@@ -595,7 +595,7 @@ h2.landing-info-h2 {
   to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 @media screen and (max-width: 1024px) {
-  .landing-info h2.landing-role { justify-content: center; }
+  .landing-info .landing-role { justify-content: center; }
 }
 
 /* ---- Phase 1: remove the half-screen gap under the hero on tablet/phone ---- */
@@ -607,4 +607,10 @@ h2.landing-info-h2 {
   .landing-section {
     padding-top: 64px; /* room for the fixed header */
   }
+}
+
+/* ---- Phase 3: former <h2>/<h3> now <p>; keep their heading look ---- */
+.landing-intro .landing-hello,
+.landing-info .landing-info-h2 {
+  font-family: "Space Grotesk", sans-serif;
 }

@@ -15,7 +15,7 @@
   width: 100%;
   max-width: calc(100% - 15px);
 }
-.about-me h3 {
+.about-me .title {
   font-size: 18px;
   text-transform: uppercase;
   letter-spacing: 4px;
@@ -48,7 +48,7 @@
   .about-me {
     width: 500px;
   }
-  .about-me h3 {
+  .about-me .title {
     font-size: 22px;
     letter-spacing: 6px;
   }
@@ -63,7 +63,7 @@
     max-width: calc(100% - 70px);
     transform: translateY(0%);
   }
-  .about-me h3 {
+  .about-me .title {
     font-size: 25px;
     letter-spacing: 7px;
   }
@@ -109,7 +109,7 @@
     width: 640px;
     max-width: calc(100% - 30px);
   }
-  .about-me h3 {
+  .about-me .title {
     font-size: 16px;
     letter-spacing: 5px;
   }
@@ -120,4 +120,9 @@
     letter-spacing: 0.2px;
     word-spacing: 1px;
   }
+}
+
+/* ---- Phase 3: title is now <h2> (was <h3>); keep the old 1em top margin ---- */
+.about-me .title {
+  margin-top: 1em;
 }

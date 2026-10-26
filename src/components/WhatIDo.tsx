@@ -61,6 +61,7 @@ const WhatIDo = () => {
           </div>
           <div
             className="what-content what-noTouch"
+            tabIndex={0}
             ref={(el) => setRef(el, 0)}
           >
             <div className="what-border1">
@@ -89,11 +90,11 @@ const WhatIDo = () => {
 
             <div className="what-content-in">
               <h3>{config.skills.develop.title}</h3>
-              <h4>{config.skills.develop.description}</h4>
+              <div className="what-sub">{config.skills.develop.description}</div>
               <p>
                 {config.skills.develop.details}
               </p>
-              <h5>Skillset & tools</h5>
+              <div className="what-label">Skillset &amp; tools</div>
               <div className="what-content-flex">
                 {config.skills.develop.tools.map((tool, index) => (
                   <div key={index} className="what-tags">{tool}</div>
@@ -104,6 +105,7 @@ const WhatIDo = () => {
           </div>
           <div
             className="what-content what-noTouch"
+            tabIndex={0}
             ref={(el) => setRef(el, 1)}
           >
             <div className="what-border1">
@@ -122,11 +124,11 @@ const WhatIDo = () => {
             <div className="what-corner"></div>
             <div className="what-content-in">
               <h3>{config.skills.design.title}</h3>
-              <h4>{config.skills.design.description}</h4>
+              <div className="what-sub">{config.skills.design.description}</div>
               <p>
                 {config.skills.design.details}
               </p>
-              <h5>Skillset & tools</h5>
+              <div className="what-label">Skillset &amp; tools</div>
               <div className="what-content-flex">
                 {config.skills.design.tools.map((tool, index) => (
                   <div key={index} className="what-tags">{tool}</div>
@@ -137,6 +139,7 @@ const WhatIDo = () => {
           </div>
           <div
             className="what-content what-noTouch"
+            tabIndex={0}
             ref={(el) => setRef(el, 2)}
           >
             <div className="what-border1">
@@ -155,11 +158,11 @@ const WhatIDo = () => {
             <div className="what-corner"></div>
             <div className="what-content-in">
               <h3>{config.skills.mobile.title}</h3>
-              <h4>{config.skills.mobile.description}</h4>
+              <div className="what-sub">{config.skills.mobile.description}</div>
               <p>
                 {config.skills.mobile.details}
               </p>
-              <h5>Skillset & tools</h5>
+              <div className="what-label">Skillset &amp; tools</div>
               <div className="what-content-flex">
                 {config.skills.mobile.tools.map((tool, index) => (
                   <div key={index} className="what-tags">{tool}</div>

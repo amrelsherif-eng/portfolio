@@ -10,7 +10,7 @@
   flex-direction: column;
   justify-content: flex-start;
 }
-.contact-section h3 {
+.contact-section .contact-name {
   font-size: 32px;
   font-weight: 400;
   text-transform: uppercase;
@@ -21,7 +21,7 @@
   display: flex;
   justify-content: space-between;
 }
-.contact-flex h4 {
+.contact-flex .contact-label {
   font-weight: 500;
   margin: 0;
   opacity: 0.6;
@@ -41,16 +41,16 @@ a.contact-social {
   border-bottom: 1px solid #ccc;
   margin-bottom: 8px;
 }
-.contact-box h2 {
+.contact-box .contact-credit {
   font-weight: 400;
   font-size: 16px;
   margin: 0;
   line-height: 22px;
 }
-.contact-box h2 > span {
+.contact-box .contact-credit > span {
   color: var(--accentColor);
 }
-.contact-box h5 {
+.contact-box .contact-year {
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -59,16 +59,16 @@ a.contact-social {
   opacity: 0.5;
 }
 @media only screen and (min-width: 600px) {
-  .contact-section h3 {
+  .contact-section .contact-name {
     font-size: 40px;
   }
-  .contact-box h2 {
+  .contact-box .contact-credit {
     font-size: 18px;
   }
   a.contact-social {
     font-size: 18px;
   }
-  .contact-flex h4 {
+  .contact-flex .contact-label {
     font-size: 15px;
   }
   .contact-flex p {
@@ -76,10 +76,10 @@ a.contact-social {
   }
 }
 @media only screen and (min-width: 900px) {
-  .contact-section h3 {
+  .contact-section .contact-name {
     font-size: 48px;
   }
-  .contact-box h2 {
+  .contact-box .contact-credit {
     font-size: 20px;
   }
   a.contact-social {
@@ -87,10 +87,10 @@ a.contact-social {
   }
 }
 @media only screen and (min-width: 1300px) {
-  .contact-section h3 {
+  .contact-section .contact-name {
     font-size: 55px;
   }
-  .contact-box h2 {
+  .contact-box .contact-credit {
     font-size: 22px;
   }
   a.contact-social {
@@ -98,11 +98,11 @@ a.contact-social {
   }
 }
 @media only screen and (min-width: 1600px) {
-  .contact-section h3 {
+  .contact-section .contact-name {
     font-size: 60px;
     margin-bottom: 40px;
   }
-  .contact-box h2 {
+  .contact-box .contact-credit {
     font-size: 23px;
   }
   a.contact-social {
@@ -112,7 +112,7 @@ a.contact-social {
     margin-top: 10px;
     margin-bottom: 20px;
   }
-  .contact-box h5 {
+  .contact-box .contact-year {
     font-size: 20px;
     line-height: 20px;
     gap: 10px;
@@ -126,7 +126,7 @@ a.contact-social {
   .contact-flex p {
     margin-bottom: 0px;
   }
-  .contact-flex h4 {
+  .contact-flex .contact-label {
     margin-top: 20px;
   }
   .contact-section {
@@ -135,5 +135,31 @@ a.contact-social {
   }
   .contact-container {
     width: calc(100% - 25px);
+  }
+}
+
+/* ---- Phase 3: labels/credit/year are <p> now (were h4/h2/h5); keep the old look ---- */
+.contact-box .contact-label,
+.contact-box .contact-credit,
+.contact-box .contact-year {
+  font-family: "Space Grotesk", sans-serif;
+}
+.contact-box .contact-year {
+  margin-top: 1.67em;
+  margin-bottom: 1.67em;
+}
+
+/* ---- Phase 3: 44px tap targets on phones ---- */
+@media only screen and (max-width: 768px) {
+  /* email / phone / CV: bigger hit area, same visual spacing */
+  .contact-flex p a {
+    display: inline-block;
+    padding: 14px 0;
+    margin: -14px 0;
+  }
+  /* social rows: text stays right above its underline */
+  a.contact-social {
+    padding-top: 19px;
+    margin-bottom: 0;
   }
 }

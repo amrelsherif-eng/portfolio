@@ -15,7 +15,7 @@ export function initialFX() {
     delay: 1,
   });
 
-  const selectors = [".landing-info h3", ".landing-intro h2", ".landing-intro h1"];
+  const selectors = [".landing-info .landing-tagline", ".landing-intro .landing-hello", ".landing-intro h1"];
   const elements = selectors.flatMap(selector => Array.from(document.querySelectorAll(selector)));
   var landingText = new TextSplitter(elements, {
     type: "chars,lines",

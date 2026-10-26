@@ -123,3 +123,17 @@
     padding: 10px 0; /* bigger tap area */
   }
 }
+
+/* ---- Phase 3: 44px tap targets on phones, without moving the layout ---- */
+@media only screen and (max-width: 768px) {
+  .navbar-title {
+    display: inline-block;
+    padding: 10px 0;
+    margin: -10px 0;
+  }
+  .header ul li a {
+    display: inline-block;
+    padding: 13px 2px;
+    margin: -3px -2px;
+  }
+}
