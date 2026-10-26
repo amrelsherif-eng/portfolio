@@ -13,6 +13,7 @@ export type Certification = {
   hours?: string; // e.g. "120 h"
   featured?: boolean; // shown in the home section (max 4)
   verifyUrl: string; // "" = not added yet -> UI shows no verify link
+  image?: string; // certificate preview (public/images/certs/<id>.webp)
 };
 
 export const certifications: Certification[] = [
@@ -20,10 +21,11 @@ export const certifications: Certification[] = [
     id: "aws-arch",
     name: "AWS Academy Graduate – Cloud Architecting",
     issuer: "AWS Academy",
-    date: "Aug 2026",
+    date: "Sep 2026",
     category: "Cloud & Networking",
     featured: true,
-    verifyUrl: "", // TODO: verify link from LinkedIn
+    verifyUrl: "https://www.credly.com/badges/2a5e97d8-ab58-4e9a-a345-0e21a2687ec7",
+    image: "/images/certs/aws-arch.webp",
   },
   {
     id: "aws-found",
@@ -32,18 +34,36 @@ export const certifications: Certification[] = [
     date: "Aug 2026",
     category: "Cloud & Networking",
     featured: true,
-    verifyUrl: "", // TODO: verify link from LinkedIn
+    verifyUrl: "https://www.credly.com/badges/2ef79065-9c11-4ee0-b949-a87948e4218d",
+    image: "/images/certs/aws-found.webp",
   },
   {
-    id: "ccna",
-    name: "Cisco CCNA v7: Routing & Switching",
-    issuer: "NTI · Digital Egypt Youth",
-    date: "Oct 2026",
+    id: "ccna-itn",
+    name: "CCNA: Introduction to Networks",
+    issuer: "Cisco Networking Academy · NTI",
+    date: "Oct 2026", // course start; ends Dec 2026
     category: "Cloud & Networking",
     status: "in-progress",
-    hours: "120 h",
     featured: true,
-    verifyUrl: "", // TODO: verify link from LinkedIn
+    verifyUrl: "", // TODO: add the Cisco badge link + preview when finished
+  },
+  {
+    id: "ccna-srwe",
+    name: "CCNA: Switching, Routing & Wireless Essentials",
+    issuer: "Cisco Networking Academy · NTI",
+    date: "Oct 2026", // course start; ends Jan 2027
+    category: "Cloud & Networking",
+    status: "in-progress",
+    verifyUrl: "", // TODO: add the Cisco badge link + preview when finished
+  },
+  {
+    id: "ccna-ensa",
+    name: "CCNA: Enterprise Networking, Security & Automation",
+    issuer: "Cisco Networking Academy · NTI",
+    date: "Oct 2026", // course start; ends Jan 2027
+    category: "Cloud & Networking",
+    status: "in-progress",
+    verifyUrl: "", // TODO: add the Cisco badge link + preview when finished
   },
   {
     id: "nti-cloud",
@@ -53,6 +73,7 @@ export const certifications: Certification[] = [
     category: "Programs & Training",
     hours: "120 h",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/nti-cloud.webp",
   },
   {
     id: "depi-appreciation",
@@ -62,6 +83,7 @@ export const certifications: Certification[] = [
     category: "Programs & Training",
     featured: true,
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/depi-appreciation.webp",
   },
   {
     id: "depi-achievement",
@@ -70,6 +92,7 @@ export const certifications: Certification[] = [
     date: "Jul 2026",
     category: "Programs & Training",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/depi-achievement.webp",
   },
   {
     id: "nti-php",
@@ -79,6 +102,7 @@ export const certifications: Certification[] = [
     category: "Programs & Training",
     hours: "120 h",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/nti-php.webp",
   },
   {
     id: "iti-php",
@@ -88,6 +112,7 @@ export const certifications: Certification[] = [
     category: "Programs & Training",
     hours: "60 h",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/iti-php.webp",
   },
   {
     id: "packt-flutter",
@@ -96,6 +121,7 @@ export const certifications: Certification[] = [
     date: "Apr 2026",
     category: "Programs & Training",
     verifyUrl: "https://coursera.org/verify/G3TC13R6ZLMO",
+    image: "/images/certs/packt-flutter.webp",
   },
   {
     id: "cisco-english",
@@ -104,6 +130,7 @@ export const certifications: Certification[] = [
     date: "Oct 2025",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/cisco-english.webp",
   },
   {
     id: "depi-english",
@@ -112,6 +139,7 @@ export const certifications: Certification[] = [
     date: "",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/depi-english.webp",
   },
   {
     id: "helsinki-ai",
@@ -120,6 +148,7 @@ export const certifications: Certification[] = [
     date: "",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/helsinki-ai.webp",
   },
   {
     id: "mckinsey",
@@ -128,6 +157,7 @@ export const certifications: Certification[] = [
     date: "Jun 2026",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/mckinsey.webp",
   },
   {
     id: "build-ai",
@@ -136,6 +166,7 @@ export const certifications: Certification[] = [
     date: "",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/build-ai.webp",
   },
   {
     id: "sprintup",
@@ -144,6 +175,7 @@ export const certifications: Certification[] = [
     date: "May 2025",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/sprintup.webp",
   },
   {
     id: "be-ready",
@@ -152,5 +184,6 @@ export const certifications: Certification[] = [
     date: "Sep 2025",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
+    image: "/images/certs/be-ready.webp",
   },
 ];

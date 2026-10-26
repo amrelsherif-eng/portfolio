@@ -1,72 +1,105 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { certifications, type CertCategory } from "../data/certifications";
-import { CertCard } from "../components/Certifications";
+import { certifications } from "../data/certifications";
+import { CertRow } from "../components/Certifications";
 import "./CertificationsPage.css";
-// Also import shared card styles
-import "../components/styles/Certifications.css";
 
-const categoryOrder: CertCategory[] = [
-  "Cloud & Networking",
-  "Programs & Training",
-  "Languages & Skills",
-];
+/* ── helpers ──────────────────────────────────────────────── */
+const ALL = "All";
 
-const CertificationsPage = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+function getCategories(certs: typeof certifications): string[] {
+  const seen = new Set<string>();
+  const ordered: string[] = [];
+  for (const c of certs) {
+    if (!seen.has(c.category)) {
+      seen.add(c.category);
+      ordered.push(c.category);
+    }
+  }
+  return ordered;
+}
+
+function groupByCategory(
+  certs: typeof certifications
+): Record<string, typeof certifications> {
+  const map: Record<string, typeof certifications> = {};
+  for (const c of certs) {
+    (map[c.category] ??= []).push(c);
+  }
+  return map;
+}
+
+/* ── page component ───────────────────────────────────────── */
+export default function CertificationsPage() {
+  const [active, setActive] = useState(ALL);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (containerRef.current) {
-      containerRef.current.scrollTop = 0;
-    }
-    const prevTitle = document.title;
-    document.title = "Certifications — Amr Elsherif";
-    return () => {
-      document.title = prevTitle;
-    };
   }, []);
 
-  const groups = categoryOrder.map((cat) => ({
-    category: cat,
-    items: certifications.filter((c) => c.category === cat),
-  }));
+  const categories = useMemo(() => getCategories(certifications), []);
+
+  const filtered = useMemo(
+    () =>
+      active === ALL
+        ? certifications
+        : certifications.filter((c) => c.category === active),
+    [active]
+  );
+
+  const groups = useMemo(() => groupByCategory(filtered), [filtered]);
 
   return (
-    <div className="certs-page" ref={containerRef}>
-      <header className="certs-page-header">
-        <div className="certs-page-back-wrap">
-          <Link to="/" className="certs-page-back-btn" data-cursor="disable">
-            ← Back to Home
-          </Link>
-        </div>
-        <h1 className="certs-page-title">
-          Certifi<span>cations</span>
-        </h1>
-        <p className="certs-page-subtitle">
-          Credentials, programs and training — newest first in each group.
-        </p>
-      </header>
+    <main className="certs-page">
+      <Link to="/#certifications" className="certs-back">
+        ← Back to Home
+      </Link>
 
-      <main className="certs-page-groups">
-        {groups.map((group) => (
-          <section key={group.category}>
-            <h2 className="certs-page-group-title">
-              {group.category}
-              <span className="certs-page-group-count">
-                ({group.items.length})
-              </span>
-            </h2>
-            <div className="certs-page-grid">
-              {group.items.map((cert) => (
-                <CertCard key={cert.id} cert={cert} />
-              ))}
-            </div>
-          </section>
+      <h1 className="certs-page-title">
+        Certi<span>fications</span>
+      </h1>
+      <p className="certs-page-subtitle">
+        Credentials, programs and training, grouped by domain.
+      </p>
+
+      {/* ── filter chips ── */}
+      <div className="certs-filters" role="group" aria-label="Filter by category">
+        <button
+          className={`certs-chip${active === ALL ? " certs-chip--active" : ""}`}
+          aria-pressed={active === ALL}
+          onClick={() => setActive(ALL)}
+          type="button"
+        >
+          {ALL}
+        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            className={`certs-chip${active === cat ? " certs-chip--active" : ""}`}
+            aria-pressed={active === cat}
+            onClick={() => setActive(cat)}
+            type="button"
+          >
+            {cat}
+          </button>
         ))}
-      </main>
-    </div>
-  );
-};
+      </div>
 
-export default CertificationsPage;
+      {/* ── grouped rows ── */}
+      {Object.entries(groups).map(([cat, items]) => (
+        <section key={cat} className="certs-group">
+          <h2 className="certs-group-title">
+            {cat}{" "}
+            <span className="certs-group-count">({items.length})</span>
+          </h2>
+
+          <div className="certs-list">
+            {items.map((cert) => (
+              <CertRow cert={cert} key={cert.name} />
+            ))}
+          </div>
+        </section>
+      ))}
+    </main>
+  );
+}
