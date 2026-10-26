@@ -101,7 +101,7 @@ export const certifications: Certification[] = [
     id: "cisco-english",
     name: "English for IT 1",
     issuer: "Cisco Networking Academy",
-    date: "",
+    date: "Oct 2025",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
   },
@@ -125,14 +125,14 @@ export const certifications: Certification[] = [
     id: "mckinsey",
     name: "Forward Program",
     issuer: "McKinsey.org",
-    date: "",
+    date: "Jun 2026",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
   },
   {
     id: "build-ai",
     name: "Build with AI: Masr Edition (attendance)",
-    issuer: "Google Developer Groups", // TODO: confirm issuer
+    issuer: "Google for Developers × ITI",
     date: "",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
@@ -149,7 +149,7 @@ export const certifications: Certification[] = [
     id: "be-ready",
     name: "Be Ready – Employability Skills",
     issuer: "", // TODO: confirm issuer (UI hides empty issuer)
-    date: "",
+    date: "Sep 2025",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
   },
