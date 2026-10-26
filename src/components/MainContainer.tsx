@@ -11,6 +11,7 @@ import Work from "./Work";
 import TechStackNew from "./TechStackNew";
 import CallToAction from "./CallToAction";
 import setSplitText from "./utils/splitText";
+import SherifChat from "./SherifChat";
 
 const MainContainer = ({ children }: PropsWithChildren) => {
   const [isDesktopView, setIsDesktopView] = useState<boolean>(
@@ -64,6 +65,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
       <Cursor />
       <Navbar />
       <SocialIcons />
+      <SherifChat />
       {isDesktopView && !isMobile && shouldRenderCharacter && children}
       <div className="container-main">
         <Landing />
