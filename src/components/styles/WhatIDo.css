@@ -484,3 +484,72 @@
     font-size: 12px;
   }
 }
+
+/* ---- What I Do (desktop): three cards need more room than the template's two ---- */
+@media only screen and (min-width: 1025px) {
+  .what-box-in {
+    height: min(660px, 82vh);
+  }
+  .what-content h3 {
+    font-size: 30px;
+    line-height: 1.15;
+  }
+  .what-noTouch:focus-visible,
+  .what-noTouch:hover,
+  .what-content-active {
+    min-height: 58%;
+  }
+  .what-noTouch:focus-visible~.what-content,
+  .what-noTouch:hover~.what-content,
+  .what-box-in:has(.what-noTouch:focus-visible) .what-noTouch:not(:focus-visible),
+  .what-box-in:hover .what-noTouch:not(:hover),
+  .what-content.what-sibling {
+    min-height: 21%;
+  }
+  /* closed cards: fade the clipped text instead of cutting it mid-line */
+  .what-content .what-content-in {
+    -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 92%);
+    mask-image: linear-gradient(to bottom, #000 62%, transparent 92%);
+  }
+  .what-noTouch:focus-visible .what-content-in,
+  .what-noTouch:hover .what-content-in,
+  .what-content-active .what-content-in {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+/* ---- 769-1024px: keep the title clear of the fixed social icons on the left ---- */
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  .what-box h2 {
+    padding-left: 64px;
+  }
+}
+
+/* ---- Short laptop windows (desktop width, under 780px tall) ---- */
+@media only screen and (min-width: 1025px) and (max-height: 780px) {
+  /* fill the screen but stay clear of the fixed header */
+  .what-box-in {
+    height: calc(100vh - 170px);
+    margin-top: 40px;
+  }
+  .what-content {
+    padding: 34px 44px;
+  }
+  .what-noTouch:focus-visible,
+  .what-noTouch:hover,
+  .what-content-active {
+    min-height: 66%;
+    padding: 22px 44px;
+  }
+  .what-noTouch:focus-visible~.what-content,
+  .what-noTouch:hover~.what-content,
+  .what-box-in:has(.what-noTouch:focus-visible) .what-noTouch:not(:focus-visible),
+  .what-box-in:hover .what-noTouch:not(:hover),
+  .what-content.what-sibling {
+    min-height: 17%;
+  }
+  .what-content h3 {
+    font-size: 26px;
+  }
+}

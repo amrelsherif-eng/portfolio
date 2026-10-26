@@ -328,3 +328,20 @@
   .career-info-in, .career-info-box .career-desc { padding-left: 0 !important; }
   .career-info .career-position { max-width: none; }
 }
+
+/* ---- Wide screens (>1400px): the date is supporting info, not a headline ---- */
+@media screen and (min-width: 1401px) {
+  .career-info .career-year {
+    font-family: var(--monoFont);
+    font-size: 15px;
+    line-height: 32px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: var(--accent2Color);
+    opacity: 0.9;
+  }
+  .career-info .career-position {
+    font-size: 28px;
+    line-height: 32px;
+  }
+}

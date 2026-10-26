@@ -160,22 +160,22 @@ export const config = {
     },
     skills: {
         develop: {
-            title: "NETWORK & CLOUD INFRASTRUCTURE",
-            description: "Routing, switching & AWS cloud architecture",
-            details: "My main track. CCNA routing and switching (in progress): subnetting, OSPF, VLANs and TCP/IP in Packet Tracer. AWS Academy Cloud Foundations and Cloud Architecting: EC2, S3, VPC, RDS and IAM. Linux (RHCSA path) is next.",
-            tools: ["AWS", "Computer Networking", "Cisco Networking", "Linux", "Cloud Computing", "Routing", "Subnetting", "OSPF", "VLAN", "TCP/IP", "Packet Tracer", "EC2", "S3", "VPC", "RDS", "IAM"]
+            title: "NETWORK & CLOUD",
+            description: "Routing, switching & AWS cloud",
+            details: "My main track: CCNA in progress (subnetting, OSPF and VLANs in Packet Tracer) plus two AWS Academy Graduate badges. Linux is next.",
+            tools: ["Cisco Networking", "OSPF", "VLAN", "Subnetting", "AWS", "VPC", "Linux"]
         },
         design: {
             title: "EMBEDDED & ECE",
-            description: "Microcontrollers, control systems & industrial instrumentation",
-            details: "My ECE foundation. ESP32 firmware for the WeatherLink team project, a Raspberry Pi 5 Li-Fi graduation project, and industrial training: auto-tuning a PID controller, AUMA actuator boards and calibration benches.",
-            tools: ["ESP32", "Raspberry Pi", "Arduino", "PIC", "Proteus", "Embedded Systems", "IoT", "PID", "Calibration", "Troubleshooting", "C", "C++"]
+            description: "Microcontrollers & control systems",
+            details: "ESP32 firmware for the WeatherLink team project, a Raspberry Pi 5 Li-Fi graduation project, and PID tuning in industrial training.",
+            tools: ["ESP32", "Raspberry Pi", "Arduino", "C / C++", "IoT", "PID"]
         },
         mobile: {
-            title: "MOBILE DEVELOPMENT",
-            description: "Cross-platform mobile applications & technical leadership",
-            details: "Where I proved coding and teamwork. DEPI Flutter track (~120 h): Dart, BLoC/Provider, Firebase and REST APIs. Team Leader of a 20-trainee group and of the DevSync project team.",
-            tools: ["Flutter", "Dart", "Firebase", "BLoC", "REST APIs", "Git", "GitHub", "Team Leadership"]
+            title: "MOBILE APPS",
+            description: "Flutter apps & team leadership",
+            details: "DEPI Flutter track (~120 h): BLoC, Firebase and REST APIs. Led a 20-trainee group and the DevSync project team.",
+            tools: ["Flutter", "Dart", "Firebase", "BLoC", "REST APIs", "Team Leadership"]
         }
     }
 };

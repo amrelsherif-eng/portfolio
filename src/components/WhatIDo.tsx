@@ -100,8 +100,8 @@ const WhatIDo = () => {
                   <div key={index} className="what-tags">{tool}</div>
                 ))}
               </div>
-              <div className="what-arrow"></div>
             </div>
+            <div className="what-arrow"></div>
           </div>
           <div
             className="what-content what-noTouch"
@@ -134,8 +134,8 @@ const WhatIDo = () => {
                   <div key={index} className="what-tags">{tool}</div>
                 ))}
               </div>
-              <div className="what-arrow"></div>
             </div>
+            <div className="what-arrow"></div>
           </div>
           <div
             className="what-content what-noTouch"
@@ -168,8 +168,8 @@ const WhatIDo = () => {
                   <div key={index} className="what-tags">{tool}</div>
                 ))}
               </div>
-              <div className="what-arrow"></div>
             </div>
+            <div className="what-arrow"></div>
           </div>
         </div>
       </div>
