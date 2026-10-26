@@ -25,12 +25,27 @@ const Career = () => {
             <div key={index} className="career-info-box">
               <div className="career-info-in">
                 <div className="career-role">
-                  <h4>{exp.position}</h4>
-                  <h5>{exp.company}</h5>
+                  <h3 className="career-position">{exp.position}</h3>
+                  <p className="career-company">{exp.company}</p>
                 </div>
-                <h3>{getDisplayYear(exp.period)}</h3>
+                <p className="career-year">{getDisplayYear(exp.period)}</p>
               </div>
-              <p>{exp.description}</p>
+              <div className="career-detail">
+                <span className="career-date-inline">{exp.period}</span>
+                <p className="career-desc">{exp.description}</p>
+                {exp.responsibilities?.length > 0 && (
+                  <ul className="career-points">
+                    {exp.responsibilities.map((r, i) => (
+                      <li key={i}>{r}</li>
+                    ))}
+                  </ul>
+                )}
+                <div className="career-tags">
+                  {exp.technologies.map((t) => (
+                    <span key={t}>{t}</span>
+                  ))}
+                </div>
+              </div>
             </div>
           ))}
         </div>

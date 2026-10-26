@@ -192,7 +192,7 @@ body {
 /* Telemetry touches: monospace for technical labels */
 .what-tags,
 .navbar-connect,
-.career-info h3,
+.career-info .career-year,
 .resume-button {
   font-family: var(--monoFont);
 }
@@ -205,8 +205,8 @@ body {
   .about-me p { font-size: 17px !important; line-height: 1.55 !important; font-weight: 400 !important; }
   .career-info-box { flex-direction: column; gap: 10px; }
   .career-info-in { width: 100% !important; justify-content: space-between; }
-  .career-info h3 { font-size: 15px !important; line-height: 20px !important; white-space: nowrap; }
-  .career-info-box p { width: 100% !important; }
+  .career-info .career-year { font-size: 15px !important; line-height: 20px !important; white-space: nowrap; }
+  .career-info-box .career-desc { width: 100% !important; }
 }
 
 /* Never allow sideways scrolling from 100vw elements / scrollbar width */
