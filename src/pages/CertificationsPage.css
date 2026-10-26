@@ -1,0 +1,153 @@
+/* ── Certifications full page ── */
+
+.certs-page {
+  height: 100vh;
+  height: 100svh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #0a0d10;
+  color: #e6edf3;
+  padding: 80px 48px 120px;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+@media screen and (max-width: 699px) {
+  .certs-page {
+    padding: 40px 24px 80px;
+  }
+}
+
+/* ── Header ── */
+.certs-page-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 64px auto;
+  box-sizing: border-box;
+}
+
+.certs-page-back-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.certs-page-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  min-height: 44px;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accentColor);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 9999px;
+  background: rgba(0, 240, 255, 0.04);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+@media (hover: hover) {
+  .certs-page-back-btn:hover {
+    background: var(--accentColor);
+    color: #0a0d10 !important;
+    border-color: var(--accentColor);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+  }
+}
+
+.certs-page-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(40px, 7vw, 96px);
+  font-weight: 700;
+  line-height: 1.08;
+  color: #fff;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.02em;
+  word-wrap: break-word;
+}
+
+@media screen and (min-width: 480px) {
+  .certs-page-title {
+    font-size: clamp(48px, 7vw, 96px);
+  }
+}
+
+.certs-page-title span {
+  color: var(--accentColor);
+}
+
+.certs-page-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #b7c0c8;
+  margin: 0 auto;
+  max-width: 560px;
+}
+
+@media screen and (min-width: 768px) {
+  .certs-page-subtitle {
+    font-size: 18px;
+  }
+}
+
+/* ── Groups ── */
+.certs-page-groups {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.certs-page-group-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 28px 0;
+  line-height: 1.3;
+}
+
+.certs-page-group-title .certs-page-group-count {
+  font-family: var(--monoFont);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--accentColor);
+  margin-left: 10px;
+  opacity: 0.85;
+}
+
+@media screen and (max-width: 699px) {
+  .certs-page-group-title {
+    font-size: 22px;
+  }
+}
+
+/* ── Page grid — reuses .cert-card from Certifications.css ── */
+.certs-page-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 1099px) {
+  .certs-page-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .certs-page-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

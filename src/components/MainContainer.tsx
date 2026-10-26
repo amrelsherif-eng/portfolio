@@ -9,6 +9,7 @@ import SocialIcons from "./SocialIcons";
 import WhatIDo from "./WhatIDo";
 import Work from "./Work";
 import TechStackNew from "./TechStackNew";
+import Certifications from "./Certifications";
 import CallToAction from "./CallToAction";
 import setSplitText from "./utils/splitText";
 
@@ -72,6 +73,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
         <Career />
         <Work />
         <TechStackNew />
+        <Certifications />
         <CallToAction />
         <Contact />
       </div>
