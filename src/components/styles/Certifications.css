@@ -1,0 +1,205 @@
+/* ── Certifications home section ── */
+
+.certs-section {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  box-sizing: border-box;
+}
+
+/* ── Section title ── */
+.certs-section h2 {
+  margin-top: 0;
+  margin-bottom: 48px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 70px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.certs-section h2 > span {
+  color: var(--accentColor);
+}
+
+@media only screen and (max-width: 1400px) {
+  .certs-section h2 {
+    font-size: 50px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .certs-section h2 {
+    font-size: 36px;
+  }
+}
+
+/* ── Featured grid ── */
+.certs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 1099px) {
+  .certs-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .certs-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Card (shared between home + page) ── */
+.cert-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  min-width: 0;
+}
+
+.cert-card:focus-within {
+  border-color: rgba(0, 240, 255, 0.45);
+}
+
+@media (hover: hover) {
+  .cert-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 240, 255, 0.45);
+    box-shadow: 0 12px 28px rgba(0, 240, 255, 0.15);
+  }
+}
+
+/* ── Card inner elements ── */
+.cert-card-category {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--accentColor);
+  letter-spacing: 0.08em;
+  margin: 0 0 10px 0;
+}
+
+.cert-card h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+.cert-card-issuer {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: #b7c0c8;
+  margin: 0 0 14px 0;
+  line-height: 1.4;
+}
+
+/* Meta row: date + hours + in-progress pill */
+.cert-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.cert-card-date,
+.cert-card-hours {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent2Color);
+  letter-spacing: 0.03em;
+}
+
+.cert-card-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  font-family: var(--monoFont);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent2Color);
+  background: rgba(255, 179, 0, 0.1);
+  border: 1px solid rgba(255, 179, 0, 0.35);
+  border-radius: 9999px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* Footer with verify link */
+.cert-card-footer {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+
+.cert-card-verify {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 18px;
+  min-height: 44px;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0a0d10 !important;
+  background: var(--accentColor);
+  border: 1px solid var(--accentColor);
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+@media (hover: hover) {
+  .cert-card-verify:hover {
+    color: #0a0d10 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 240, 255, 0.4);
+  }
+}
+
+/* ── "All certifications →" button ── */
+.certs-all-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+}
+
+.certs-all-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 35px;
+  min-height: 44px;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+  background: var(--accentColor);
+  border-radius: 30px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+@media (hover: hover) {
+  .certs-all-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 240, 255, 0.4);
+  }
+}
