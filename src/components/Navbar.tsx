@@ -70,7 +70,7 @@ const Navbar = () => {
     <>
       <div className="header">
         <a href="/#" className="navbar-title" data-cursor="disable">
-          <img src="/wordmark.svg" alt="シェリフ · Amr Elsherif" className="navbar-logo" />
+          <img src="/wordmark.svg" alt="シャリーフ · Amr Elsherif" className="navbar-logo" />
         </a>
         <a
           href={`mailto:${config.social.email}`}

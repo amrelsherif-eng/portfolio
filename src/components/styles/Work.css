@@ -378,30 +378,111 @@
   font-family: "Space Grotesk", sans-serif;
 }
 
-/* ---- Desktop windows under 820px tall (e.g. 1536x700 laptops at 125% scaling):
-        scale the card so it always fits on screen ---- */
-@media only screen and (min-width: 1025px) and (max-height: 820px) {
+/* ---- Desktop & tablet (pinned horizontal scroll, >768px): the original zig-zag cards,
+   with the image in a fixed frame so it is never cut off.
+   Width and image height follow the window so cards always fit (1280x600 and up). */
+@media only screen and (min-width: 769px) {
+  .work-flex {
+    margin-left: 0;
+    padding-right: 0;
+  }
   .work-box {
-    padding: 48px 64px;
-    gap: 28px;
+    width: clamp(330px, 31vw, 470px);
+    padding: clamp(18px, 3.2vh, 36px) clamp(20px, 2.2vw, 36px);
+    gap: clamp(12px, 2.2vh, 22px);
+    justify-content: flex-start;
+  }
+  .work-box:first-child {
+    border-left: 1px solid #363636;
+  }
+  .work-image-in {
+    display: block;
+    width: 100%;
+  }
+  .work-image img {
+    display: block;
+    width: 100%;
+    height: min(clamp(110px, calc(100vh - 440px), 300px), 25vw);
+    max-height: none;
+    object-fit: contain;
+    background: #0f1418;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
   }
   .work-title {
-    margin-bottom: 10px;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+  .work-title > div {
+    text-align: right;
+    flex: 1;
   }
   .work-title .work-num {
-    font-size: 40px;
-    line-height: 40px;
+    font-size: clamp(26px, 3.6vh, 36px);
+    line-height: 1;
+  }
+  .work-info .work-name {
+    font-size: clamp(17px, 2.4vh, 21px);
+    line-height: 1.25;
+  }
+  .work-info .work-title p {
+    font-family: var(--monoFont);
+    font-size: 12px;
+    color: #8b98a1;
+    margin-top: 4px;
   }
   .work-info .work-desc {
-    margin: 2px 0 12px;
+    font-size: clamp(13px, 1.9vh, 14.5px);
+    margin: 0 0 12px;
+    max-width: none;
+    width: 100%;
   }
-  .work-image img {
-    max-height: clamp(110px, calc(100vh - 500px), 230px);
+  .work-info .work-label {
+    font-size: 12px;
+    font-family: var(--monoFont);
+    color: #8b98a1;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .work-section h2 {
+    margin-top: clamp(60px, 11vh, 100px);
+    margin-bottom: clamp(14px, 3vh, 34px);
+    font-size: clamp(38px, 7vh, 64px);
+  }
+  .work-box-cta {
+    justify-content: center;
   }
 }
-/* narrower cards (1025-1400px) wrap the text into more lines -> leave the image less room */
-@media only screen and (min-width: 1025px) and (max-width: 1400px) and (max-height: 820px) {
-  .work-image img {
-    max-height: clamp(90px, calc(100vh - 560px), 230px);
+
+/* heading row: "My Work" + a direct link to the All Works page */
+.work-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.work-all-link {
+  font-family: var(--monoFont);
+  font-size: 14px;
+  color: var(--accentColor);
+  text-decoration: none;
+  padding: 12px 18px;
+  min-height: 44px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 999px;
+  margin-bottom: clamp(14px, 3vh, 34px);
+  transition: background 0.25s ease;
+}
+.work-all-link:hover {
+  background: rgba(0, 240, 255, 0.1);
+  color: var(--accentColor);
+}
+@media only screen and (max-width: 768px) {
+  .work-all-link {
+    margin-bottom: 20px;
+    padding: 12px 16px;
   }
 }

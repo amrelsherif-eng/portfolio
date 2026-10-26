@@ -108,3 +108,22 @@ div.resume-button span {
     display: none;
   }
 }
+
+/* Desktop: the fixed RESUME link floated over scrolling text (e.g. My Work cards).
+   A frosted pill keeps it readable and clearly separate from the content underneath. */
+@media only screen and (min-width: 1025px) {
+  .resume-button {
+    padding: 10px 16px;
+    border: 1px solid #363636;
+    border-radius: 999px;
+    background: rgba(10, 13, 16, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: 3px;
+  }
+  div.resume-button span {
+    font-size: 18px;
+  }
+}

@@ -62,9 +62,14 @@ const Work = () => {
   return (
     <div className="work-section" id="work">
       <div className="work-container section-container">
-        <h2>
-          My <span>Work</span>
-        </h2>
+        <div className="work-head">
+          <h2>
+            My <span>Work</span>
+          </h2>
+          <Link to="/works" className="work-all-link" data-cursor="disable">
+            All works →
+          </Link>
+        </div>
         <div className="work-flex">
           {config.projects.slice(0, 5).map((project, index) => (
             <div className="work-box" key={project.id}>
