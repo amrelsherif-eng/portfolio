@@ -1,9 +1,40 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv, Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
+function localChatPlugin(): Plugin {
+  return {
+    name: "local-chat-api",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        if ((req as typeof req & { url?: string }).url?.split("?")[0] !== "/api/chat") return next();
+        // Vite's dev server does not parse bodies like Vercel does: read the JSON ourselves.
+        // (vite.config has no Node/DOM typings here, so describe the two APIs we use)
+        type Decoder = { decode(input?: Uint8Array, opts?: { stream: boolean }): string };
+        const Decoder = (globalThis as unknown as { TextDecoder: new () => Decoder }).TextDecoder;
+        const stream = req as unknown as { on(event: string, cb: (chunk: Uint8Array) => void): void };
+        const body = await new Promise<string>((resolve) => {
+          const decoder = new Decoder();
+          let data = "";
+          stream.on("data", (chunk) => { data += decoder.decode(chunk, { stream: true }); });
+          stream.on("end", () => resolve(data + decoder.decode()));
+        });
+        (req as typeof req & { body?: string }).body = body;
+        const { default: handler } = await import("./api/chat");
+        await handler(req as unknown as Parameters<typeof handler>[0], res as unknown as Parameters<typeof handler>[1]);
+      });
+    },
+  };
+}
+
+export default defineConfig(({ mode }) => {
+  const runtime = globalThis as typeof globalThis & { process: { cwd: () => string; env: Record<string, string | undefined> } };
+  const env = loadEnv(mode, runtime.process.cwd(), "");
+  if (env.GEMINI_API_KEY) runtime.process.env.GEMINI_API_KEY = env.GEMINI_API_KEY;
+  if (env.GEMINI_MODEL) runtime.process.env.GEMINI_MODEL = env.GEMINI_MODEL;
+  return {
+  plugins: [react(), localChatPlugin()],
   build: {
     rollupOptions: {
       output: {
@@ -27,4 +58,5 @@ export default defineConfig({
   optimizeDeps: {
     include: ['three', 'gsap', 'lenis']
   }
+  };
 });
