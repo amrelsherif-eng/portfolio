@@ -553,3 +553,52 @@
     font-size: 26px;
   }
 }
+
+/* Proof points sit between the summary and tool tags in the expanded card. */
+.what-content-in {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.what-content-in .what-highlights {
+  list-style: none;
+  margin: 8px 0 6px;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 400;
+}
+.what-highlights li {
+  position: relative;
+  padding-left: 14px;
+}
+.what-highlights li::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: var(--accentColor);
+  font-size: 16px;
+  line-height: 1.1;
+}
+.what-content-in .what-label {
+  margin-top: 4px;
+}
+.what-noTouch:focus-visible .what-content-in,
+.what-noTouch:hover .what-content-in,
+.what-content-active .what-content-in {
+  justify-content: space-evenly;
+}
+
+@media only screen and (min-width: 1025px) and (max-height: 700px) {
+  .what-content-in .what-highlights {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .what-content-in .what-highlights {
+    display: none;
+  }
+}
