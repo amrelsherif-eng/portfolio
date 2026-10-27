@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { certifications, Certification, CertCategory } from "../data/certifications";
 import { CertViewer } from "../components/Certifications";
+import { responsiveImage } from "../utils/responsiveImage";
 import "./CertificationsPage.css";
 
 /* ── local monogram (not exported from Certifications.tsx) ── */
@@ -136,9 +137,10 @@ export default function CertificationsPage() {
       <section className="cpg-section">
         <h2 className="cpg-h2">AWS badges</h2>
         <div className="cpg-aws-grid">
-          {awsItems.map((cert) => (
+          {awsItems.map((cert, index) => (
             <div className="cpg-aws-card" key={cert.id}>
               {cert.image && (
+                (() => { const image = responsiveImage(cert.image); return (
                 <button
                   className="cpg-aws-thumb-btn"
                   type="button"
@@ -146,10 +148,15 @@ export default function CertificationsPage() {
                   onClick={(e) => openPreview(awsItems, cert, e.currentTarget)}
                 >
                   <img
-                    src={cert.image}
+                    src={image.src}
+                    srcSet={image.srcSet}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 320px"
                     alt={cert.name}
                     className="cpg-aws-thumb"
-                    loading="lazy"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
+                    width={image.width}
+                    height={image.height}
                     // certificates come in different shapes: size the frame to this image's real ratio
                     onLoad={(e) => {
                       const img = e.currentTarget;
@@ -161,6 +168,7 @@ export default function CertificationsPage() {
                     }}
                   />
                 </button>
+                ); })()
               )}
               <div className="cpg-aws-body">
                 <div className="cpg-mono-tile" aria-hidden="true">
@@ -246,7 +254,7 @@ export default function CertificationsPage() {
                   aria-label={`Preview ${cert.name}`}
                   onClick={(e) => openPreview(restItems, cert, e.currentTarget)}
                 >
-                  <img src={cert.image} alt="" loading="lazy" decoding="async" />
+                  <img {...responsiveImage(cert.image)} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 320px" alt="" loading="lazy" decoding="async" />
                 </button>
               )}
               <div className="cpg-mono-tile" aria-hidden="true">

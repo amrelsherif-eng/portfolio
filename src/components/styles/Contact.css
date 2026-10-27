@@ -163,3 +163,6 @@ a.contact-social {
     margin-bottom: 0;
   }
 }
+@media only screen and (max-width: 1024px) {
+  .contact-section { padding-bottom: 112px; }
+}

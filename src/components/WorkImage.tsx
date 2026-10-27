@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { MdArrowOutward } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { responsiveImage } from "../utils/responsiveImage";
 
 interface Props {
   image: string;
   alt?: string;
   video?: string;
   link?: string;
+  priority?: boolean;
 }
 
 const WorkImage = (props: Props) => {
@@ -40,7 +42,7 @@ const WorkImage = (props: Props) => {
             <div className="work-link">
               <MdArrowOutward />
             </div>
-            <img src={props.image} alt={props.alt} loading="lazy" decoding="async" />
+            <img {...responsiveImage(props.image)} sizes="(max-width: 768px) 90vw, 420px" alt={props.alt} loading={props.priority ? "eager" : "lazy"} fetchPriority={props.priority ? "high" : "auto"} decoding="async" />
             {isVideo && <video src={video} autoPlay muted playsInline loop></video>}
           </a>
         ) : (
@@ -54,7 +56,7 @@ const WorkImage = (props: Props) => {
             <div className="work-link">
               <MdArrowOutward />
             </div>
-            <img src={props.image} alt={props.alt} loading="lazy" decoding="async" />
+            <img {...responsiveImage(props.image)} sizes="(max-width: 768px) 90vw, 420px" alt={props.alt} loading={props.priority ? "eager" : "lazy"} fetchPriority={props.priority ? "high" : "auto"} decoding="async" />
             {isVideo && <video src={video} autoPlay muted playsInline loop></video>}
           </Link>
         )
@@ -65,7 +67,7 @@ const WorkImage = (props: Props) => {
           onMouseLeave={() => setIsVideo(false)}
           data-cursor={"disable"}
         >
-          <img src={props.image} alt={props.alt} loading="lazy" decoding="async" />
+          <img {...responsiveImage(props.image)} sizes="(max-width: 768px) 90vw, 420px" alt={props.alt} loading={props.priority ? "eager" : "lazy"} fetchPriority={props.priority ? "high" : "auto"} decoding="async" />
           {isVideo && <video src={video} autoPlay muted playsInline loop></video>}
         </div>
       )}

@@ -594,3 +594,4 @@
   color: #8b98a1;
   flex: 1 1 260px;
 }
+@media (max-width: 1024px) { .cpg { padding-bottom: 112px; } }

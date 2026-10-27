@@ -1,16 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { config } from "../config";
+import { responsiveImage } from "../utils/responsiveImage";
 import "./MyWorks.css";
 
 const MyWorks = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (containerRef.current) {
-      containerRef.current.scrollTop = 0;
-    }
     const prevTitle = document.title;
     document.title = "All Works — Amr Elsherif";
     return () => {
@@ -19,7 +15,7 @@ const MyWorks = () => {
   }, []);
 
   return (
-    <div className="works-page" ref={containerRef}>
+    <div className="works-page">
       <header className="works-header">
         <div className="works-back-wrap">
           <Link to="/" className="works-back-btn" data-cursor="disable">
@@ -53,10 +49,12 @@ const MyWorks = () => {
                     {formattedIndex}
                   </span>
                   <img
-                    src={project.image}
+                    {...responsiveImage(project.image)}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
                     alt={project.title}
                     className="works-card-img"
-                    loading="lazy"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
                     decoding="async"
                   />
                 </div>
