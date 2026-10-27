@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
-import { Link } from "react-router-dom";
+import SubpageNav from "../components/SubpageNav";
 import { certifications, Certification, CertCategory } from "../data/certifications";
 import { CertViewer } from "../components/Certifications";
 import { responsiveImage } from "../utils/responsiveImage";
@@ -106,9 +106,9 @@ export default function CertificationsPage() {
     <main className="cpg">
       {/* ── HEADER ──────────────────────────────────────────── */}
       <header className="cpg-header">
-        <Link to="/#certifications" className="cpg-back">
-          ← Back to Home
-        </Link>
+        <SubpageNav />
+
+
 
         <h1 className="cpg-title">
           Certi<span>fications</span>

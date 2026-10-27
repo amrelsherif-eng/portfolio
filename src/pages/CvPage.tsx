@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { trapTab } from "../components/utils/focusTrap";
-import { Link } from "react-router-dom";
+import SubpageNav from "../components/SubpageNav";
 import { cvs, CvVersion, emphasisRows } from "../data/cvs";
 import { lenis } from "../components/Navbar";
 import "./CvPage.css";
@@ -129,9 +129,9 @@ export default function CvPage() {
 
   return (
     <main className="cv-page">
-      <Link to="/" className="cv-back">
-        ← Back to Home
-      </Link>
+      <SubpageNav />
+
+
 
       <h1 className="cv-page-title">
         Choose a <span>CV</span>

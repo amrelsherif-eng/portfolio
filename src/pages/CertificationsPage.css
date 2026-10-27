@@ -16,26 +16,6 @@
   clip-path: inset(0 -100vmax);
 }
 
-/* ── back pill ────────────────────────────────────────────── */
-.cpg-back {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 10px 28px;
-  font-family: var(--monoFont);
-  font-size: 0.85rem;
-  color: var(--accentColor);
-  border: 1.5px solid var(--accentColor);
-  border-radius: 999px;
-  text-decoration: none;
-  margin-bottom: 28px;
-  transition: background 0.25s ease;
-}
-.cpg-back:hover {
-  background: rgba(0, 240, 255, 0.08);
-}
-
 /* ── page heading ─────────────────────────────────────────── */
 .cpg-title {
   font-family: "Space Grotesk", sans-serif;
@@ -505,7 +485,6 @@
    REDUCED MOTION
    ══════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
-  .cpg-back,
   .cpg-pill,
   .cpg-chip,
   .cpg-aws-card,

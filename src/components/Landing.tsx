@@ -1,4 +1,5 @@
 import { PropsWithChildren, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "./styles/Landing.css";
 import { config } from "../config";
 
@@ -42,6 +43,22 @@ const Landing = ({ children }: PropsWithChildren) => {
               <span className="landing-role-tail">Engineer</span>
             </p>
             <p className="landing-role-sub">Aspiring DevOps · ECE '27</p>
+            <div className="landing-cta-row">
+              <Link
+                to="/resume"
+                className="landing-cta-btn landing-cta-btn-primary"
+                data-cursor="disable"
+              >
+                View CV
+              </Link>
+              <a
+                href="#contact"
+                className="landing-cta-btn landing-cta-btn-ghost"
+                data-cursor="disable"
+              >
+                Contact
+              </a>
+            </div>
           </div>
           {/* Mobile photo - shows only on mobile when 3D character is hidden */}
           <div className="mobile-photo">
