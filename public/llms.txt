@@ -1,0 +1,61 @@
+# Amr Elsherif
+
+> Network & Cloud Infrastructure Engineer (CCNA Track, AWS, Linux) and aspiring DevOps Engineer. Final-year Electronics & Communications Engineering student (ECE '27).
+
+Final-year Electronics & Communications Engineering student at Damanhour University (GPA 3.47/4.00, Class of 2027), building a career in Network & Cloud Infrastructure on the way to DevOps. CCNA in progress, AWS Academy Cloud Architecting graduate, Linux next. My Flutter team-lead and embedded/IoT work taught me to ship with a team. Open to internships now and full-time roles from July 2027.
+
+## Focus & roadmap
+- Direction: Network & Cloud Infrastructure → DevOps.
+- Roadmap: CCNA (now, exam expected late 2026) → Linux (RHCSA, starting) → AWS SAA-C03 (later) → DevOps (Docker, CI/CD, Terraform).
+- Target roles: Network Engineer, NOC Engineer, Cloud Engineer, System Administrator, Junior DevOps. Internships now; full-time from July 2027.
+
+## Experience
+- Network Engineering Trainee (CCNA) — NTI · Creativa Hub Damanhour (Oct 2026 – Now): 120-hour Cisco CCNA v7 Routing & Switching program (90 technical + 30 professional-skills hours) under MCIT's Digital Egypt Youth initiative. Preparing for the CCNA 200-301 exam.
+- Cloud Architect Intern (AWS) — NTI × ITIDA (MCIT) (Aug 2026): Fully funded 120-hour internship: 90 hours of AWS training plus 30 hours of soft skills and freelancing. Earned both AWS Academy Graduate badges.
+- Instrumentation & Control Trainee — Beheira Drinking Water & Wastewater Co. (Jul – Aug 2026): Six-week accredited field training in the Central Workshops instrumentation lab (Holding Company for Water and Wastewater).
+- Team Leader — DEPI (MCIT) · Harvest Training Center (Nov 2025 – Jul 2026): Led the 20-trainee Cross-Platform Mobile group while completing the track; received an MCIT Certificate of Appreciation for the role.
+- Mobile App Development Trainee (Flutter) — DEPI (MCIT) (Nov 2025 – Jul 2026): 9-month MCIT track in cross-platform mobile development (~120 technical hours) with parallel Business English, soft-skills and freelancing tracks.
+- Electrical Distribution Trainee — Beheira Electricity Distribution Co. (Summers 2024–25): Accredited field training on medium- and low-voltage distribution networks, transformer substations, load management and safety. Two rounds rated Excellent: 92% (2024) and 98% (2025).
+- Full Stack Web Development Intern (PHP) — NTI × ITIDA (Jul 2025): Fully funded 120-hour internship (90 technical + 30 freelancing hours), completed with a 97.5% final score.
+
+## Projects
+- Beam-steered Li-Fi System: 4-member graduation project: beam-steered Li-Fi with seamless Wi-Fi failover, using Raspberry Pi 5, PPP, WireGuard and OpenCV tracking. Currently in the design phase.
+- WeatherLink — [GitHub](https://github.com/amrelsherif-eng/weatherlink): Built as a 5-member team, WeatherLink connects an ESP32-S3 sensor station to Blynk Cloud with a cross-platform Flutter dashboard using Clean Architecture and BLoC.
+- DevSync — [GitHub](https://github.com/amrelsherif-eng/devsync_flutter): Led the team that designed and built an AI-powered developer–project matching application integrating Firebase services, GitHub API, and Gemini API.
+- ATS LaTeX Resume Template — [GitHub](https://github.com/amrelsherif-eng/software-engineer-resume-template): Open-source ATS-friendly LaTeX resume template on Overleaf and GitHub, with an AI prompt; the release post reached 12K+ impressions and the tutorial 6.3K.
+- Flutter & Dart Specialization — [GitHub](https://github.com/amrelsherif-eng/Flutter-Dart-Specialization-Packt): Packt Flutter & Dart Specialization on Coursera: 5 apps and 55 commits of hands-on practice.
+
+## Certifications
+- AWS Academy Graduate – Cloud Architecting — AWS Academy, Sep 2026: https://www.credly.com/badges/2a5e97d8-ab58-4e9a-a345-0e21a2687ec7
+- AWS Academy Graduate – Cloud Foundations — AWS Academy, Aug 2026: https://www.credly.com/badges/2ef79065-9c11-4ee0-b949-a87948e4218d
+- CCNA v7 — Cisco Networking Academy · NTI, Oct 2026 (in progress)
+- Cloud Architect Internship — NTI × ITIDA (MCIT), Aug 2026
+- Certificate of Appreciation – Team Leader — MCIT · DEPI, Jul 2026
+- Certificate of Achievement – Cross-Platform Mobile (Flutter) — MCIT · DEPI, Jul 2026
+- Full Stack Web Development (PHP) Internship — NTI × ITIDA, Jul 2025
+- Web Development using PHP — ITI
+- Getting Started with Flutter & Dart — Packt · Coursera, Apr 2026: https://coursera.org/verify/G3TC13R6ZLMO
+- English for IT 1 — Cisco Networking Academy, Oct 2025
+- Business English — MCIT · DEPI, Jul 2026
+- Elements of AI for Business — University of Helsinki, Dec 2025: https://courses.minnalearn.com/certificate/ar/elements-of-ai-for-business/cbf58c90-902c-4b1c-9c53-68b5cd9c64d8
+- Forward Program — McKinsey.org, Jun 2026
+- Build with AI: Masr Edition (attendance) — Google for Developers × ITI, Jun 2026
+- Python — SprintUp, May 2025
+- Be Ready – Employability Skills, Sep 2025
+
+## Network Lab
+- [Network Lab](https://amrelsherif-eng.vercel.app/lab): three short browser mini-games following the learning path (practice games for visitors, not work experience).
+- [Subnetting Sprint](https://amrelsherif-eng.vercel.app/lab/subnetting): IPv4 subnetting quiz.
+- [Fix the Network](https://amrelsherif-eng.vercel.app/lab/troubleshoot): CCNA troubleshooting cases.
+- [Build a VPC](https://amrelsherif-eng.vercel.app/lab/vpc): AWS VPC building puzzle.
+
+## Pages
+- [Home](https://amrelsherif-eng.vercel.app/)
+- [All works](https://amrelsherif-eng.vercel.app/works)
+- [Certifications](https://amrelsherif-eng.vercel.app/certifications)
+- [Resume](https://amrelsherif-eng.vercel.app/resume)
+
+## Contact
+- Email: amrelsherif.eng@gmail.com
+- LinkedIn: https://www.linkedin.com/in/amrelsherif-eng
+- GitHub: https://github.com/amrelsherif-eng
