@@ -97,43 +97,6 @@
   outline-offset: 3px;
 }
 
-.cta-terminal-hint {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 28px;
-  min-height: 44px;
-  padding: 10px 22px;
-  font-family: var(--monoFont);
-  font-size: 14px;
-  line-height: 1.4;
-  color: #00f0ff;
-  background: rgba(0, 240, 255, 0.06);
-  border: 1px solid rgba(0, 240, 255, 0.4);
-  border-radius: 999px;
-  text-decoration: none;
-  letter-spacing: 0.03em;
-  box-sizing: border-box;
-  cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  max-width: 100%;
-  text-align: center;
-  word-break: break-word;
-}
-
-.cta-terminal-hint:hover {
-  background: rgba(0, 240, 255, 0.12);
-  border-color: #00f0ff;
-  box-shadow: 0 0 18px rgba(0, 240, 255, 0.25);
-}
-
-.cta-terminal-hint:focus-visible {
-  color: #00f0ff;
-  outline: 2px solid #00f0ff;
-  outline-offset: 3px;
-}
-
 @media only screen and (max-width: 768px) {
   .cta-section {
     padding: 70px 16px;
@@ -145,16 +108,10 @@
     flex-direction: column;
     align-items: stretch;
   }
-  .cta-terminal-hint {
-    margin-top: 20px;
-    font-size: 12px;
-    padding: 8px 10px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cta-btn,
-  .cta-terminal-hint {
+  .cta-btn {
     transition: none;
   }
   .cta-btn-primary:hover {

@@ -11,6 +11,7 @@ import Work from "./Work";
 import TechStackNew from "./TechStackNew";
 import Certifications from "./Certifications";
 import MottoBand from "./MottoBand";
+import LabTeaser from "./LabTeaser";
 import CallToAction from "./CallToAction";
 import setSplitText from "./utils/splitText";
 import ControlDock from "./control/ControlDock";
@@ -78,6 +79,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
         <TechStackNew />
         <Certifications />
         <MottoBand />
+        <LabTeaser />
         <CallToAction />
         <Contact />
       </div>
