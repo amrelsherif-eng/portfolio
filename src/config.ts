@@ -35,7 +35,7 @@ export const config = {
             description: "Fully funded 120-hour internship: 90 hours of AWS training plus 30 hours of soft skills and freelancing. Earned both AWS Academy Graduate badges.",
             responsibilities: [
                 "AWS Academy Cloud Foundations (20 h) and Cloud Architecting (60 h)",
-                "Labs: VPC networking, EC2, S3, RDS, IAM, load balancing and auto scaling, CloudWatch, decoupled and serverless architectures"
+                "Course topics: VPC networking, EC2, S3, RDS, IAM, load balancing and auto scaling, CloudWatch, decoupled and serverless architectures"
             ],
             technologies: ["AWS", "VPC", "EC2", "S3", "RDS", "IAM", "CloudWatch"]
         },
