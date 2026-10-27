@@ -4,6 +4,10 @@ import { lenis } from "../Navbar";
 
 export type SectionId = "top" | "about" | "work" | "techstack" | "certifications" | "contact";
 
+export function navigateTo(path: string): void {
+  window.dispatchEvent(new CustomEvent<string>("control:navigate", { detail: path }));
+}
+
 const SECTION_SELECTOR: Record<SectionId, string> = {
   top: "#landingDiv",
   about: "#about",
@@ -17,7 +21,7 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
 
 /** Scroll the page by `px` (positive = down). Uses Lenis when it is running. */
 export function scrollByPx(px: number, smooth = true): void {
-  if (lenis) {
+  if (lenis && window.location.pathname === "/" && !document.documentElement.classList.contains("scroll-locked")) {
     lenis.scrollTo(lenis.scroll + px, { immediate: !smooth || reducedMotion(), duration: 0.6 });
   } else {
     window.scrollBy({ top: px, behavior: smooth && !reducedMotion() ? "smooth" : "auto" });
@@ -26,9 +30,20 @@ export function scrollByPx(px: number, smooth = true): void {
 
 /** Jump to a home-page section. Returns false when the section is not on this page. */
 export function goToSection(id: SectionId): boolean {
+  if (id === "top" && window.location.pathname !== "/") {
+    window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" });
+    return true;
+  }
   const el = document.querySelector<HTMLElement>(SECTION_SELECTOR[id]);
-  if (!el) return false;
-  if (lenis) lenis.scrollTo(el, { offset: 0, duration: 1.5, immediate: reducedMotion() });
+  if (!el) {
+    if (window.location.pathname !== "/") {
+      try { sessionStorage.setItem("control:pending-section", id); } catch { /* storage may be unavailable */ }
+      navigateTo("/");
+      return true;
+    }
+    return false;
+  }
+  if (lenis && !document.documentElement.classList.contains("scroll-locked")) lenis.scrollTo(el, { offset: 0, duration: 1.5, immediate: reducedMotion() });
   else el.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth" });
   return true;
 }
@@ -40,9 +55,8 @@ export function openPing(): void {
 
 /** Open the CV page through the existing router link, so no full reload happens. */
 export function openResume(): void {
-  const link = document.querySelector<HTMLAnchorElement>("a.resume-button");
-  if (link) link.click();
-  else window.location.assign("/resume");
+  if (window.location.pathname === "/resume") return;
+  navigateTo("/resume");
 }
 
 /** Move the site's custom glowing cursor (Cursor.tsx follows document mousemove). */

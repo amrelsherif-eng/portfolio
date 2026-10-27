@@ -14,6 +14,7 @@ const GameShell = lazy(() => import("./lab/GameShell"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const SherifChat = lazy(() => import("./components/SherifChat"));
 import { LoadingProvider } from "./context/LoadingProvider";
+import GlobalControlDock from "./components/control/GlobalControlDock";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
       <Suspense fallback={null}>
         <SherifChat />
       </Suspense>
+      <GlobalControlDock />
       <Routes>
         <Route
           path="/"

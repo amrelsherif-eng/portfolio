@@ -22,6 +22,7 @@ export default function ControlDock() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const stopGestureRef = useRef<(() => void) | null>(null);
+  const gestureAbortRef = useRef<AbortController | null>(null);
   const stopVoiceRef = useRef<(() => void) | null>(null);
   const gestureWantedRef = useRef<boolean>(false);
   const panelRef = useRef<HTMLElement>(null);
@@ -71,6 +72,8 @@ export default function ControlDock() {
   useEffect(() => {
     return () => {
       gestureWantedRef.current = false;
+      gestureAbortRef.current?.abort();
+      gestureAbortRef.current = null;
       if (stopGestureRef.current) {
         stopGestureRef.current();
         stopGestureRef.current = null;
@@ -85,6 +88,8 @@ export default function ControlDock() {
   const toggleGesture = async () => {
     if (gestureActive) {
       gestureWantedRef.current = false;
+      gestureAbortRef.current?.abort();
+      gestureAbortRef.current = null;
       if (stopGestureRef.current) {
         stopGestureRef.current();
         stopGestureRef.current = null;
@@ -93,6 +98,8 @@ export default function ControlDock() {
       setGestureStatus("");
     } else {
       gestureWantedRef.current = true;
+      const abortController = new AbortController();
+      gestureAbortRef.current = abortController;
       setGestureActive(true);
       setGestureStatus("loading");
       try {
@@ -111,7 +118,7 @@ export default function ControlDock() {
               setVoicePhase("error");
             }
           }
-        });
+        }, abortController.signal);
         if (!gestureWantedRef.current) {
           stop();
         } else {

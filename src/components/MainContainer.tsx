@@ -1,4 +1,7 @@
 import { PropsWithChildren, useEffect, useState } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLoading } from "../context/LoadingProvider";
+import { goToSection, SectionId } from "./control/actions";
 import About from "./About";
 import Career from "./Career";
 import Contact from "./Contact";
@@ -14,9 +17,9 @@ import MottoBand from "./MottoBand";
 import LabTeaser from "./LabTeaser";
 import CallToAction from "./CallToAction";
 import setSplitText from "./utils/splitText";
-import ControlDock from "./control/ControlDock";
 
 const MainContainer = ({ children }: PropsWithChildren) => {
+  const { isLoading } = useLoading();
   const [isDesktopView, setIsDesktopView] = useState<boolean>(
     window.innerWidth > 1024
   );
@@ -34,6 +37,21 @@ const MainContainer = ({ children }: PropsWithChildren) => {
       window.removeEventListener("resize", resizeHandler);
     };
   }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+    const timer = window.setTimeout(() => {
+      ScrollTrigger.refresh();
+      let pending: string | null = null;
+      try {
+        pending = sessionStorage.getItem("control:pending-section");
+        sessionStorage.removeItem("control:pending-section");
+      } catch { /* storage may be unavailable */ }
+      const sectionIds: SectionId[] = ["top", "about", "work", "techstack", "certifications", "contact"];
+      if (pending && sectionIds.includes(pending as SectionId)) goToSection(pending as SectionId);
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [isLoading]);
 
   useEffect(() => {
     if (window.innerWidth <= 1024) return;
@@ -68,7 +86,6 @@ const MainContainer = ({ children }: PropsWithChildren) => {
       <Cursor />
       <Navbar />
       <SocialIcons />
-      <ControlDock />
       {isDesktopView && !isMobile && shouldRenderCharacter && children}
       <div className="container-main">
         <Landing />

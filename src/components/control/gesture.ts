@@ -77,7 +77,7 @@ class OneEuroFilter {
   reset(): void { this.value = undefined; this.time = undefined; this.derivative = 0; }
 }
 
-export async function startGesture(onStatus: (s: GestureStatus, detail?: string) => void): Promise<() => void> {
+export async function startGesture(onStatus: (s: GestureStatus, detail?: string) => void, signal?: AbortSignal): Promise<() => void> {
   onStatus("loading");
   let stream: MediaStream | undefined;
   let landmarker: HandLandmarker | undefined;
@@ -106,6 +106,13 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
   let thumbSpeed = 0;
   const customCursor = document.querySelector<HTMLElement>(".cursor-main");
   const originalCursorVisibility = customCursor?.style.visibility ?? "";
+  const fallbackCursor = customCursor ? undefined : document.createElement("div");
+  if (fallbackCursor) {
+    fallbackCursor.className = "gesture-pointer";
+    fallbackCursor.setAttribute("aria-hidden", "true");
+    fallbackCursor.setAttribute("data-control-ui", "");
+    document.body.append(fallbackCursor);
+  }
   const dwellRadius = 28;
   const dwellDuration = 1200;
 
@@ -138,12 +145,15 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
     stopped = true; cancelAnimationFrame(frame);
     stream?.getTracks().forEach((track) => track.stop()); landmarker?.close();
     if (openGuide && wrapper.contains(openGuide)) { openGuide.classList.remove("gesture-guide--preview"); document.body.append(openGuide); }
-    video.srcObject = null; wrapper.remove(); ring.remove();
+    video.srcObject = null; wrapper.remove(); ring.remove(); fallbackCursor?.remove();
     if (customCursor) customCursor.style.visibility = originalCursorVisibility;
+    signal?.removeEventListener("abort", cleanup);
     // A guide opened by the user is intentionally left available after stopping.
   };
 
   try {
+    if (signal?.aborted) { cleanup(); return cleanup; }
+    signal?.addEventListener("abort", cleanup, { once: true });
     if (!navigator.mediaDevices?.getUserMedia) throw new Error("Camera needs a secure page (https or localhost).");
     try { stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" } }); }
     catch (first) {
@@ -151,14 +161,18 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
       if (name === "NotAllowedError" || name === "SecurityError") throw first;
       stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
     }
+    if (stopped) { stream.getTracks().forEach((track) => track.stop()); return cleanup; }
     video.srcObject = stream; document.body.append(wrapper); await video.play();
+    if (stopped) return cleanup;
     try { if (localStorage.getItem("handsfree-guide-seen") !== "1") showGestureGuide(); } catch { showGestureGuide(); }
     const vision = await FilesetResolver.forVisionTasks("/mediapipe/wasm");
+    if (stopped) { landmarker?.close(); return cleanup; }
     try {
       landmarker = await HandLandmarker.createFromOptions(vision, { baseOptions: { modelAssetPath: "/mediapipe/hand_landmarker.task", delegate: "GPU" }, runningMode: "VIDEO", numHands: 1 });
     } catch {
       landmarker = await HandLandmarker.createFromOptions(vision, { baseOptions: { modelAssetPath: "/mediapipe/hand_landmarker.task", delegate: "CPU" }, runningMode: "VIDEO", numHands: 1 });
     }
+    if (stopped) return cleanup;
     const ctx = canvas.getContext("2d");
     onStatus("ready");
     const tick = () => {
@@ -211,6 +225,11 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
           if (!cursorInitialized) { cursorX = targetX; cursorY = targetY; cursorInitialized = true; }
           cursorX = filterX.filter(targetX, now); cursorY = filterY.filter(targetY, now);
           moveCursor(cursorX, cursorY);
+          if (fallbackCursor) {
+            fallbackCursor.hidden = false;
+            fallbackCursor.style.left = `${cursorX}px`;
+            fallbackCursor.style.top = `${cursorY}px`;
+          }
           const hit = document.elementFromPoint(cursorX, cursorY);
           const target = hit?.closest<HTMLElement>("a, button, [role='button'], input, summary, [tabindex]");
           const clickable = !!target && !target.closest("[data-control-ui]");
@@ -229,6 +248,7 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
         if (dir !== thumbDir || now - thumbLastSeen > 250) { thumbStarted = 0; thumbSpeed = 0; thumbDir = dir; }
         thumbLastSeen = now;
         if (customCursor) customCursor.style.visibility = "hidden";
+        if (fallbackCursor) fallbackCursor.hidden = true;
         hideDwell();
         if (!thumbStarted) thumbStarted = now;
         // 9 px/frame at first, easing toward 22 px/frame after holding 1.5 s.
@@ -237,6 +257,7 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
         scrollByPx(dir * thumbSpeed, false);
       } else {
         if (customCursor) customCursor.style.visibility = "hidden";
+        if (fallbackCursor) fallbackCursor.hidden = true;
         hideDwell();
         if (activePose === "open palm") { pinching = false; cursorInitialized = false; filterX.reset(); filterY.reset(); }
       }
