@@ -293,7 +293,7 @@ export default function ControlDock() {
 
           <div className="control-dock-cheatsheet" data-control-ui="" data-cursor="disable">
             <p data-control-ui="" data-cursor="disable">
-              ☝ point = move · 🤏 pinch = click · ✋ open hand up/down = scroll · ✌ = open Ping
+              ☝ point = move · hold = click · ✋ flick up/down = section
             </p>
             <p data-control-ui="" data-cursor="disable">
               Talk naturally: &quot;show me his AWS work&quot;, &quot;وريني مشاريعه&quot;, &quot;what is he studying?&quot;

@@ -39,3 +39,12 @@
   text-transform: uppercase;
   text-shadow: 0 1px 4px #000;
 }
+
+.gesture-guide { position: absolute; z-index: 4; left: 170px; bottom: 0; width: max-content; max-width: min(360px, calc(100vw - 190px)); padding: 12px; border: 1px solid rgba(0, 240, 255, 0.45); border-radius: 10px; background: #071014; color: #d8faff; font: 12px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45); pointer-events: auto; }
+.gesture-guide button { display: block; min-width: 88px; min-height: 44px; margin-top: 8px; border: 1px solid #00f0ff; border-radius: 6px; background: rgba(0, 240, 255, 0.12); color: #00f0ff; font: inherit; cursor: pointer; }
+.gesture-dwell-ring { position: fixed; z-index: 9002; width: 44px; height: 44px; pointer-events: none; }
+.gesture-dwell-ring[hidden] { display: none; }
+.gesture-dwell-ring svg { display: block; width: 44px; height: 44px; transform: rotate(-90deg); }
+.gesture-dwell-ring circle { fill: none; stroke-width: 3; }
+.gesture-dwell-ring__track { stroke: rgba(0, 240, 255, 0.22); }
+.gesture-dwell-ring__progress { stroke: #00f0ff; stroke-dasharray: 119.38; stroke-dashoffset: calc(119.38 * (1 - var(--dwell-progress, 0))); }
