@@ -172,6 +172,7 @@ export default function ControlDock() {
         data-control-ui=""
         data-cursor="disable"
       >
+        <span className="sherif-pulse" aria-hidden="true" />
         <svg
           width="24"
           height="24"

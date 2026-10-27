@@ -34,6 +34,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, runtime.process.cwd(), "");
   if (env.GEMINI_API_KEY) runtime.process.env.GEMINI_API_KEY = env.GEMINI_API_KEY;
   if (env.GEMINI_MODEL) runtime.process.env.GEMINI_MODEL = env.GEMINI_MODEL;
+  if (env.GROQ_API_KEY) runtime.process.env.GROQ_API_KEY = env.GROQ_API_KEY;
+  if (env.GROQ_MODEL) runtime.process.env.GROQ_MODEL = env.GROQ_MODEL;
   return {
   plugins: [react(), localChatPlugin()],
   build: {
