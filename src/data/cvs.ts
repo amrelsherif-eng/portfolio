@@ -1,6 +1,4 @@
-// The three CV versions offered on /resume.
-// TEMPORARY: all three point to the same LinkedIn-export PDF until the real CVs are made.
-// TODO BEFORE PUSH: the preview images are placeholders (old CVs with banned items) — replace with the new CVs.
+// The three CV versions offered on /resume (real PDFs, Oct 2026).
 export type CvVersion = {
   id: string;
   title: string;
@@ -32,11 +30,10 @@ export const cvs: CvVersion[] = [
     summary:
       "My main CV. CCNA track at NTI, an AWS cloud internship with two AWS Academy Graduate badges, and the Linux path to DevOps.",
     focus: ["CCNA", "AWS", "Linux", "Subnetting", "VPC"],
-    file: "/cv/Amr-Elsherif-CV.pdf",
+    file: "/cv/Amr-Elsherif-Network-Cloud.pdf",
     preview: "/images/cv/network-cloud.webp",
     recommended: true,
     updated: "Oct 2026",
-    draft: true,
     filename: "Amr-Elsherif-Network-Cloud.pdf",
     emphasis: {
       roles: "Network, NOC, Cloud, SysAdmin, Junior DevOps",
@@ -52,10 +49,9 @@ export const cvs: CvVersion[] = [
     summary:
       "The engineering side: ESP32 and Raspberry Pi projects, PID auto-tuning in industrial training, and electrical distribution training rated Excellent.",
     focus: ["ESP32", "Raspberry Pi", "C / C++", "PID", "IoT"],
-    file: "/cv/Amr-Elsherif-CV.pdf",
+    file: "/cv/Amr-Elsherif-Embedded-ECE.pdf",
     preview: "/images/cv/embedded-ece.webp",
     updated: "Oct 2026",
-    draft: true,
     filename: "Amr-Elsherif-Embedded-ECE.pdf",
     emphasis: {
       roles: "Embedded, IoT, Instrumentation & Control",
@@ -71,10 +67,9 @@ export const cvs: CvVersion[] = [
     summary:
       "DEPI Flutter track (~120 technical hours), Team Leader of a 20-trainee group, and the team behind DevSync and WeatherLink.",
     focus: ["Flutter", "Dart", "Firebase", "BLoC", "Leadership"],
-    file: "/cv/Amr-Elsherif-CV.pdf",
+    file: "/cv/Amr-Elsherif-Mobile-Apps.pdf",
     preview: "/images/cv/mobile-apps.webp",
     updated: "Oct 2026",
-    draft: true,
     filename: "Amr-Elsherif-Mobile-Apps.pdf",
     emphasis: {
       roles: "Flutter developer, team lead",
