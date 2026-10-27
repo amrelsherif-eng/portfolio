@@ -11,6 +11,7 @@ const CertificationsPage = lazy(() => import("./pages/CertificationsPage"));
 const CvPage = lazy(() => import("./pages/CvPage"));
 const LabIndex = lazy(() => import("./lab/LabIndex"));
 const GameShell = lazy(() => import("./lab/GameShell"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 import { LoadingProvider } from "./context/LoadingProvider";
 
 const App = () => {
@@ -57,6 +58,7 @@ const App = () => {
         />
         <Route path="/lab" element={<Suspense fallback={null}><LabIndex /></Suspense>} />
         <Route path="/lab/:id" element={<Suspense fallback={null}><GameShell /></Suspense>} />
+        <Route path="*" element={<Suspense fallback={null}><NotFoundPage /></Suspense>} />
       </Routes>
       <Analytics />
       <SpeedInsights />
