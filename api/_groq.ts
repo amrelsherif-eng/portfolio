@@ -1,4 +1,5 @@
 type GroqResponse = { ok: boolean; status?: number; json: () => Promise<unknown> };
+// Env: GROQ_API_KEY, GROQ_API_KEY_2 (the latter is optional).
 const runtime = globalThis as typeof globalThis & {
   process?: { env: Record<string, string | undefined> };
   fetch: (url: string, init: { method: string; headers: Record<string, string>; body: string; signal: unknown }) => Promise<GroqResponse>;
@@ -7,11 +8,15 @@ const runtime = globalThis as typeof globalThis & {
   clearTimeout: (id: unknown) => void;
 };
 
+export function groqKeys(): string[] {
+  return [...new Set([runtime.process?.env.GROQ_API_KEY, runtime.process?.env.GROQ_API_KEY_2].map((key) => key?.trim()).filter((key): key is string => Boolean(key)))];
+}
+
 export async function callGroqJson(system: string, user: string, opts: { temperature?: number; max_tokens?: number } = {}): Promise<unknown | null> {
-  const key = runtime.process?.env.GROQ_API_KEY;
-  if (!key) return null;
+  const keys = groqKeys();
+  if (!keys.length) return null;
   const models = [...new Set([runtime.process?.env.GROQ_MODEL, "openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"].filter(Boolean) as string[])];
-  for (const model of models) {
+  for (const key of keys) for (const model of models) {
     const controller = new runtime.AbortController();
     const timer = runtime.setTimeout(() => controller.abort(), 8000);
     let response: GroqResponse;
@@ -25,6 +30,7 @@ export async function callGroqJson(system: string, user: string, opts: { tempera
     } catch { runtime.clearTimeout(timer); continue; }
     runtime.clearTimeout(timer);
     if (!response.ok) {
+      if (response.status === 401 || response.status === 403) break;
       if (response.status === 400 || response.status === 404 || response.status === 429 || (response.status !== undefined && response.status >= 500)) continue;
       return null;
     }
