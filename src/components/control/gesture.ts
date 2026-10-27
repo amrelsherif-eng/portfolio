@@ -4,22 +4,27 @@ import { announce, clickAt, moveCursor, scrollByPx } from "./actions";
 
 export type GestureStatus = "loading" | "ready" | "no-hand" | "error";
 type Point = { x: number; y: number };
-type Pose = "point" | "fist" | "open palm" | "other";
+type Pose = "point" | "thumb up" | "thumb down" | "open palm" | "fist" | "other";
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 function fingerExtended(landmarks: Point[], tip: number, pip: number): boolean {
   return distance(landmarks[tip], landmarks[0]) > distance(landmarks[pip], landmarks[0]);
 }
-function getPose(landmarks: Point[]): { pose: Pose; index: Point; pinch: number; palm: number } {
+function getPose(landmarks: Point[]): { pose: Pose; index: Point; pinch: number; palm: number; fingersCurled: boolean } {
   const tips = [8, 12, 16, 20];
   const pips = [6, 10, 14, 18];
   const extended = tips.map((tip, i) => fingerExtended(landmarks, tip, pips[i]));
+  const palm = distance(landmarks[0], landmarks[9]);
+  const fingersCurled = extended.every((v) => !v);
+  const thumbExtended = distance(landmarks[4], landmarks[5]) > 0.9 * palm;
   const pose: Pose = extended[0] && extended.slice(1).every((v) => !v) ? "point"
     : extended.every(Boolean) ? "open palm"
-      : extended.every((v) => !v) ? "fist" : "other";
-  return { pose, index: landmarks[8], pinch: distance(landmarks[4], landmarks[8]), palm: distance(landmarks[0], landmarks[9]) };
+      : fingersCurled && thumbExtended && landmarks[4].y < landmarks[2].y - 0.45 * palm ? "thumb up"
+        : fingersCurled && thumbExtended && landmarks[4].y > landmarks[2].y + 0.45 * palm ? "thumb down"
+          : fingersCurled ? "fist" : "other";
+  return { pose, index: landmarks[8], pinch: distance(landmarks[4], landmarks[8]), palm, fingersCurled };
 }
 
-const guideMarkup = '<strong class="gesture-guide__title">Hand gestures</strong><div class="gesture-guide__row"><span>☝</span><span>Point</span><span>move the cursor</span></div><div class="gesture-guide__row"><span>🤏</span><span>Pinch</span><span>click</span></div><div class="gesture-guide__row"><span>✊</span><span>Fist + move</span><span>scroll</span></div><div class="gesture-guide__row"><span>✋</span><span>Open hand</span><span>rest</span></div><button type="button">Got it</button>';
+const guideMarkup = '<strong class="gesture-guide__title">Hand gestures</strong><div class="gesture-guide__row"><span>☝</span><span>Point</span><span>move the cursor</span></div><div class="gesture-guide__row"><span>🤏</span><span>Pinch</span><span>click</span></div><div class="gesture-guide__row"><span>👍 👎</span><span>Thumb up / down</span><span>scroll</span></div><div class="gesture-guide__row"><span>✋</span><span>Open hand</span><span>rest</span></div><button type="button">Got it</button>';
 let openGuide: HTMLDivElement | undefined;
 let guideKeyHandler: ((event: KeyboardEvent) => void) | undefined;
 
@@ -76,7 +81,6 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
   let stream: MediaStream | undefined;
   let landmarker: HandLandmarker | undefined;
   let frame = 0;
-  let momentumFrame = 0;
   let stopped = false;
   let lastVideoTime = -1;
   let lastHandTime = performance.now();
@@ -94,8 +98,8 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
   let dwellLatched = false;
   let pinching = false;
   let lastClick = -Infinity;
-  let lastHandY: number | undefined;
-  let scrollVelocity = 0;
+  let thumbStarted = 0;
+  let thumbSpeed = 0;
   const customCursor = document.querySelector<HTMLElement>(".cursor-main");
   const originalCursorVisibility = customCursor?.style.visibility ?? "";
   const dwellRadius = 28;
@@ -127,7 +131,7 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
   const hideDwell = () => { ring.hidden = true; dwellStarted = 0; dwellPoint = null; dwellLatched = false; };
   const cleanup = () => {
     if (stopped) return;
-    stopped = true; cancelAnimationFrame(frame); cancelAnimationFrame(momentumFrame);
+    stopped = true; cancelAnimationFrame(frame);
     stream?.getTracks().forEach((track) => track.stop()); landmarker?.close(); wrapper.remove(); ring.remove();
     if (openGuide?.isConnected) { openGuide.classList.remove("gesture-guide--preview"); document.body.append(openGuide); }
     if (customCursor) customCursor.style.visibility = originalCursorVisibility;
@@ -166,7 +170,7 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
       const landmarks = result.landmarks[0] as Point[] | undefined;
       if (!landmarks) {
         if (!noHandSent && now - lastHandTime >= 1500) { noHandSent = true; onStatus("no-hand"); }
-        label.textContent = "No hand"; hideDwell(); pinching = false; lastHandY = undefined;
+        label.textContent = "No hand"; hideDwell(); pinching = false; thumbStarted = 0; thumbSpeed = 0;
         if (customCursor) customCursor.style.visibility = "hidden";
         return;
       }
@@ -188,7 +192,7 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
 
       if (pose === stablePose) stableFrames += 1; else { stablePose = pose; stableFrames = 1; }
       if (stableFrames >= 4) activePose = stablePose;
-      const current = pinching && activePose === "point" ? "🤏 Click" : activePose === "point" ? "☝ Move" : activePose === "fist" ? "✊ Scroll" : activePose === "open palm" ? "✋ Resting" : "No hand";
+      const current = pinching && activePose === "point" ? "🤏 Click" : activePose === "point" ? "☝ Move" : activePose === "thumb up" ? "👍 Scroll up" : activePose === "thumb down" ? "👎 Scroll down" : activePose === "fist" ? "✊ Resting" : activePose === "open palm" ? "✋ Resting" : "No hand";
       label.textContent = current;
 
       // Ignore outer 15% of camera image, mirror horizontal movement, retaining current mapping.
@@ -212,25 +216,20 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
             if (progress >= 1 && clickAt(cursorX, cursorY)) { dwellLatched = true; ring.hidden = true; announce("Click"); }
           }
         }
-        lastHandY = undefined;
-      } else if (activePose === "fist") {
+        thumbStarted = 0; thumbSpeed = 0;
+      } else if (activePose === "thumb up" || activePose === "thumb down") {
         if (customCursor) customCursor.style.visibility = "hidden";
         hideDwell();
-        const y = landmarks[9].y;
-        if (lastHandY !== undefined) {
-          scrollVelocity = scrollVelocity * 0.65 + (-(y - lastHandY) * window.innerHeight * 2.5) * 0.35;
-          scrollByPx(scrollVelocity, false);
-        }
-        lastHandY = y;
+        if (!thumbStarted) thumbStarted = now;
+        // 9 px/frame at first, easing toward 22 px/frame after holding 1.5 s.
+        const target = 9 + 13 * Math.min(1, Math.max(0, (now - thumbStarted - 1500) / 1000));
+        thumbSpeed += (target - thumbSpeed) * 0.15;
+        scrollByPx(activePose === "thumb up" ? -thumbSpeed : thumbSpeed, false);
       } else {
         if (customCursor) customCursor.style.visibility = "hidden";
-        hideDwell(); lastHandY = undefined;
+        hideDwell(); thumbStarted = 0; thumbSpeed = 0;
         if (activePose === "open palm") { pinching = false; cursorInitialized = false; filterX.reset(); filterY.reset(); }
       }
-      if (!pinching && activePose !== "fist" && Math.abs(scrollVelocity) > 1) {
-        scrollVelocity *= 0.92;
-        scrollByPx(scrollVelocity, false);
-      } else if (Math.abs(scrollVelocity) <= 1) scrollVelocity = 0;
     };
     frame = requestAnimationFrame(tick);
     return cleanup;

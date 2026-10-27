@@ -298,7 +298,7 @@ export default function ControlDock() {
                 Gestures
               </span>
               <span className="control-dock-tile-sub" data-control-ui="" data-cursor="disable">
-                ☝ move · 🤏 click · ✊ scroll · ✋ rest
+                ☝ move · 🤏 click · 👍👎 scroll · ✋ rest
               </span>
             </button>
 
