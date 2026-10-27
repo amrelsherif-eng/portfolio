@@ -1,6 +1,7 @@
 // Env: GROQ_API_KEY, GROQ_API_KEY_2/_3 (optional), GEMINI_API_KEY (fallback)
 import { knowledge } from "./knowledge.js";
-import { callGemini, isRateLimited } from "./_gemini.js";
+import { callGemini } from "./_gemini.js";
+import { rateLimit } from "./_ratelimit.js";
 import { callGroqJson, groqKeys } from "./_groq.js";
 import { matchIntent } from "./_intent.js";
 import { makeDeadline } from "./_budget.js";
@@ -85,7 +86,7 @@ export default async function handler(req: Request, res: Response) {
   if (typeof payload === "string") { try { payload = JSON.parse(payload); } catch { return respond(res, 400, { action: "none", reply: fallback(langFallback) }); } }
   if (!payload || typeof payload !== "object") return respond(res, 400, { action: "none", reply: fallback(langFallback) });
   const { text, audio, mime, lang } = payload as { text?: unknown; audio?: unknown; mime?: unknown; lang?: unknown };
-  if (isRateLimited(req, 1, "voice", 40)) return respond(res, 429, { action: "none", reply: (lang === "ar" || langFallback === "ar") ? "أوامر كتير ورا بعض، استنى دقيقة وجرّب تاني." : "Too many commands in a row. Wait a minute and try again.", transcript: "" });
+  if (await rateLimit(req, "voice", 40, 600)) return respond(res, 429, { action: "none", reply: (lang === "ar" || langFallback === "ar") ? "أوامر كتير ورا بعض، استنى دقيقة وجرّب تاني." : "Too many commands in a row. Wait a minute and try again.", transcript: "" });
   if (lang !== "en" && lang !== "ar") return respond(res, 400, { action: "none", reply: fallback(langFallback), transcript: "" });
   let transcript = typeof text === "string" ? text.trim() : "";
   if (audio !== undefined) {
