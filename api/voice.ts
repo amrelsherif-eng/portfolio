@@ -2,6 +2,7 @@
 import { knowledge } from "./knowledge.js";
 import { callGemini, isRateLimited } from "./_gemini.js";
 import { callGroqJson } from "./_groq.js";
+import { matchIntent } from "./_intent.js";
 
 const env = (globalThis as typeof globalThis & { process?: { env: Record<string, string | undefined> } }).process?.env;
 const hallucinations = ["thank you", "thanks for watching", "thank you for watching", "you", "bye", "subscribe", "ترجمة نانسي قنقر", "اشتركوا في القناة", "شكرا", "شكرا لكم", "شكرا على المشاهدة", "موسيقى", "music"];
@@ -102,6 +103,8 @@ export default async function handler(req: Request, res: Response) {
     if (!transcript) return respond(res, 200, { action: "none", reply: lang === "ar" ? "مسمعتش كويس، جرّب تاني وقرّب من المايك" : "I didn't catch that. Try again a little closer to the mic.", transcript: "" });
   }
   if (!transcript || transcript.length > 300) return respond(res, 400, { action: "none", reply: fallback(lang), transcript });
+  const intent = matchIntent(transcript, lang);
+  if (intent) return respond(res, 200, { ...intent, transcript });
   if (!env?.GROQ_API_KEY && ![env?.GEMINI_API_KEY, env?.GEMINI_API_KEY_2, env?.GEMINI_API_KEY_3].some((key) => key?.trim())) return respond(res, 200, { action: "none", reply: fallback(lang), transcript });
   const instruction = `Reply ONLY with a JSON object with keys action, target, direction, reply. Allowed action values: goto, scroll, resume, chat, answer, none. Allowed target values: top, about, work, techstack, certifications, contact. Allowed direction values: up, down. ${catalogue}\n${answerRule}\n\nThe requested reply language is ${lang === "ar" ? "Egyptian Arabic" : "English"}.\n\nKNOWLEDGE:\n${knowledge}`;
   if (env?.GROQ_API_KEY) {

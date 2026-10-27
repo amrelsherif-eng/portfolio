@@ -1,0 +1,61 @@
+import assert from "node:assert/strict";
+import { matchIntent } from "../api/_intent.ts";
+
+const cases = [
+  ["en", "Show me his projects", { action: "goto", target: "work", reply: "Going to Projects." }],
+  ["en", "take me to the certifications", { action: "goto", target: "certifications", reply: "Going to Certifications." }],
+  ["en", "Scroll down.", { action: "scroll", direction: "down", reply: "Scrolling down." }],
+  ["en", "open his CV", { action: "resume", reply: "Opening the CV." }],
+  ["en", "go to contact", { action: "goto", target: "contact", reply: "Going to Contact." }],
+  ["en", "what certifications does he have?", null],
+  ["en", "tell me about his projects", null],
+  ["en", "show me his projects and certifications", null],
+  ["en", "Thank you", null],
+  ["en", "show me his work", { action: "goto", target: "work", reply: "Going to Projects." }],
+  ["en", "open portfolio", { action: "goto", target: "work", reply: "Going to Projects." }],
+  ["en", "show me badges", { action: "goto", target: "certifications", reply: "Going to Certifications." }],
+  ["en", "show me AWS", { action: "goto", target: "certifications", reply: "Going to Certifications." }],
+  ["en", "show me his tools", { action: "goto", target: "techstack", reply: "Going to Tech stack." }],
+  ["en", "go to tech stack", { action: "goto", target: "techstack", reply: "Going to Tech stack." }],
+  ["en", "go to about", { action: "goto", target: "about", reply: "Going to About." }],
+  ["en", "go home", { action: "goto", target: "top", reply: "Going to the top." }],
+  ["en", "back up", { action: "scroll", direction: "up", reply: "Scrolling up." }],
+  ["en", "go up", { action: "scroll", direction: "up", reply: "Scrolling up." }],
+  ["en", "open Ping", { action: "chat", reply: "Opening Ping." }],
+  ["en", "hire him", { action: "goto", target: "contact", reply: "Going to Contact." }],
+  ["en", "what is his tech stack", null],
+  ["en", "can he do AWS", null],
+  ["en", "projects contact", null],
+  ["en", "please show me all of his projects now", null],
+  ["en", "go to work and open chat", null],
+  ["en", "where is his CV", null],
+  ["en", "up", { action: "scroll", direction: "up", reply: "Scrolling up." }],
+  ["ar", "وريني مشاريعه", { action: "goto", target: "work", reply: "تمام، رايح للمشاريع." }],
+  ["ar", "روح لقسم الشهادات", { action: "goto", target: "certifications", reply: "تمام، رايح للشهادات." }],
+  ["ar", "انزل تحت", { action: "scroll", direction: "down", reply: "تمام، نازل." }],
+  ["ar", "افتح السي في", { action: "resume", reply: "بفتح السي في." }],
+  ["ar", "اطلع فوق خالص", { action: "goto", target: "top", reply: "تمام، رايح لأول الصفحة." }],
+  ["ar", "هو بيدرس ايه", null],
+  ["ar", "كلمني عن خبرته", null],
+  ["ar", "عنده شهادات ايه", null],
+  ["ar", "إزاي أتواصل معاه", null],
+  ["ar", "وريني شغله", { action: "goto", target: "work", reply: "تمام، رايح للمشاريع." }],
+  ["ar", "وريني اعمال", { action: "goto", target: "work", reply: "تمام، رايح للمشاريع." }],
+  ["ar", "افتح مهاراته", { action: "goto", target: "techstack", reply: "تمام، رايح للمهارات." }],
+  ["ar", "روح تواصل", { action: "goto", target: "contact", reply: "تمام، رايح للتواصل." }],
+  ["ar", "افتح شات", { action: "chat", reply: "بفتح Ping." }],
+  ["ar", "اطلع فوق", { action: "scroll", direction: "up", reply: "تمام، طالع." }],
+  ["ar", "انزل", { action: "scroll", direction: "down", reply: "تمام، نازل." }],
+  ["ar", "ايه مهاراته", null],
+  ["ar", "كام شهادة عنده", null],
+  ["ar", "روح للمشاريع والشهادات", null],
+  ["ar", "افتح السي في بتاع عمرو من فضلك دلوقتي", null],
+  ["ar", "افتح ايميل", { action: "goto", target: "contact", reply: "تمام، رايح للتواصل." }],
+  ["ar", "فوق خالص", { action: "goto", target: "top", reply: "تمام، رايح لأول الصفحة." }],
+];
+
+for (const [lang, transcript, expected] of cases) {
+  assert.deepEqual(matchIntent(transcript, lang), expected, `${lang}: ${transcript}`);
+}
+
+console.log(`voice intent: ${cases.length} cases OK`);
