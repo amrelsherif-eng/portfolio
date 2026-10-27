@@ -13,14 +13,14 @@ const requestLog = new Map<string, number[]>();
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_REQUESTS = 20;
 
-export function isRateLimited(req: RequestLike): boolean {
+export function isRateLimited(req: RequestLike, weight = 1): boolean {
   const first = (h: string | string[] | undefined) => (Array.isArray(h) ? h[0] : h)?.split(",")[0].trim();
   const ip = first(req.headers?.["x-real-ip"]) || first(req.headers?.["x-forwarded-for"]) || req.ip || req.socket?.remoteAddress || "unknown";
   const now = Date.now();
   if (requestLog.size > 2000) for (const [key, times] of requestLog) if (!times.some((time) => now - time < WINDOW_MS)) requestLog.delete(key);
   const recent = (requestLog.get(ip) || []).filter((time) => now - time < WINDOW_MS);
-  if (recent.length >= MAX_REQUESTS) { requestLog.set(ip, recent); return true; }
-  recent.push(now);
+  if (recent.length + weight > MAX_REQUESTS) { requestLog.set(ip, recent); return true; }
+  for (let i = 0; i < weight; i++) recent.push(now);
   requestLog.set(ip, recent);
   return false;
 }
