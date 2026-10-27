@@ -136,7 +136,7 @@ export const certifications: Certification[] = [
     id: "depi-english",
     name: "Business English",
     issuer: "MCIT · DEPI",
-    date: "",
+    date: "Jul 2026",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
     image: "/images/certs/depi-english.webp",
@@ -145,9 +145,9 @@ export const certifications: Certification[] = [
     id: "helsinki-ai",
     name: "Elements of AI for Business",
     issuer: "University of Helsinki",
-    date: "",
+    date: "Dec 2025",
     category: "Languages & Skills",
-    verifyUrl: "", // TODO: verify link from LinkedIn
+    verifyUrl: "https://courses.minnalearn.com/certificate/ar/elements-of-ai-for-business/cbf58c90-902c-4b1c-9c53-68b5cd9c64d8",
     image: "/images/certs/helsinki-ai.webp",
   },
   {
@@ -163,7 +163,7 @@ export const certifications: Certification[] = [
     id: "build-ai",
     name: "Build with AI: Masr Edition (attendance)",
     issuer: "Google for Developers × ITI",
-    date: "",
+    date: "Jun 2026",
     category: "Languages & Skills",
     verifyUrl: "", // TODO: verify link from LinkedIn
     image: "/images/certs/build-ai.webp",
