@@ -1,5 +1,5 @@
 type GroqResponse = { ok: boolean; status?: number; json: () => Promise<unknown> };
-// Env: GROQ_API_KEY, GROQ_API_KEY_2 (the latter is optional).
+// Env: GROQ_API_KEY, GROQ_API_KEY_2, GROQ_API_KEY_3 (the last two are optional).
 const runtime = globalThis as typeof globalThis & {
   process?: { env: Record<string, string | undefined> };
   fetch: (url: string, init: { method: string; headers: Record<string, string>; body: string; signal: unknown }) => Promise<GroqResponse>;
@@ -9,7 +9,7 @@ const runtime = globalThis as typeof globalThis & {
 };
 
 export function groqKeys(): string[] {
-  return [...new Set([runtime.process?.env.GROQ_API_KEY, runtime.process?.env.GROQ_API_KEY_2].map((key) => key?.trim()).filter((key): key is string => Boolean(key)))];
+  return [...new Set([runtime.process?.env.GROQ_API_KEY, runtime.process?.env.GROQ_API_KEY_2, runtime.process?.env.GROQ_API_KEY_3].map((key) => key?.trim()).filter((key): key is string => Boolean(key)))];
 }
 
 export async function callGroqJson(system: string, user: string, opts: { temperature?: number; max_tokens?: number } = {}): Promise<unknown | null> {

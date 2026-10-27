@@ -1,4 +1,4 @@
-// Env: GROQ_API_KEY, GROQ_API_KEY_2 (optional), GEMINI_API_KEY (fallback)
+// Env: GROQ_API_KEY, GROQ_API_KEY_2/_3 (optional), GEMINI_API_KEY (fallback)
 import { knowledge } from "./knowledge.js";
 import { callGemini, isRateLimited } from "./_gemini.js";
 import { callGroqJson, groqKeys } from "./_groq.js";
