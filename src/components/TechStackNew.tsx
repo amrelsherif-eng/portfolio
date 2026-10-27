@@ -137,7 +137,6 @@ const TechStackNew = () => {
                 </div>
               ))}
             </div>
-            <p className="techstack-motto">Your speed doesn't matter, forward is forward. <span aria-hidden="true">🐢</span></p>
           </div>
         </div>
       </div>
