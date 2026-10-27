@@ -18,8 +18,15 @@ export default function SherifChat() {
 
   useEffect(() => {
     const show = () => setOpen(true);
+    const ask = (event: Event) => {
+      const text = (event as CustomEvent<unknown>).detail;
+      if (typeof text !== "string" || !text.trim()) return;
+      setOpen(true);
+      void send(text);
+    };
     window.addEventListener("sherif:open", show);
-    return () => window.removeEventListener("sherif:open", show);
+    window.addEventListener("sherif:ask", ask);
+    return () => { window.removeEventListener("sherif:open", show); window.removeEventListener("sherif:ask", ask); };
   }, []);
   useEffect(() => {
     if (open) inputRef.current?.focus();

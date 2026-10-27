@@ -4,8 +4,10 @@
   width: var(--cWidth);
   bottom: 0;
   z-index: 99;
-  left: 50%;
-  transform: translateX(-50%);
+  /* centred without a transform, so the fixed RESUME pill inside lines up with the viewport */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
 }
 .social-icons {
   position: absolute;
@@ -113,15 +115,24 @@ div.resume-button span {
    A frosted pill keeps it readable and clearly separate from the content underneath. */
 @media only screen and (min-width: 1025px) {
   .resume-button {
-    padding: 10px 16px;
+    /* one block with the hands-free + Ping buttons above it (56 + 12 + 56 = 124px) */
+    position: fixed;
+    right: 28px;
+    bottom: 40px;
+    width: 124px;
+    height: 44px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
     border: 1px solid #363636;
     border-radius: 999px;
     background: rgba(10, 13, 16, 0.88);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: 3px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: 2.5px;
   }
   div.resume-button span {
     font-size: 18px;

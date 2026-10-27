@@ -1,0 +1,50 @@
+.gesture-preview {
+  position: fixed;
+  left: 104px; /* clear of the social icons column */
+  bottom: 24px;
+  width: 160px;
+  height: 120px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-radius: 12px;
+  z-index: 9001;
+  pointer-events: none;
+  background: #071014;
+}
+
+.gesture-preview__video,
+.gesture-preview__canvas {
+  position: absolute;
+  inset: 0;
+  width: 160px;
+  height: 120px;
+}
+
+.gesture-preview__video {
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.gesture-preview__canvas {
+  z-index: 1;
+}
+
+.gesture-preview__label {
+  position: absolute;
+  z-index: 2;
+  left: 6px;
+  bottom: 5px;
+  color: #00f0ff;
+  font: 9px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px #000;
+}
+
+.gesture-guide { position: absolute; z-index: 4; left: 170px; bottom: 0; width: max-content; max-width: min(360px, calc(100vw - 190px)); padding: 12px; border: 1px solid rgba(0, 240, 255, 0.45); border-radius: 10px; background: #071014; color: #d8faff; font: 12px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45); pointer-events: auto; }
+.gesture-guide button { display: block; min-width: 88px; min-height: 44px; margin-top: 8px; border: 1px solid #00f0ff; border-radius: 6px; background: rgba(0, 240, 255, 0.12); color: #00f0ff; font: inherit; cursor: pointer; }
+.gesture-dwell-ring { position: fixed; z-index: 9002; width: 44px; height: 44px; pointer-events: none; }
+.gesture-dwell-ring[hidden] { display: none; }
+.gesture-dwell-ring svg { display: block; width: 44px; height: 44px; transform: rotate(-90deg); }
+.gesture-dwell-ring circle { fill: none; stroke-width: 3; }
+.gesture-dwell-ring__track { stroke: rgba(0, 240, 255, 0.22); }
+.gesture-dwell-ring__progress { stroke: #00f0ff; stroke-dasharray: 119.38; stroke-dashoffset: calc(119.38 * (1 - var(--dwell-progress, 0))); }
