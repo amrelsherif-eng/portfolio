@@ -43,6 +43,7 @@ const Landing = ({ children }: PropsWithChildren) => {
               src="/images/profile.webp"
               alt="Amr Elsherif"
               loading="eager"
+              fetchPriority="high"
               onError={(e) => (e.currentTarget.style.display = "none")}
               decoding="async"
             />
