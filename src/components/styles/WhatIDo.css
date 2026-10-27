@@ -639,8 +639,8 @@
   }
 }
 
-/* very short desktop windows (e.g. 1280x600): drop the number tiles so the skill tags are never clipped */
-@media only screen and (min-width: 1025px) and (max-height: 640px) {
+/* short desktop windows (e.g. 1280x600 / 1280x680): drop the number tiles so the skill tags are never clipped */
+@media only screen and (min-width: 1025px) and (max-height: 690px) {
   .what-stats {
     display: none;
   }

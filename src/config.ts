@@ -169,8 +169,8 @@ export const config = {
                 "AWS Academy Graduate: Foundations + Architecting"
             ],
             stats: [
-                { value: "120 h", label: "CCNA v7 at NTI" },
-                { value: "120 h", label: "AWS internship" },
+                { value: "120 h", label: "CCNA training at NTI" },
+                { value: "120 h", label: "AWS cloud internship" },
                 { value: "2", label: "AWS Academy badges" }
             ],
             tools: ["Subnetting", "OSPF", "VLAN", "ACLs", "Packet Tracer", "AWS", "VPC", "Linux"]
@@ -185,9 +185,9 @@ export const config = {
                 "Li-Fi graduation project (design phase)"
             ],
             stats: [
-                { value: "100 °C", label: "PID setpoint, stable" },
-                { value: "98%", label: "Excellent rating, 2025" },
-                { value: "5", label: "WeatherLink team" }
+                { value: "100 °C", label: "held steady by my PID" },
+                { value: "98%", label: "training grade: Excellent" },
+                { value: "5", label: "on the WeatherLink team" }
             ],
             tools: ["ESP32", "Raspberry Pi", "Arduino", "C / C++", "IoT", "PID", "Proteus", "Calibration"]
         },
@@ -201,9 +201,9 @@ export const config = {
                 "Led the 5-member team behind DevSync"
             ],
             stats: [
-                { value: "20", label: "trainees led" },
-                { value: "5", label: "DevSync team" },
-                { value: "~120 h", label: "Flutter track" }
+                { value: "20", label: "trainees I led at DEPI" },
+                { value: "5", label: "DevSync team I led" },
+                { value: "~120 h", label: "of Flutter training" }
             ],
             tools: ["Flutter", "Dart", "BLoC", "Firebase", "REST APIs", "Git", "Gemini API", "Leadership"]
         }

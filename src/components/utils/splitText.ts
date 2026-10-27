@@ -19,6 +19,8 @@ function revealTrigger(trigger: Element | null | undefined, anim: () => gsap.cor
     start: window.innerWidth <= 1024 ? "top 70%" : "top 65%",
     onEnter: () => anim()?.timeScale(1).play(),
     onLeaveBack: () => anim()?.timeScale(3).reverse(),
+    // coming back up into a section (e.g. after the page re-measured while you were below it): show it
+    onEnterBack: () => anim()?.timeScale(1).play(),
   };
 }
 
