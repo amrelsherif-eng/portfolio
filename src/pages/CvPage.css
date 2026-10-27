@@ -1,0 +1,348 @@
+/* ── CV chooser page ──────────────────────────────────────── */
+
+.cv-page {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 80px 40px 120px;
+  min-height: 100vh;
+  background-color: var(--backgroundColor);
+}
+
+/* back link (pill, matches .certs-back) */
+.cv-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 32px;
+  font-family: var(--monoFont);
+  font-size: 0.88rem;
+  color: var(--accentColor);
+  border: 1.5px solid var(--accentColor);
+  border-radius: 999px;
+  text-decoration: none;
+  margin-bottom: 32px;
+  transition: background 0.25s ease;
+}
+.cv-back:hover {
+  background: rgba(0, 240, 255, 0.08);
+}
+
+/* page heading */
+.cv-page-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.cv-page-title span {
+  color: var(--accentColor);
+}
+.cv-page-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  color: #aaa;
+  margin-bottom: 48px;
+}
+
+/* ── card grid ────────────────────────────────────────────── */
+.cv-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+/* ── card ─────────────────────────────────────────────────── */
+.cv-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border: 1px solid #363636;
+  border-radius: 10px;
+  padding: 20px;
+  transition: border-color 0.25s ease;
+}
+.cv-card:hover {
+  border-color: var(--accentColor);
+}
+
+/* recommended variant */
+.cv-card--recommended {
+  border-color: rgba(0, 240, 255, 0.35);
+}
+.cv-recommended-pill {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2; /* above the preview image */
+  background: var(--backgroundColor);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: var(--accentColor);
+  border: 1px solid var(--accentColor);
+  border-radius: 999px;
+  padding: 3px 10px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ── preview image frame ──────────────────────────────────── */
+.cv-preview-btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.cv-preview-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 17 / 22;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid #363636;
+  transition: border-color 0.25s ease;
+}
+.cv-preview-btn:hover .cv-preview-frame,
+.cv-preview-btn:focus-visible .cv-preview-frame {
+  border-color: var(--accentColor);
+}
+.cv-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+
+/* ── card text ────────────────────────────────────────────── */
+.cv-card-role {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+.cv-card-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.cv-card-summary {
+  font-family: "Inter", sans-serif;
+  font-size: 0.88rem;
+  color: #aaa;
+  line-height: 1.55;
+  margin-bottom: 12px;
+}
+
+/* focus tags */
+.cv-focus-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.cv-focus-tag {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: #aaa;
+  border: 1px solid #363636;
+  border-radius: 999px;
+  padding: 3px 10px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* meta line */
+.cv-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.cv-updated {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: #ffb300;
+  white-space: nowrap;
+}
+.cv-draft-tag {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: #666;
+  border: 1px solid #444;
+  border-radius: 999px;
+  padding: 2px 8px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ── action buttons ───────────────────────────────────────── */
+.cv-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+.cv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 20px;
+  font-family: var(--monoFont);
+  font-size: 0.82rem;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.cv-btn--primary {
+  color: #0a0d10;
+  background: var(--accentColor);
+  border: 1.5px solid var(--accentColor);
+  font-weight: 600;
+}
+.cv-btn--primary:hover {
+  background: #33f5ff;
+  color: #0a0d10;
+}
+.cv-btn--ghost {
+  color: var(--accentColor);
+  background: transparent;
+  border: 1.5px solid #363636;
+}
+.cv-btn--ghost:hover {
+  border-color: var(--accentColor);
+  background: rgba(0, 240, 255, 0.06);
+  color: var(--accentColor);
+}
+
+/* ── CV preview viewer (lightbox) ─────────────────────────── */
+.cv-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 7, 9, 0.95);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: cv-viewer-fadein 150ms ease both;
+}
+@keyframes cv-viewer-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.cv-viewer-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1;
+  transition: border-color 0.2s ease;
+}
+.cv-viewer-close:hover,
+.cv-viewer-close:focus-visible {
+  border-color: var(--accentColor);
+}
+
+.cv-viewer-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: min(92vw, 700px);
+  pointer-events: none;
+}
+.cv-viewer-img {
+  max-width: min(92vw, 700px);
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+  pointer-events: auto;
+  user-select: none;
+}
+.cv-viewer-caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  pointer-events: auto;
+}
+.cv-viewer-name {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+}
+.cv-viewer-role {
+  font-family: var(--monoFont);
+  font-size: 0.78rem;
+  color: #888;
+}
+
+/* scroll lock (same rule as Certifications.css — duplicated so CvPage is self-contained) */
+html.scroll-locked,
+html.scroll-locked body {
+  overflow: hidden !important;
+}
+
+/* ── responsive: tablet (≤1024px) ─────────────────────────── */
+@media (max-width: 1024px) {
+  .cv-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
+
+/* ── responsive: phone (≤640px) ───────────────────────────── */
+@media (max-width: 640px) {
+  .cv-page {
+    padding: 60px 20px 80px;
+  }
+  .cv-actions {
+    flex-direction: column;
+  }
+  .cv-viewer-close {
+    top: 8px;
+    right: 8px;
+  }
+}
+
+/* ── reduced motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cv-card,
+  .cv-back,
+  .cv-preview-frame,
+  .cv-btn,
+  .cv-viewer-close {
+    transition: none;
+  }
+  .cv-viewer-overlay {
+    animation: none;
+  }
+}

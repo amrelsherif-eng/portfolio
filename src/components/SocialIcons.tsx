@@ -6,6 +6,7 @@ import {
 import "./styles/SocialIcons.css";
 import { TbNotes } from "react-icons/tb";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import HoverLinks from "./HoverLinks";
 import { config } from "../config";
 
@@ -75,12 +76,12 @@ const SocialIcons = () => {
           </a>
         </span>
       </div>
-      <a className="resume-button" href="/cv/Amr-Elsherif-CV.pdf" target="_blank" rel="noopener noreferrer">
+      <Link className="resume-button" to="/resume">
         <HoverLinks text="RESUME" />
         <span>
           <TbNotes />
         </span>
-      </a>
+      </Link>
     </div>
   );
 };
