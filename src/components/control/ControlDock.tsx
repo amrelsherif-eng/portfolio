@@ -138,7 +138,7 @@ export default function ControlDock() {
       try {
         beginVoice(voiceLang);
       } catch {
-      setVoiceStatus("Microphone unavailable. Please try again.");
+        setVoiceStatus("Microphone unavailable. Please try again.");
         setVoiceActive(false);
       }
     }
@@ -147,6 +147,17 @@ export default function ControlDock() {
   if (!isDesktop) return null;
 
   const isAnyActive = gestureActive || voiceActive;
+  const isThinking = voiceActive && voiceStatus.toLowerCase().includes("thinking");
+  const isListening = voiceActive && !isThinking;
+  const isIdle = !gestureActive && !voiceActive && !gestureStatus && !voiceStatus;
+
+  const statusText = useMemo(() => {
+    if (voiceStatus) return voiceStatus;
+    if (gestureStatus) return gestureStatus;
+    if (voiceActive) return "Listening…";
+    if (gestureActive) return "Gestures active";
+    return voiceLang === "ar" ? 'جرّب: "وريني مشاريعه"' : 'Try: "show me his projects"';
+  }, [voiceStatus, gestureStatus, voiceActive, gestureActive, voiceLang]);
 
   return (
     <>
@@ -208,92 +219,144 @@ export default function ControlDock() {
         >
           <header className="control-dock-header" data-control-ui="" data-cursor="disable">
             <span className="control-dock-title" data-control-ui="" data-cursor="disable">
-              $ hands-free
+              hands-free
             </span>
-            <button
-              type="button"
-              className="control-dock-close"
-              aria-label="Close hands-free controls"
-              onClick={() => setIsOpen(false)}
-              data-control-ui=""
-              data-cursor="disable"
-            >
-              ×
-            </button>
-          </header>
-
-          <div className="control-dock-body" data-control-ui="" data-cursor="disable">
-            <div className="control-dock-row" data-control-ui="" data-cursor="disable">
-              <div className="control-dock-info" data-control-ui="" data-cursor="disable">
-                <div className="control-dock-row-title" data-control-ui="" data-cursor="disable">
-                  Hand gestures
-                </div>
-                <div className="control-dock-row-sub" data-control-ui="" data-cursor="disable">
-                  Camera stays on your device
-                </div>
-                {gestureStatus && (
-                  <div className="control-dock-status" data-control-ui="" data-cursor="disable">
-                    {gestureStatus}
-                  </div>
-                )}
-              </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={gestureActive}
-                aria-label="Toggle hand gestures"
-                className={`control-dock-switch ${gestureActive ? "is-checked" : ""}`}
-                onClick={() => void toggleGesture()}
+            <div className="control-dock-header-actions" data-control-ui="" data-cursor="disable">
+              <div
+                className="control-dock-language"
+                role="group"
+                aria-label="Voice language"
                 data-control-ui=""
-                data-cursor="disable"
               >
-                <span className="control-dock-switch-track" data-control-ui="" data-cursor="disable">
-                  <span className="control-dock-switch-thumb" data-control-ui="" data-cursor="disable" />
-                </span>
-              </button>
-            </div>
-
-            {voiceSupported && (
-              <div className="control-dock-row" data-control-ui="" data-cursor="disable">
-                <div className="control-dock-info" data-control-ui="" data-cursor="disable">
-                  <div className="control-dock-row-title" data-control-ui="" data-cursor="disable">
-                    Voice commands
-                  </div>
-                  <div className="control-dock-row-sub" data-control-ui="" data-cursor="disable">
-                    Works in any browser · EN / عربي
-                  </div>
-                  {voiceStatus && (
-                    <div className="control-dock-status" data-control-ui="" data-cursor="disable">
-                      {voiceStatus}
-                    </div>
-                  )}
-                </div>
-                <div className="control-dock-language" role="group" aria-label="Voice language" data-control-ui="">
-                  <button type="button" aria-pressed={voiceLang === "en"} onClick={() => setVoiceLang("en")} data-control-ui="">EN</button>
-                  <button type="button" aria-pressed={voiceLang === "ar"} onClick={() => setVoiceLang("ar")} data-control-ui="">عربي</button>
-                </div>
                 <button
                   type="button"
-                  aria-label="Tap to talk"
-                  className={`control-dock-voice-button ${voiceActive ? "is-listening" : ""}`}
-                  onClick={toggleVoice}
+                  aria-pressed={voiceLang === "en"}
+                  onClick={() => setVoiceLang("en")}
                   data-control-ui=""
                   data-cursor="disable"
                 >
-                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg>
-                  <span>Tap to talk</span>
+                  EN
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={voiceLang === "ar"}
+                  onClick={() => setVoiceLang("ar")}
+                  data-control-ui=""
+                  data-cursor="disable"
+                >
+                  عربي
                 </button>
               </div>
-            )}
+              <button
+                type="button"
+                className="control-dock-close"
+                aria-label="Close hands-free controls"
+                onClick={() => setIsOpen(false)}
+                data-control-ui=""
+                data-cursor="disable"
+              >
+                ×
+              </button>
+            </div>
+          </header>
+
+          <div className="control-dock-tiles" data-control-ui="" data-cursor="disable">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={gestureActive}
+              aria-label="Toggle hand gestures"
+              className={`control-dock-tile ${gestureActive ? "is-active" : ""}`}
+              onClick={() => void toggleGesture()}
+              data-control-ui=""
+              data-cursor="disable"
+            >
+              <div className="control-dock-tile-icon" aria-hidden="true" data-control-ui="" data-cursor="disable">
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  data-control-ui=""
+                  data-cursor="disable"
+                >
+                  <path d="M18 11V6a2 2 0 0 0-4 0v4" data-control-ui="" data-cursor="disable" />
+                  <path d="M14 10V4a2 2 0 0 0-4 0v6" data-control-ui="" data-cursor="disable" />
+                  <path d="M10 10.5V6a2 2 0 0 0-4 0v8" data-control-ui="" data-cursor="disable" />
+                  <path
+                    d="M6 14v-1.5a1.5 1.5 0 0 0-3 0v4.5a7 7 0 0 0 7 7h3a7 7 0 0 0 7-7v-5a2 2 0 0 0-4 0v2"
+                    data-control-ui=""
+                    data-cursor="disable"
+                  />
+                </svg>
+              </div>
+              <span className="control-dock-tile-title" data-control-ui="" data-cursor="disable">
+                Gestures
+              </span>
+              <span className="control-dock-tile-sub" data-control-ui="" data-cursor="disable">
+                Camera stays local
+              </span>
+            </button>
+
+            <button
+              type="button"
+              aria-label="Tap to talk"
+              className={`control-dock-tile control-dock-voice-tile ${voiceActive ? "is-active is-voice-active" : ""}`}
+              onClick={toggleVoice}
+              data-voice-supported={voiceSupported}
+              data-control-ui=""
+              data-cursor="disable"
+            >
+              <div className="control-dock-tile-icon" aria-hidden="true" data-control-ui="" data-cursor="disable">
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ display: isThinking ? "none" : "block" }}
+                  data-control-ui=""
+                  data-cursor="disable"
+                >
+                  <rect x="9" y="2" width="6" height="12" rx="3" data-control-ui="" data-cursor="disable" />
+                  <path d="M5 10v2a7 7 0 0 0 14 0v-2" data-control-ui="" data-cursor="disable" />
+                  <line x1="12" y1="19" x2="12" y2="22" data-control-ui="" data-cursor="disable" />
+                  <line x1="8" y1="22" x2="16" y2="22" data-control-ui="" data-cursor="disable" />
+                </svg>
+                {isListening && <span className="control-dock-pulse-ring" data-control-ui="" data-cursor="disable" />}
+                {isThinking && (
+                  <span className="control-dock-thinking-dots" data-control-ui="" data-cursor="disable">
+                    <span />
+                    <span />
+                    <span />
+                  </span>
+                )}
+              </div>
+              <span className="control-dock-tile-title" data-control-ui="" data-cursor="disable">
+                Voice
+              </span>
+              <span className="control-dock-tile-sub" data-control-ui="" data-cursor="disable">
+                Tap and speak
+              </span>
+            </button>
           </div>
 
-          <div className="control-dock-cheatsheet" data-control-ui="" data-cursor="disable">
-            <p data-control-ui="" data-cursor="disable">
-              ☝ point = move · hold = click · ✋ flick up/down = section
-            </p>
-            <p data-control-ui="" data-cursor="disable">
-              Talk naturally: &quot;show me his AWS work&quot;, &quot;وريني مشاريعه&quot;, &quot;what is he studying?&quot;
-            </p>
+          <div
+            className={`control-dock-status-line ${isIdle ? "is-hint" : ""}`}
+            title={statusText}
+            aria-live="polite"
+            dir="auto"
+            data-control-ui=""
+            data-cursor="disable"
+          >
+            {statusText}
           </div>
         </section>
       )}
