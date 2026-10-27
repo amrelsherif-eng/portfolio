@@ -1,0 +1,117 @@
+/* ── Temporary CV Page Card ─────────────────────────────── */
+
+.cvt-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #363636;
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 560px;
+  margin: 32px auto 0;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.cvt-mono-label {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: var(--accentColor);
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.cvt-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: #fff;
+  margin: 0 0 10px;
+  line-height: 1.3;
+}
+
+.cvt-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: #9aa4b2;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.cvt-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.cvt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-family: var(--monoFont);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1.2;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.cvt-btn--primary {
+  background: var(--accentColor);
+  color: #061014;
+  border: 1px solid var(--accentColor);
+}
+
+.cvt-btn--primary:hover {
+  background: #33f5ff;
+  border-color: #33f5ff;
+  color: #061014;
+}
+
+.cvt-btn--secondary {
+  background: transparent;
+  color: var(--accentColor);
+  border: 1px solid var(--accentColor);
+}
+
+.cvt-btn--secondary:hover {
+  background: rgba(0, 240, 255, 0.08);
+  border-color: var(--accentColor);
+  color: var(--accentColor);
+}
+
+.cvt-btn:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 3px;
+}
+
+.cvt-note {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #78858e;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Mobile responsiveness (wrap on phones, no overflow at 390px) ─ */
+@media (max-width: 480px) {
+  .cvt-actions {
+    flex-direction: column;
+  }
+
+  .cvt-btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cvt-btn {
+    transition: none;
+  }
+}
