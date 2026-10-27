@@ -150,6 +150,11 @@
   margin-top: 2px;
 }
 
+.control-dock-language { display: inline-flex; border: 1px solid rgba(255,255,255,.15); border-radius: 8px; overflow: hidden; }
+.control-dock-language button { min-height: 44px; padding: 0 8px; border: 0; border-right: 1px solid rgba(255,255,255,.12); background: transparent; color: #9aa4b2; font: 500 12px var(--monoFont); cursor: pointer; }
+.control-dock-language button:last-child { border-right: 0; }
+.control-dock-language button[aria-pressed="true"] { color: var(--accentColor); background: rgba(0,240,255,.1); }
+
 /* Switch toggle button (≥44px height for accessibility) */
 .control-dock-switch {
   min-height: 44px;

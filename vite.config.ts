@@ -8,7 +8,8 @@ function localChatPlugin(): Plugin {
     apply: "serve",
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
-        if ((req as typeof req & { url?: string }).url?.split("?")[0] !== "/api/chat") return next();
+        const route = (req as typeof req & { url?: string }).url?.split("?")[0];
+        if (route !== "/api/chat" && route !== "/api/voice") return next();
         // Vite's dev server does not parse bodies like Vercel does: read the JSON ourselves.
         // (vite.config has no Node/DOM typings here, so describe the two APIs we use)
         type Decoder = { decode(input?: Uint8Array, opts?: { stream: boolean }): string };
@@ -21,7 +22,7 @@ function localChatPlugin(): Plugin {
           stream.on("end", () => resolve(data + decoder.decode()));
         });
         (req as typeof req & { body?: string }).body = body;
-        const { default: handler } = await import("./api/chat");
+        const { default: handler } = route === "/api/chat" ? await import("./api/chat") : await import("./api/voice");
         await handler(req as unknown as Parameters<typeof handler>[0], res as unknown as Parameters<typeof handler>[1]);
       });
     },

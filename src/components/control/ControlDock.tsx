@@ -12,6 +12,7 @@ export default function ControlDock() {
   const [gestureActive, setGestureActive] = useState<boolean>(false);
   const [gestureStatus, setGestureStatus] = useState<string>("");
   const [voiceActive, setVoiceActive] = useState<boolean>(false);
+  const [voiceLang, setVoiceLang] = useState<"en" | "ar">("en");
   const [voiceStatus, setVoiceStatus] = useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -113,6 +114,19 @@ export default function ControlDock() {
     }
   };
 
+  const beginVoice = (lang: "en" | "ar") => {
+    setVoiceActive(true);
+    setVoiceStatus("listening");
+    const stop = startVoice((status, text) => {
+      if (status === "listening") setVoiceStatus("listening");
+      else if (status === "heard") setVoiceStatus(text ? `heard: "${text}"` : "heard");
+      else if (status === "interim") setVoiceStatus(text || "listening");
+      else if (status === "thinking") setVoiceStatus("thinking…");
+      else if (status === "error") { setVoiceStatus(text ? `error: ${text}` : "error"); setVoiceActive(false); }
+      else if (status === "stopped") { setVoiceStatus(""); setVoiceActive(false); }
+    }, lang);
+    stopVoiceRef.current = stop;
+  };
   const toggleVoice = () => {
     if (voiceActive) {
       if (stopVoiceRef.current) {
@@ -122,23 +136,8 @@ export default function ControlDock() {
       setVoiceActive(false);
       setVoiceStatus("");
     } else {
-      setVoiceActive(true);
-      setVoiceStatus("listening");
       try {
-        const stop = startVoice((status, text) => {
-          if (status === "listening") {
-            setVoiceStatus("listening");
-          } else if (status === "heard") {
-            setVoiceStatus(text ? `heard: "${text}"` : "heard");
-          } else if (status === "error") {
-            setVoiceStatus(text ? `error: ${text}` : "error");
-            setVoiceActive(false);
-          } else if (status === "stopped") {
-            setVoiceStatus("");
-            setVoiceActive(false);
-          }
-        });
-        stopVoiceRef.current = stop;
+        beginVoice(voiceLang);
       } catch {
         setVoiceStatus("error");
         setVoiceActive(false);
@@ -269,6 +268,10 @@ export default function ControlDock() {
                     </div>
                   )}
                 </div>
+                <div className="control-dock-language" role="group" aria-label="Voice language" data-control-ui="">
+                  <button type="button" aria-pressed={voiceLang === "en"} onClick={() => { if (voiceLang !== "en") { setVoiceLang("en"); if (voiceActive) { stopVoiceRef.current?.(); beginVoice("en"); } } }} data-control-ui="">EN</button>
+                  <button type="button" aria-pressed={voiceLang === "ar"} onClick={() => { if (voiceLang !== "ar") { setVoiceLang("ar"); if (voiceActive) { stopVoiceRef.current?.(); beginVoice("ar"); } } }} data-control-ui="">عربي</button>
+                </div>
                 <button
                   type="button"
                   role="switch"
@@ -292,7 +295,7 @@ export default function ControlDock() {
               ☝ point = move · 🤏 pinch = click · ✋ open hand up/down = scroll · ✌ = open Ping
             </p>
             <p data-control-ui="" data-cursor="disable">
-              Say: &quot;go to work&quot;, &quot;scroll down&quot;, &quot;open resume&quot;
+              Talk naturally: &quot;show me his AWS work&quot;, &quot;وريني مشاريعه&quot;, &quot;what is he studying?&quot;
             </p>
           </div>
         </section>
