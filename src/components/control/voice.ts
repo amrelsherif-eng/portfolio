@@ -20,7 +20,8 @@ function speak(reply: string, lang: "en" | "ar") {
   const utterance = new SpeechSynthesisUtterance(reply); utterance.voice = voice; utterance.lang = voice.lang; window.speechSynthesis.speak(utterance);
 }
 export function startVoice(onStatus: (s: VoiceStatus, text?: string) => void, lang: "en" | "ar"): () => void {
-  let stream: MediaStream | undefined, recorder: MediaRecorder | undefined, context: AudioContext | undefined, raf = 0, silenceSince = 0, speechDetected = false, stopped = false, chunks: Blob[] = [];
+  let stream: MediaStream | undefined, recorder: MediaRecorder | undefined, context: AudioContext | undefined, raf = 0, silenceSince = 0, speechDetected = false, stopped = false;
+  const chunks: Blob[] = [];
   let maxTimer: ReturnType<typeof setTimeout> | undefined;
   const cleanup = () => { if (maxTimer) clearTimeout(maxTimer); if (raf) cancelAnimationFrame(raf); if (recorder && recorder.state !== "inactive") recorder.stop(); stream?.getTracks().forEach((track) => track.stop()); void context?.close(); };
   const stop = () => { if (stopped) return; stopped = true; cleanup(); onStatus("stopped"); };
