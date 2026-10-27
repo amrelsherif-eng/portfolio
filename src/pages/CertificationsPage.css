@@ -147,9 +147,11 @@
   overflow: hidden;
   transition: border-color 0.2s ease;
   min-height: 44px;
-  /* frame = the certificate's own shape, centred: no empty bars above/below */
+  /* frame = the certificate's own shape (set from the image on load; landscape until then), centred */
   align-self: center;
-  aspect-ratio: 1598 / 1237;
+  justify-self: center;
+  aspect-ratio: 4 / 3;
+  width: 100%;
 }
 .cpg-aws-thumb-btn:hover {
   border-color: var(--accentColor);
@@ -511,4 +513,84 @@
   .cpg-card {
     transition: none;
   }
+}
+
+/* ── certificate image at the top of each grid card ───────────────
+   one fixed height for every card; the scan is shown whole (contain), so landscape
+   and portrait certificates sit side by side in identical frames */
+.cpg-card-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 168px;
+  margin: 0 0 16px;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 1px solid #262626;
+  border-radius: 10px;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, 0.06), transparent 70%),
+    rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+.cpg-card-media img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  transition: transform 0.3s ease;
+}
+.cpg-card-media:hover,
+.cpg-card-media:focus-visible {
+  border-color: var(--accentColor);
+}
+.cpg-card-media:hover img {
+  transform: scale(1.04);
+}
+@media (max-width: 640px) {
+  .cpg-card-media {
+    height: 190px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cpg-card-media,
+  .cpg-card-media img {
+    transition: none;
+  }
+  .cpg-card-media:hover img {
+    transform: none;
+  }
+}
+
+/* ── CCNA "next" line under the AWS cards ── */
+.cpg-next {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin: -36px 0 64px; /* sits right under the AWS cards */
+  padding: 16px 20px;
+  border: 1px dashed rgba(0, 240, 255, 0.3);
+  border-radius: 12px;
+  font-size: 14px;
+}
+.cpg-next-label {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: var(--accentColor);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.cpg-next-name {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  color: #fff;
+}
+.cpg-next-meta {
+  color: #8b98a1;
+  flex: 1 1 260px;
 }

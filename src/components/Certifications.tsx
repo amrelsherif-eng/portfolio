@@ -200,7 +200,7 @@ export function CertRow({
   return (
     <div className="cert-row">
       <div className="cert-row-monogram" aria-hidden="true">
-        {monogram(cert.issuer)}
+        {monogram(cert.issuer || cert.name)}
       </div>
 
       <div className="cert-row-info">

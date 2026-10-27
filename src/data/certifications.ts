@@ -39,35 +39,14 @@ export const certifications: Certification[] = [
     image: "/images/certs/aws-found.webp",
   },
   {
-    id: "ccna-itn",
-    name: "CCNA: Introduction to Networks",
+    id: "ccna",
+    name: "CCNA v7",
     issuer: "Cisco Networking Academy · NTI",
-    date: "Oct 2026", // course start; ends Dec 2026
+    date: "Oct 2026", // started; one stable entry until the exam (target Dec 2026), then swap for the real badge
     category: "Cloud & Networking",
     status: "in-progress",
-    endDate: "Dec 2026",
     featured: true,
-    verifyUrl: "", // TODO: add the Cisco badge link + preview when finished
-  },
-  {
-    id: "ccna-srwe",
-    name: "CCNA: Switching, Routing & Wireless Essentials",
-    issuer: "Cisco Networking Academy · NTI",
-    date: "Oct 2026", // course start; ends Jan 2027
-    category: "Cloud & Networking",
-    status: "in-progress",
-    endDate: "Jan 2027",
-    verifyUrl: "", // TODO: add the Cisco badge link + preview when finished
-  },
-  {
-    id: "ccna-ensa",
-    name: "CCNA: Enterprise Networking, Security & Automation",
-    issuer: "Cisco Networking Academy · NTI",
-    date: "Oct 2026", // course start; ends Jan 2027
-    category: "Cloud & Networking",
-    status: "in-progress",
-    endDate: "Jan 2027",
-    verifyUrl: "", // TODO: add the Cisco badge link + preview when finished
+    verifyUrl: "", // TODO: Cisco/Credly badge link + preview when finished
   },
   {
     id: "nti-cloud",

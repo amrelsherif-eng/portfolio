@@ -45,7 +45,6 @@ const restItems = certifications.filter(
 /* stat strip values */
 const earnedCount = certifications.filter((c) => c.status !== "in-progress").length;
 const awsBadgeCount = awsItems.length;
-const inProgressCount = ccnaItems.length;
 
 /* categories present in "rest" items only */
 function getRestCategories(certs: Certification[]): CertCategory[] {
@@ -102,8 +101,6 @@ export default function CertificationsPage() {
     []
   );
 
-  const pad = (n: number) => String(n).padStart(2, "0");
-
   return (
     <main className="cpg">
       {/* ── HEADER ──────────────────────────────────────────── */}
@@ -129,8 +126,8 @@ export default function CertificationsPage() {
             <span className="cpg-stat-label">AWS badges</span>
           </div>
           <div className="cpg-stat-tile">
-            <span className="cpg-stat-num">{inProgressCount}</span>
-            <span className="cpg-stat-label">CCNA courses in progress</span>
+            <span className="cpg-stat-num">CCNA</span>
+            <span className="cpg-stat-label">in progress</span>
           </div>
         </div>
       </header>
@@ -153,12 +150,21 @@ export default function CertificationsPage() {
                     alt={cert.name}
                     className="cpg-aws-thumb"
                     loading="lazy"
+                    // certificates come in different shapes: size the frame to this image's real ratio
+                    onLoad={(e) => {
+                      const img = e.currentTarget;
+                      const frame = img.parentElement;
+                      if (!frame || !img.naturalWidth) return;
+                      frame.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
+                      // portrait: narrow the frame instead of letting it grow too tall
+                      if (img.naturalHeight > img.naturalWidth) frame.style.width = `${Math.round((260 * img.naturalWidth) / img.naturalHeight)}px`;
+                    }}
                   />
                 </button>
               )}
               <div className="cpg-aws-body">
                 <div className="cpg-mono-tile" aria-hidden="true">
-                  {monogram(cert.issuer)}
+                  {monogram(cert.issuer || cert.name)}
                 </div>
                 <h3 className="cpg-aws-name">{cert.name}</h3>
                 {cert.issuer && <p className="cpg-aws-issuer">{cert.issuer}</p>}
@@ -191,30 +197,17 @@ export default function CertificationsPage() {
         </div>
       </section>
 
-      {/* ── CCNA TRACKER ───────────────────────────────────── */}
-      <section className="cpg-section">
-        <h2 className="cpg-h2">CCNA in progress</h2>
-        <div className="cpg-ccna-panel">
-          <p className="cpg-ccna-meta">
-            Cisco Networking Academy · NTI — target: CCNA 200-301 exam
-          </p>
-          <div className="cpg-ccna-steps">
-            {ccnaItems.map((cert, i) => (
-              <div className="cpg-ccna-step" key={cert.id}>
-                <span className="cpg-ccna-num" aria-hidden="true">
-                  {pad(i + 1)}
-                </span>
-                <h3 className="cpg-ccna-name">{cert.name}</h3>
-                <p className="cpg-ccna-date">
-                  {cert.date}
-                  {cert.endDate ? ` → ${cert.endDate}` : ""}
-                </p>
-                <span className="cpg-ccna-pill">In progress</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── CCNA: one stable line (no per-course tracker to keep updating) ── */}
+      {ccnaItems.map((cert) => (
+        <p className="cpg-next" key={cert.id}>
+          <span className="cpg-next-label">Next</span>
+          <span className="cpg-next-name">{cert.name}</span>
+          <span className="cpg-next-meta">
+            {cert.issuer} · since {cert.date} · target: CCNA 200-301 exam
+          </span>
+          <span className="cpg-ccna-pill">In progress</span>
+        </p>
+      ))}
 
       {/* ── ALL CREDENTIALS ────────────────────────────────── */}
       <section className="cpg-section">
@@ -245,8 +238,19 @@ export default function CertificationsPage() {
         <div className="cpg-grid">
           {filteredRest.map((cert) => (
             <div className="cpg-card" key={cert.id}>
+              {cert.image && (
+                // same-height frame for every card; the certificate is shown whole (shapes differ)
+                <button
+                  className="cpg-card-media"
+                  type="button"
+                  aria-label={`Preview ${cert.name}`}
+                  onClick={(e) => openPreview(restItems, cert, e.currentTarget)}
+                >
+                  <img src={cert.image} alt="" loading="lazy" decoding="async" />
+                </button>
+              )}
               <div className="cpg-mono-tile" aria-hidden="true">
-                {monogram(cert.issuer)}
+                {monogram(cert.issuer || cert.name)}
               </div>
               <h3 className="cpg-card-name">{cert.name}</h3>
               {cert.issuer && <p className="cpg-card-issuer">{cert.issuer}</p>}
