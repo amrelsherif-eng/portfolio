@@ -64,6 +64,9 @@ function parseGroqModel(value: unknown, lang: "en" | "ar"): VoiceReply | null {
 export default async function handler(req: Request, res: Response) {
   const langFallback = (req.body as { lang?: unknown } | undefined)?.lang === "ar" ? "ar" : "en";
   if (req.method !== "POST") return respond(res, 405, { action: "none", reply: fallback(langFallback) });
+  const contentLength = req.headers?.["content-length"];
+  const contentLengthValue = Array.isArray(contentLength) ? contentLength[0] : contentLength;
+  if (contentLengthValue && Number(contentLengthValue) > 2_300_000) return respond(res, 413, { action: "none", reply: fallback(langFallback) });
   let payload: unknown = req.body;
   if (typeof payload === "string") { try { payload = JSON.parse(payload); } catch { return respond(res, 400, { action: "none", reply: fallback(langFallback) }); } }
   if (!payload || typeof payload !== "object") return respond(res, 400, { action: "none", reply: fallback(langFallback) });

@@ -55,7 +55,7 @@ export default function SherifChat() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // send only real turns: no welcome text, no error bubbles
-        body: JSON.stringify({ messages: next.filter((message) => !message.isError).map(({ role, text }) => ({ role, text })) }),
+        body: JSON.stringify({ messages: next.filter((message) => !message.isError).slice(-12).map(({ role, text }) => ({ role, text })) }),
       });
       const data = await response.json() as { reply?: string };
       if (!response.ok) {

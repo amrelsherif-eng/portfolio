@@ -18,6 +18,12 @@ export function isRateLimited(req: RequestLike, weight = 1, bucket = "chat", max
   const ip = `${bucket}:${first(req.headers?.["x-real-ip"]) || first(req.headers?.["x-forwarded-for"]) || req.ip || req.socket?.remoteAddress || "unknown"}`;
   const now = Date.now();
   if (requestLog.size > 2000) for (const [key, times] of requestLog) if (!times.some((time) => now - time < WINDOW_MS)) requestLog.delete(key);
+  if (requestLog.size > 5000) {
+    for (const key of requestLog.keys()) {
+      requestLog.delete(key);
+      if (requestLog.size <= 4000) break;
+    }
+  }
   const recent = (requestLog.get(ip) || []).filter((time) => now - time < WINDOW_MS);
   if (recent.length + weight > max) { requestLog.set(ip, recent); return true; }
   for (let i = 0; i < weight; i++) recent.push(now);

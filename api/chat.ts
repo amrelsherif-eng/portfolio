@@ -29,6 +29,9 @@ function respond(res: ChatResponse, statusCode: number, body: { reply: string })
 
 export default async function handler(req: ChatRequest, res: ChatResponse) {
   if (req.method !== "POST") return respond(res, 405, { reply: "Please send a chat message using POST." });
+  const contentLength = req.headers?.["content-length"];
+  const contentLengthValue = Array.isArray(contentLength) ? contentLength[0] : contentLength;
+  if (contentLengthValue && Number(contentLengthValue) > 16384) return respond(res, 413, { reply: "Please send a shorter chat message." });
   const hasGeminiKey = [runtime.process?.env.GEMINI_API_KEY, runtime.process?.env.GEMINI_API_KEY_2, runtime.process?.env.GEMINI_API_KEY_3].some((key) => key?.trim());
   if (!hasGeminiKey) return respond(res, 503, { reply: "Ping is offline right now — email amrelsherif.eng@gmail.com." });
 
@@ -39,6 +42,12 @@ export default async function handler(req: ChatRequest, res: ChatResponse) {
   // keep memory bounded: drop visitors with no requests in the current window
   if (requestLog.size > 2000) {
     for (const [key, times] of requestLog) if (!times.some((time) => now - time < WINDOW_MS)) requestLog.delete(key);
+  }
+  if (requestLog.size > 5000) {
+    for (const key of requestLog.keys()) {
+      requestLog.delete(key);
+      if (requestLog.size <= 4000) break;
+    }
   }
   const recent = (requestLog.get(ip) || []).filter((time) => now - time < WINDOW_MS);
   if (recent.length >= MAX_REQUESTS) {
@@ -52,7 +61,7 @@ export default async function handler(req: ChatRequest, res: ChatResponse) {
   if (typeof payload === "string") {
     try { payload = JSON.parse(payload); } catch { return respond(res, 400, { reply: "I couldn't read that message. Please try again." }); }
   }
-  if (!payload || typeof payload !== "object" || !Array.isArray((payload as { messages?: unknown }).messages)) {
+  if (!payload || typeof payload !== "object" || !Array.isArray((payload as { messages?: unknown }).messages) || (payload as { messages: unknown[] }).messages.length > 12) {
     return respond(res, 400, { reply: "Please send a valid chat message." });
   }
   const messages = ((payload as { messages: unknown[] }).messages).slice(-12);
