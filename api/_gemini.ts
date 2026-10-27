@@ -10,7 +10,7 @@ const runtime = globalThis as typeof globalThis & {
   clearTimeout: (id: unknown) => void;
 };
 
-export async function callGemini(contents: unknown[], systemInstruction: string, generationConfig: unknown, deadline?: Deadline): Promise<{ ok: true; json: unknown } | { ok: false; status: number }> {
+export async function callGemini(contents: unknown[], systemInstruction: string, generationConfig: unknown, deadline?: Deadline): Promise<{ ok: true; status: 200; json: unknown } | { ok: false; status: number; json?: undefined }> {
   const keys = [runtime.process?.env.GEMINI_API_KEY, runtime.process?.env.GEMINI_API_KEY_2, runtime.process?.env.GEMINI_API_KEY_3].filter((key): key is string => Boolean(key?.trim()));
   if (!keys.length) return { ok: false, status: 503 };
   const models = [...new Set([runtime.process?.env.GEMINI_MODEL, "gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-flash-lite-latest"].filter(Boolean) as string[])];
@@ -38,7 +38,7 @@ export async function callGemini(contents: unknown[], systemInstruction: string,
       if (response.status === 404 || response.status === 429 || response.status === 503 || response.status === 500) continue;
       return { ok: false, status: 502 };
     }
-    return { ok: true, json: await response.json() };
+    return { ok: true, status: 200, json: await response.json() };
     }
     if (!invalidKey && !quotaOnEveryModel) break;
   }
