@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { config } from "../config";
+import SubpageNav from "../components/SubpageNav";
 import "./MyWorks.css";
 
 const MyWorks = () => {
@@ -20,12 +21,8 @@ const MyWorks = () => {
 
   return (
     <div className="works-page" ref={containerRef}>
+      <SubpageNav />
       <header className="works-header">
-        <div className="works-back-wrap">
-          <Link to="/" className="works-back-btn" data-cursor="disable">
-            ← Back to Home
-          </Link>
-        </div>
         <h1 className="works-title">
           All <span>Works</span>
         </h1>

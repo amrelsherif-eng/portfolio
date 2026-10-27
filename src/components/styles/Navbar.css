@@ -106,7 +106,7 @@
     width: 100vw;
     height: 100%;
     transform: translateX(-50%);
-    background: rgba(10, 13, 16, 0.82);
+    background: rgba(10, 13, 16, 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);

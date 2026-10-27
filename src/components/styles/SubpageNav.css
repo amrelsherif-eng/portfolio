@@ -1,0 +1,112 @@
+.subpage-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  row-gap: 8px;
+  column-gap: 16px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto 32px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+}
+
+.subpage-nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.subpage-nav-home {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--monoFont);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+
+.subpage-nav-home:hover {
+  color: var(--accentColor);
+}
+
+.subpage-nav-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  gap: 8px;
+}
+
+.subpage-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 6px;
+  font-family: var(--monoFont);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.subpage-nav-link:hover {
+  color: var(--accentColor);
+}
+
+.subpage-nav-link.is-active,
+.subpage-nav-link[aria-current="page"] {
+  color: var(--accentColor);
+  font-weight: 600;
+}
+
+.subpage-nav-sep {
+  color: rgba(255, 255, 255, 0.25);
+  user-select: none;
+  font-family: var(--monoFont);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.subpage-nav-home:focus-visible,
+.subpage-nav-link:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Phone styles: wrap to second line under "← Home", right links stay on one line with smaller gap */
+@media only screen and (max-width: 640px) {
+  .subpage-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: 2px;
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+  }
+
+  .subpage-nav-right {
+    gap: 2px;
+    width: 100%;
+    justify-content: space-between;
+    overflow-x: visible;
+  }
+
+  .subpage-nav-home,
+  .subpage-nav-link {
+    font-size: 12px;
+    padding: 0 2px;
+  }
+
+  .subpage-nav-sep {
+    font-size: 11px;
+    padding: 0 1px;
+  }
+}

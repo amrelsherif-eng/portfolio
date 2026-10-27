@@ -3,6 +3,11 @@
   display: none;
 }
 
+/* Hero CTA row - hidden on desktop */
+.landing-cta-row {
+  display: none;
+}
+
 /* Remove mobile photo and ensure 3D character is always hidden on mobile */
 @media only screen and (max-width: 1024px) {
   .character-model {
@@ -18,7 +23,7 @@
     display: flex;
     flex-direction: column;
     padding: 0 15px;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
   }
 
   /* Fix spacing between name and subtitle */
@@ -70,7 +75,7 @@
     /* Space between name and subtitles */
     z-index: 10;
     background: transparent;
-    padding-bottom: 50px;
+    padding-bottom: 16px;
     /* Add bottom padding for scroll space */
     display: flex;
     flex-direction: column;
@@ -145,6 +150,60 @@
     height: auto;
     object-fit: contain;
     filter: drop-shadow(0 0 40px rgba(0, 240, 255, 0.4));
+  }
+
+  /* Hero CTA row (<= 1024px) */
+  .landing-cta-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 14px;
+    width: auto;
+  }
+
+  .landing-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 22px;
+    font-family: var(--monoFont);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .landing-cta-btn-primary {
+    background: var(--accentColor);
+    color: #061014 !important;
+    border: 1px solid var(--accentColor);
+  }
+
+  .landing-cta-btn-primary:hover {
+    color: #061014 !important;
+    box-shadow: 0 8px 28px rgba(0, 240, 255, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .landing-cta-btn-ghost {
+    background: transparent;
+    color: var(--accentColor) !important;
+    border: 1px solid rgba(0, 240, 255, 0.4);
+  }
+
+  .landing-cta-btn-ghost:hover {
+    color: var(--accentColor) !important;
+    background: rgba(0, 240, 255, 0.08);
+  }
+
+  .landing-cta-btn:focus-visible {
+    outline: 2px solid var(--accentColor);
+    outline-offset: 3px;
   }
 }
 
@@ -619,4 +678,13 @@
 .landing-intro .landing-hello,
 .landing-info .landing-info-h2 {
   font-family: "Space Grotesk", sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-cta-btn {
+    transition: none;
+  }
+  .landing-cta-btn-primary:hover {
+    transform: none;
+  }
 }

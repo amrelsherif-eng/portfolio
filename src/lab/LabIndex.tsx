@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SubpageNav from "../components/SubpageNav";
 import { labGames } from "./games";
 import "./lab.css";
 
@@ -8,7 +9,7 @@ function bestScore(id: string) {
 
 export default function LabIndex() {
   return <main className="lab-page">
-    <Link className="lab-back" to="/">← Back to home</Link>
+    <SubpageNav />
     <header className="lab-hero"><p className="lab-kicker">HANDS-ON LEARNING</p><h1>Network <span>Lab</span></h1><p>Short hands-on games from my learning path.</p></header>
     <section className="lab-grid" aria-label="Games">
       {labGames.map((game) => <Link className="lab-card" to={`/lab/${game.id}`} key={game.id}>

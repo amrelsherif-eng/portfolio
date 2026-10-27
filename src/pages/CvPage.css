@@ -8,26 +8,6 @@
   background-color: var(--backgroundColor);
 }
 
-/* back link (pill) */
-.cv-back {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 10px 32px;
-  font-family: var(--monoFont);
-  font-size: 0.88rem;
-  color: var(--accentColor);
-  border: 1.5px solid var(--accentColor);
-  border-radius: 999px;
-  text-decoration: none;
-  margin-bottom: 32px;
-  transition: background 0.25s ease;
-}
-.cv-back:hover {
-  background: rgba(0, 240, 255, 0.08);
-}
-
 /* page heading */
 .cv-page-title {
   font-family: "Space Grotesk", sans-serif;
@@ -706,7 +686,6 @@ html.scroll-locked body {
   .cv-row,
   .cv-row-radio,
   .cv-row-radio::after,
-  .cv-back,
   .cv-btn,
   .cv-pw-expand,
   .cv-viewer-close,
