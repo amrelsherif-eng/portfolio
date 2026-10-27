@@ -6,7 +6,8 @@ import "./lab.css";
 import SherifChat from "../components/SherifChat";
 
 type Stats = { best: number; attempts: number };
-function readStats(id: string): Stats { try { return JSON.parse(localStorage.getItem(`lab-stats-${id}`) || "null") || { best: 0, attempts: 0 }; } catch { return { best: 0, attempts: 0 }; } }
+const count = (v: unknown) => (Number.isInteger(v) && (v as number) >= 0 && (v as number) <= 1000000 ? (v as number) : 0);
+function readStats(id: string): Stats { try { const raw = JSON.parse(localStorage.getItem(`lab-stats-${id}`) || "null") as { best?: unknown; attempts?: unknown } | null; return { best: count(raw?.best), attempts: count(raw?.attempts) }; } catch { return { best: 0, attempts: 0 }; } }
 
 export default function GameShell() {
   const { id = "" } = useParams();

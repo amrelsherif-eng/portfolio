@@ -3,7 +3,7 @@ import { labGames } from "./games";
 import "./lab.css";
 
 function bestScore(id: string) {
-  try { return JSON.parse(localStorage.getItem(`lab-stats-${id}`) || "null")?.best as number | undefined; } catch { return undefined; }
+  try { const best: unknown = JSON.parse(localStorage.getItem(`lab-stats-${id}`) || "null")?.best; return Number.isInteger(best) && (best as number) >= 0 ? (best as number) : undefined; } catch { return undefined; }
 }
 
 export default function LabIndex() {
