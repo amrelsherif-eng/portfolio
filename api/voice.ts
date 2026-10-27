@@ -4,6 +4,8 @@ import { callGemini, isRateLimited } from "./_gemini.js";
 import { callGroqJson } from "./_groq.js";
 
 const env = (globalThis as typeof globalThis & { process?: { env: Record<string, string | undefined> } }).process?.env;
+const hallucinations = ["thank you", "thanks for watching", "thank you for watching", "you", "bye", "subscribe", "ترجمة نانسي قنقر", "اشتركوا في القناة", "شكرا", "شكرا لكم", "شكرا على المشاهدة", "موسيقى", "music"];
+const transcriptionPrompt = { ar: "عمرو، وريني مشاريعه، الشهادات، بيدرس ايه، السي في، التواصل، انزل تحت، اطلع فوق", en: "Amr, projects, certifications, tech stack, resume, contact, scroll down" };
 
 type Request = { method?: string; body?: unknown; headers?: Record<string, string | string[] | undefined>; ip?: string; socket?: { remoteAddress?: string } };
 type Response = { statusCode: number; setHeader: (name: string, value: string) => void; end: (body?: string) => void; status?: (code: number) => Response; json?: (body: unknown) => void };
@@ -60,6 +62,15 @@ function parseGroqModel(value: unknown, lang: "en" | "ar"): VoiceReply | null {
   if (item.action !== "scroll") delete item.direction;
   return parseModel({ candidates: [{ content: { parts: [{ text: JSON.stringify(item) }] } }] }, lang);
 }
+function cleanTranscript(value: string, lang: "en" | "ar"): string {
+  const transcript = value.trim().replace(/[.,!?،؛:؟\s]+$/g, "").trim();
+  const normalized = transcript.toLocaleLowerCase();
+  if (!transcript || hallucinations.some((item) => normalized === item) || normalized.includes("نانسي قنقر")) return "";
+  const words = transcript.replace(/[.,!?،؛:؟]/g, " ").toLocaleLowerCase().split(/\s+/).filter(Boolean);
+  const promptWords = transcriptionPrompt[lang].replace(/[.,!?،؛:؟]/g, " ").toLocaleLowerCase().split(/\s+/).filter(Boolean);
+  if (words.length >= 4 && words.filter((word) => promptWords.includes(word)).length / words.length > 0.7) return "";
+  return transcript;
+}
 
 export default async function handler(req: Request, res: Response) {
   const langFallback = (req.body as { lang?: unknown } | undefined)?.lang === "ar" ? "ar" : "en";
@@ -84,11 +95,11 @@ export default async function handler(req: Request, res: Response) {
     try {
       const form = new web.FormData();
       form.append("file", new web.Blob([bytes], { type: mime }), mime.includes("webm") ? "speech.webm" : `speech.${mime.split("/")[1]?.split(";")[0] || "bin"}`);
-      form.append("model", "whisper-large-v3-turbo"); form.append("language", lang); form.append("response_format", "json"); form.append("temperature", "0"); form.append("prompt", lang === "ar" ? "عمرو، وريني مشاريعه، الشهادات، بيدرس ايه، السي في، التواصل، انزل تحت، اطلع فوق" : "Amr, projects, certifications, tech stack, resume, contact, scroll down");
+      form.append("model", "whisper-large-v3-turbo"); form.append("language", lang); form.append("response_format", "verbose_json"); form.append("temperature", "0"); form.append("prompt", transcriptionPrompt[lang]);
       const response = await web.fetch("https://api.groq.com/openai/v1/audio/transcriptions", { method: "POST", headers: { Authorization: `Bearer ${env.GROQ_API_KEY}` }, body: form, signal: controller.signal });
-      if (response.ok) { const result = await response.json() as { text?: unknown }; transcript = typeof result.text === "string" ? result.text.trim() : ""; }
+      if (response.ok) { const result = await response.json() as { text?: unknown; segments?: Array<{ text?: unknown; no_speech_prob?: unknown; avg_logprob?: unknown }> }; transcript = Array.isArray(result.segments) ? result.segments.filter((segment) => typeof segment.no_speech_prob === "number" && segment.no_speech_prob < 0.6 && typeof segment.avg_logprob === "number" && segment.avg_logprob > -1.0).map((segment) => typeof segment.text === "string" ? segment.text : "").join(" ").trim() : typeof result.text === "string" ? result.text.trim() : ""; transcript = cleanTranscript(transcript, lang); }
     } catch { /* fall through to empty transcript */ } finally { web.clearTimeout(timer); }
-    if (!transcript) return respond(res, 200, { action: "none", reply: lang === "ar" ? "مسمعتش، جرّب تاني" : "I didn't catch that", transcript: "" });
+    if (!transcript) return respond(res, 200, { action: "none", reply: lang === "ar" ? "مسمعتش كويس، جرّب تاني وقرّب من المايك" : "I didn't catch that. Try again a little closer to the mic.", transcript: "" });
   }
   if (!transcript || transcript.length > 300) return respond(res, 400, { action: "none", reply: fallback(lang), transcript });
   if (!env?.GROQ_API_KEY && ![env?.GEMINI_API_KEY, env?.GEMINI_API_KEY_2, env?.GEMINI_API_KEY_3].some((key) => key?.trim())) return respond(res, 200, { action: "none", reply: fallback(lang), transcript });

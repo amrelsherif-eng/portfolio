@@ -1,6 +1,6 @@
 import { announce, goToSection, openPing, openResume, scrollByPx, SectionId } from "./actions";
 
-type VoiceStatus = "listening" | "heard" | "thinking" | "error" | "stopped";
+type VoiceStatus = "listening" | "heard" | "thinking" | "replied" | "error" | "stopped";
 type VoiceAction = { action: "goto" | "scroll" | "resume" | "chat" | "answer" | "none"; target?: SectionId; direction?: "up" | "down"; reply: string; transcript: string };
 export function isVoiceSupported(): boolean { return typeof navigator !== "undefined" && Boolean(navigator.mediaDevices?.getUserMedia) && typeof window !== "undefined" && typeof window.MediaRecorder !== "undefined"; }
 function executeCommand(transcript: string): boolean {
@@ -20,11 +20,12 @@ function speak(reply: string, lang: "en" | "ar") {
   const utterance = new SpeechSynthesisUtterance(reply); utterance.voice = voice; utterance.lang = voice.lang; window.speechSynthesis.speak(utterance);
 }
 export function startVoice(onStatus: (s: VoiceStatus, text?: string) => void, lang: "en" | "ar"): () => void {
-  let stream: MediaStream | undefined, recorder: MediaRecorder | undefined, context: AudioContext | undefined, raf = 0, silenceSince = 0, speechDetected = false, stopped = false, chunks: Blob[] = [];
+  let stream: MediaStream | undefined, recorder: MediaRecorder | undefined, context: AudioContext | undefined, raf = 0, silenceSince = 0, speechDetected = false, aboveThresholdMs = 0, noiseFloorTotal = 0, noiseFloorFrames = 0, threshold = 0.006, startedAt = 0, previousFrameAt = 0, stopped = false, shouldSend = false;
+  const chunks: Blob[] = [];
   let maxTimer: ReturnType<typeof setTimeout> | undefined;
   const cleanup = () => { if (maxTimer) clearTimeout(maxTimer); if (raf) cancelAnimationFrame(raf); if (recorder && recorder.state !== "inactive") recorder.stop(); stream?.getTracks().forEach((track) => track.stop()); void context?.close(); };
   const stop = () => { if (stopped) return; stopped = true; cleanup(); onStatus("stopped"); };
-  const finish = () => { if (stopped || !recorder || recorder.state === "inactive") return; stopped = true; if (maxTimer) clearTimeout(maxTimer); cancelAnimationFrame(raf); recorder.stop(); };
+  const finish = () => { if (stopped || !recorder || recorder.state === "inactive") return; stopped = true; shouldSend = speechDetected; if (maxTimer) clearTimeout(maxTimer); cancelAnimationFrame(raf); recorder.stop(); };
   const sendAudio = async (blob: Blob) => {
     cleanup();
     if (!blob.size) { onStatus("error", "No audio captured. Please try again."); return; }
@@ -33,7 +34,9 @@ export function startVoice(onStatus: (s: VoiceStatus, text?: string) => void, la
       const audio = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(new Error("Unable to read recording")); reader.onload = () => resolve(String(reader.result).split(",")[1] || ""); reader.readAsDataURL(blob); });
       const response = await fetch("/api/voice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ audio, mime: blob.type || "audio/webm", lang }) });
       const data = await response.json() as VoiceAction; if (response.status === 429) { onStatus("error", data.reply); return; } if (!response.ok) throw new Error("Voice request failed");
-      const transcript = data.transcript || ""; onStatus("heard", transcript);
+      const transcript = data.transcript || "";
+      if (!transcript.trim()) { onStatus("error", data.reply); return; }
+      onStatus("heard", transcript);
       if (!executeCommand(transcript)) {
         if (data.action === "goto" && data.target) goToSection(data.target);
         else if (data.action === "scroll") scrollByPx(data.direction === "up" ? -600 : 600);
@@ -41,7 +44,8 @@ export function startVoice(onStatus: (s: VoiceStatus, text?: string) => void, la
         else if (data.action === "answer") window.dispatchEvent(new CustomEvent("sherif:ask", { detail: transcript }));
         announce(data.reply); speak(data.reply, lang);
       }
-      setTimeout(() => onStatus("stopped"), 1800);
+      onStatus("replied", data.reply);
+      setTimeout(() => onStatus("stopped"), 4000);
     } catch { onStatus("error", lang === "ar" ? "حصلت مشكلة، جرّب تاني." : "Something went wrong. Please try again."); }
   };
   void (async () => {
@@ -51,10 +55,15 @@ export function startVoice(onStatus: (s: VoiceStatus, text?: string) => void, la
       const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : undefined;
       recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
       recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
-      recorder.onstop = () => { const blob = new Blob(chunks, { type: recorder?.mimeType || "audio/webm" }); void sendAudio(blob); };
+      recorder.onstop = () => { if (!shouldSend) return; const blob = new Blob(chunks, { type: recorder?.mimeType || "audio/webm" }); void sendAudio(blob); };
       context = new AudioContext(); const analyser = context.createAnalyser(); analyser.fftSize = 1024; context.createMediaStreamSource(stream).connect(analyser); const samples = new Float32Array(analyser.fftSize);
-      const monitor = () => { if (stopped) return; analyser.getFloatTimeDomainData(samples); let sum = 0; for (const value of samples) sum += value * value; const rms = Math.sqrt(sum / samples.length); const now = performance.now(); if (rms > 0.02) { speechDetected = true; silenceSince = 0; } else if (speechDetected) { if (!silenceSince) silenceSince = now; else if (now - silenceSince >= 1200) { finish(); return; } } raf = requestAnimationFrame(monitor); };
-      recorder.start(); onStatus("listening"); raf = requestAnimationFrame(monitor); maxTimer = setTimeout(finish, 7000);
+      const monitor = () => { if (stopped) return; analyser.getFloatTimeDomainData(samples); let sum = 0; for (const value of samples) sum += value * value; const rms = Math.sqrt(sum / samples.length); const now = performance.now(); const elapsed = now - startedAt; const frameMs = previousFrameAt ? now - previousFrameAt : 0; previousFrameAt = now;
+        if (elapsed <= 350) { noiseFloorTotal += rms; noiseFloorFrames++; threshold = Math.min(0.05, Math.max(0.006, (noiseFloorTotal / noiseFloorFrames) * 3)); }
+        else if (!speechDetected && rms > threshold) { aboveThresholdMs += frameMs; if (aboveThresholdMs >= 250) { speechDetected = true; silenceSince = 0; } }
+        else if (!speechDetected) aboveThresholdMs = Math.max(0, aboveThresholdMs - frameMs / 2);
+        if (speechDetected) { if (rms > threshold) silenceSince = 0; else { if (!silenceSince) silenceSince = now; else if (now - silenceSince >= 1200) { finish(); return; } } }
+        raf = requestAnimationFrame(monitor); };
+      recorder.start(); startedAt = performance.now(); onStatus("listening"); raf = requestAnimationFrame(monitor); maxTimer = setTimeout(() => { if (!speechDetected) { stopped = true; cleanup(); onStatus("error", lang === "ar" ? "مسمعتش حاجة. اتأكد من المايك واتكلم بصوت أعلى شوية." : "I didn't hear anything. Check your mic and speak a bit louder."); } else finish(); }, 8000);
     } catch (error) { stopped = true; cleanup(); const denied = error instanceof DOMException && error.name === "NotAllowedError"; onStatus("error", denied ? "Microphone permission denied. Allow mic access and try again." : "Microphone unavailable. Please try again."); }
   })();
   return stop;
