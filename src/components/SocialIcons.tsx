@@ -61,17 +61,17 @@ const SocialIcons = () => {
     <div className="icons-section">
       <div className="social-icons" data-cursor="icons" id="social">
         <span>
-          <a href={config.contact.github} target="_blank" rel="noopener noreferrer">
+          <a href={config.contact.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub (opens in a new tab)">
             <FaGithub />
           </a>
         </span>
         <span>
-          <a href={config.contact.linkedin} target="_blank" rel="noopener noreferrer">
+          <a href={config.contact.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn (opens in a new tab)">
             <FaLinkedinIn />
           </a>
         </span>
         <span>
-          <a href={config.contact.whatsapp} target="_blank" rel="noopener noreferrer">
+          <a href={config.contact.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp (opens in a new tab)">
             <FaWhatsapp />
           </a>
         </span>
