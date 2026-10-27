@@ -1,20 +1,74 @@
 import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
 import "./gesture.css";
-import { announce, clickAt, goToSection, moveCursor } from "./actions";
+import { announce, clickAt, moveCursor, scrollByPx } from "./actions";
 
 export type GestureStatus = "loading" | "ready" | "no-hand" | "error";
-
 type Point = { x: number; y: number };
-type Pose = "point" | "open palm";
+type Pose = "point" | "fist" | "open palm" | "other";
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 function fingerExtended(landmarks: Point[], tip: number, pip: number): boolean {
-  const wrist = landmarks[0];
-  return distance(landmarks[tip], wrist) > distance(landmarks[pip], wrist);
+  return distance(landmarks[tip], landmarks[0]) > distance(landmarks[pip], landmarks[0]);
 }
-function getPose(landmarks: Point[]): { pose: Pose; index: Point } {
-  const index = landmarks[8];
-  const open = [8, 12, 16, 20].every((tip, i) => fingerExtended(landmarks, tip, [6, 10, 14, 18][i]));
-  return { pose: open ? "open palm" : "point", index };
+function getPose(landmarks: Point[]): { pose: Pose; index: Point; pinch: number; palm: number } {
+  const tips = [8, 12, 16, 20];
+  const pips = [6, 10, 14, 18];
+  const extended = tips.map((tip, i) => fingerExtended(landmarks, tip, pips[i]));
+  const pose: Pose = extended[0] && extended.slice(1).every((v) => !v) ? "point"
+    : extended.every(Boolean) ? "open palm"
+      : extended.every((v) => !v) ? "fist" : "other";
+  return { pose, index: landmarks[8], pinch: distance(landmarks[4], landmarks[8]), palm: distance(landmarks[0], landmarks[9]) };
+}
+
+const guideMarkup = '<strong class="gesture-guide__title">Hand gestures</strong><div class="gesture-guide__row"><span>☝</span><span>Point</span><span>move the cursor</span></div><div class="gesture-guide__row"><span>🤏</span><span>Pinch</span><span>click</span></div><div class="gesture-guide__row"><span>✊</span><span>Fist + move</span><span>scroll</span></div><div class="gesture-guide__row"><span>✋</span><span>Open hand</span><span>rest</span></div><button type="button">Got it</button>';
+let openGuide: HTMLDivElement | undefined;
+let guideKeyHandler: ((event: KeyboardEvent) => void) | undefined;
+
+/** Show the gesture reference without loading or initializing MediaPipe. */
+export function showGestureGuide(): void {
+  if (openGuide?.isConnected) { openGuide.focus(); return; }
+  const guide = document.createElement("div");
+  guide.className = "gesture-guide";
+  guide.setAttribute("data-control-ui", "");
+  guide.setAttribute("data-cursor", "disable");
+  guide.setAttribute("role", "dialog");
+  guide.setAttribute("aria-label", "Hand gestures");
+  guide.tabIndex = -1;
+  guide.innerHTML = guideMarkup;
+  const preview = document.querySelector<HTMLElement>(".gesture-preview");
+  if (preview) {
+    guide.classList.add("gesture-guide--preview");
+    preview.append(guide);
+  } else document.body.append(guide);
+  const close = () => {
+    guide.remove();
+    if (openGuide === guide) openGuide = undefined;
+    if (guideKeyHandler) window.removeEventListener("keydown", guideKeyHandler);
+    guideKeyHandler = undefined;
+    try { localStorage.setItem("handsfree-guide-seen", "1"); } catch { /* storage may be unavailable */ }
+  };
+  guide.querySelector("button")?.addEventListener("click", close);
+  guideKeyHandler = (event: KeyboardEvent) => { if (event.key === "Escape") close(); };
+  window.addEventListener("keydown", guideKeyHandler);
+  openGuide = guide;
+  guide.focus();
+}
+
+class OneEuroFilter {
+  private value?: number;
+  private derivative = 0;
+  private time?: number;
+  constructor(private readonly minCutoff = 1, private readonly beta = 0.02, private readonly derivativeCutoff = 1) {}
+  private alpha(cutoff: number, dt: number): number { const tau = 1 / (2 * Math.PI * cutoff); return 1 / (1 + tau / dt); }
+  filter(value: number, time: number): number {
+    if (this.value === undefined || this.time === undefined) { this.value = value; this.time = time; return value; }
+    const dt = Math.max(0.001, (time - this.time) / 1000);
+    const rawDerivative = (value - this.value) / dt;
+    this.derivative += this.alpha(this.derivativeCutoff, dt) * (rawDerivative - this.derivative);
+    this.value += this.alpha(this.minCutoff + this.beta * Math.abs(this.derivative), dt) * (value - this.value);
+    this.time = time;
+    return this.value;
+  }
+  reset(): void { this.value = undefined; this.time = undefined; this.derivative = 0; }
 }
 
 export async function startGesture(onStatus: (s: GestureStatus, detail?: string) => void): Promise<() => void> {
@@ -22,6 +76,7 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
   let stream: MediaStream | undefined;
   let landmarker: HandLandmarker | undefined;
   let frame = 0;
+  let momentumFrame = 0;
   let stopped = false;
   let lastVideoTime = -1;
   let lastHandTime = performance.now();
@@ -29,54 +84,54 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
   let stablePose: Pose | null = null;
   let stableFrames = 0;
   let activePose: Pose | null = null;
-  let smoothX = 0;
-  let smoothY = 0;
+  let cursorX = 0;
+  let cursorY = 0;
   let cursorInitialized = false;
+  const filterX = new OneEuroFilter();
+  const filterY = new OneEuroFilter();
   let dwellStarted = 0;
   let dwellPoint: Point | null = null;
   let dwellLatched = false;
-  let flickOrigin: { y: number; at: number } | null = null;
-  let lastJump = -Infinity;
+  let pinching = false;
+  let lastClick = -Infinity;
+  let lastHandY: number | undefined;
+  let scrollVelocity = 0;
+  const customCursor = document.querySelector<HTMLElement>(".cursor-main");
+  const originalCursorVisibility = customCursor?.style.visibility ?? "";
   const dwellRadius = 28;
-  const dwellDuration = 900;
-  const sections = ["top", "about", "work", "techstack", "certifications", "contact"] as const;
+  const dwellDuration = 1200;
 
   const wrapper = document.createElement("div");
   wrapper.className = "gesture-preview";
   wrapper.setAttribute("data-control-ui", "");
+  wrapper.setAttribute("data-cursor", "disable");
   const video = document.createElement("video");
   video.className = "gesture-preview__video";
   video.width = 160; video.height = 120; video.autoplay = true; video.muted = true; video.playsInline = true;
   const canvas = document.createElement("canvas");
   canvas.className = "gesture-preview__canvas"; canvas.width = 160; canvas.height = 120;
   const label = document.createElement("span");
-  label.className = "gesture-preview__label"; label.textContent = "Waiting for hand";
-  wrapper.append(video, canvas, label);
+  label.className = "gesture-preview__label";
+  label.setAttribute("aria-live", "polite");
+  const help = document.createElement("button");
+  help.type = "button"; help.className = "gesture-preview__help"; help.textContent = "?";
+  help.setAttribute("aria-label", "Show gesture guide"); help.setAttribute("data-control-ui", ""); help.setAttribute("data-cursor", "disable");
+  help.addEventListener("click", showGestureGuide);
+  wrapper.append(video, canvas, label, help);
 
   const ring = document.createElement("div");
-  ring.className = "gesture-dwell-ring"; ring.setAttribute("data-control-ui", "");
+  ring.className = "gesture-dwell-ring"; ring.setAttribute("data-control-ui", ""); ring.setAttribute("data-cursor", "disable");
   ring.innerHTML = '<svg viewBox="0 0 44 44" aria-hidden="true"><circle class="gesture-dwell-ring__track" cx="22" cy="22" r="19"/><circle class="gesture-dwell-ring__progress" cx="22" cy="22" r="19"/></svg>';
   ring.hidden = true;
   document.body.append(ring);
-
-  let guideTimer: ReturnType<typeof setTimeout> | undefined;
-  let guide: HTMLDivElement | undefined;
-  try {
-    if (localStorage.getItem("handsfree-guide-seen") !== "1") {
-      guide = document.createElement("div");
-      guide.className = "gesture-guide"; guide.setAttribute("data-control-ui", "");
-      guide.innerHTML = '<div>☝ Point to move — hold still on a button to click</div><div>✋ Flick your open hand up / down to change section</div><button type="button">Got it</button>';
-      const dismiss = () => { if (!guide) return; guide.remove(); guide = undefined; try { localStorage.setItem("handsfree-guide-seen", "1"); } catch { /* storage may be unavailable */ } };
-      guide.querySelector("button")?.addEventListener("click", dismiss);
-      wrapper.append(guide);
-      guideTimer = setTimeout(() => { guide?.remove(); guide = undefined; }, 12000);
-    }
-  } catch { /* storage may be unavailable */ }
-
+  const hideDwell = () => { ring.hidden = true; dwellStarted = 0; dwellPoint = null; dwellLatched = false; };
   const cleanup = () => {
     if (stopped) return;
-    stopped = true; cancelAnimationFrame(frame); if (guideTimer) clearTimeout(guideTimer);
-    stream?.getTracks().forEach((track) => track.stop()); landmarker?.close(); wrapper.remove(); ring.remove(); guide?.remove();
+    stopped = true; cancelAnimationFrame(frame); cancelAnimationFrame(momentumFrame);
+    stream?.getTracks().forEach((track) => track.stop()); landmarker?.close(); wrapper.remove(); ring.remove();
+    if (openGuide?.isConnected) { openGuide.classList.remove("gesture-guide--preview"); document.body.append(openGuide); }
+    if (customCursor) customCursor.style.visibility = originalCursorVisibility;
+    // A guide opened by the user is intentionally left available after stopping.
   };
 
   try {
@@ -88,6 +143,7 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
       stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
     }
     video.srcObject = stream; document.body.append(wrapper); await video.play();
+    try { if (localStorage.getItem("handsfree-guide-seen") !== "1") showGestureGuide(); } catch { showGestureGuide(); }
     const vision = await FilesetResolver.forVisionTasks("/mediapipe/wasm");
     try {
       landmarker = await HandLandmarker.createFromOptions(vision, { baseOptions: { modelAssetPath: "/mediapipe/hand_landmarker.task", delegate: "GPU" }, runningMode: "VIDEO", numHands: 1 });
@@ -100,71 +156,81 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
       if (stopped) return;
       frame = requestAnimationFrame(tick);
       if (!landmarker || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || video.currentTime === lastVideoTime) {
-        if (!noHandSent && performance.now() - lastHandTime >= 1500) { noHandSent = true; onStatus("no-hand"); label.textContent = "No hand"; }
+        if (!noHandSent && performance.now() - lastHandTime >= 1500) { noHandSent = true; onStatus("no-hand"); label.textContent = "No hand"; hideDwell(); }
         return;
       }
       lastVideoTime = video.currentTime;
-      const result = landmarker.detectForVideo(video, performance.now());
+      const now = performance.now();
+      const result = landmarker.detectForVideo(video, now);
       ctx?.clearRect(0, 0, canvas.width, canvas.height);
       const landmarks = result.landmarks[0] as Point[] | undefined;
       if (!landmarks) {
-        if (!noHandSent && performance.now() - lastHandTime >= 1500) { noHandSent = true; onStatus("no-hand"); label.textContent = "No hand"; }
+        if (!noHandSent && now - lastHandTime >= 1500) { noHandSent = true; onStatus("no-hand"); }
+        label.textContent = "No hand"; hideDwell(); pinching = false; lastHandY = undefined;
+        if (customCursor) customCursor.style.visibility = "hidden";
         return;
       }
-      lastHandTime = performance.now();
+      lastHandTime = now;
       if (noHandSent) onStatus("ready"); noHandSent = false;
-      const { pose, index } = getPose(landmarks);
-      if (pose === stablePose) stableFrames += 1; else { stablePose = pose; stableFrames = 1; }
-      if (stableFrames >= 3) activePose = stablePose;
-      label.textContent = pose;
+      const { pose, index, pinch, palm } = getPose(landmarks);
       if (ctx) { ctx.fillStyle = "#00f0ff"; for (const point of landmarks) { ctx.beginPath(); ctx.arc((1 - point.x) * canvas.width, point.y * canvas.height, 2, 0, Math.PI * 2); ctx.fill(); } }
 
-      // Ignore outer 15% of camera image, mirror horizontal movement, and retain the central 70% mapping.
+      const pinchDistance = palm > 0 ? pinch / palm : 1;
+      const pinchStarted = !pinching && pinchDistance < 0.28;
+      if (pinching && pinchDistance > 0.42) pinching = false;
+      else if (pinchStarted) pinching = true;
+      // Pinch from pointing is immediate; it does not wait for pose debounce.
+      if (pinching && activePose === "point") {
+        if (pinchStarted && now - lastClick >= 400) { if (clickAt(cursorX, cursorY)) announce("Click"); lastClick = now; }
+        ring.hidden = false; ring.style.left = `${cursorX - 22}px`; ring.style.top = `${cursorY - 22}px`;
+        ring.classList.add("is-pinching"); ring.style.setProperty("--pinch-strength", String(Math.max(0, Math.min(1, 1 - pinchDistance / 0.42))));
+      } else ring.classList.remove("is-pinching");
+
+      if (pose === stablePose) stableFrames += 1; else { stablePose = pose; stableFrames = 1; }
+      if (stableFrames >= 4) activePose = stablePose;
+      const current = pinching && activePose === "point" ? "🤏 Click" : activePose === "point" ? "☝ Move" : activePose === "fist" ? "✊ Scroll" : activePose === "open palm" ? "✋ Resting" : "No hand";
+      label.textContent = current;
+
+      // Ignore outer 15% of camera image, mirror horizontal movement, retaining current mapping.
       const targetX = Math.min(1, Math.max(0, (0.85 - index.x) / 0.7)) * window.innerWidth;
       const targetY = Math.min(1, Math.max(0, (index.y - 0.15) / 0.7)) * window.innerHeight;
       if (activePose === "point") {
-        if (!cursorInitialized) { smoothX = targetX; smoothY = targetY; cursorInitialized = true; }
-        smoothX += (targetX - smoothX) * 0.35; smoothY += (targetY - smoothY) * 0.35;
-        moveCursor(smoothX, smoothY);
-        const hit = document.elementFromPoint(smoothX, smoothY);
-        const target = hit?.closest<HTMLElement>("a, button, [role='button'], input, summary, [tabindex]");
-        const clickable = !!target && !target.closest("[data-control-ui]");
-        const now = performance.now();
-        if (!clickable) { dwellStarted = 0; ring.hidden = true; if (!dwellLatched) dwellPoint = null; }
-        else if (dwellLatched) {
-          if (!dwellPoint || distance({ x: smoothX, y: smoothY }, dwellPoint) > dwellRadius) { dwellLatched = false; dwellStarted = now; dwellPoint = { x: smoothX, y: smoothY }; }
-        } else if (!dwellPoint || distance({ x: smoothX, y: smoothY }, dwellPoint) > dwellRadius) {
-          dwellStarted = now; dwellPoint = { x: smoothX, y: smoothY };
-        }
-        if (clickable && !dwellLatched && dwellPoint) {
-          const progress = Math.min(1, (now - dwellStarted) / dwellDuration);
-          ring.hidden = false; ring.style.left = `${smoothX - 22}px`; ring.style.top = `${smoothY - 22}px`;
-          ring.style.setProperty("--dwell-progress", String(progress));
-          if (progress >= 1 && clickAt(smoothX, smoothY)) { dwellLatched = true; ring.hidden = true; announce("Click"); }
-        }
-      } else {
-        ring.hidden = true; dwellStarted = 0; dwellPoint = null; dwellLatched = false;
-      }
-
-      const now = performance.now();
-      if (activePose === "open palm") {
-        const y = landmarks[9].y;
-        if (!flickOrigin || now - flickOrigin.at > 400) flickOrigin = { y, at: now };
-        else if (now - lastJump >= 1200 && Math.abs(y - flickOrigin.y) > 0.18) {
-          const currentY = window.innerHeight * 0.4;
-          const currentIndex = sections.reduce((found, section, i) => {
-            const el = document.querySelector<HTMLElement>(section === "top" ? "#landingDiv" : `#${section}`);
-            return el && el.getBoundingClientRect().top <= currentY ? i : found;
-          }, 0);
-          const destination = Math.max(0, Math.min(sections.length - 1, currentIndex + (y < flickOrigin.y ? -1 : 1)));
-          if (destination !== currentIndex && goToSection(sections[destination])) {
-            lastJump = now;
-            const names: Record<(typeof sections)[number], string> = { top: "Top", about: "About", work: "Work", techstack: "Tech Stack", certifications: "Certifications", contact: "Contact" };
-            announce(names[sections[destination]]);
+        if (customCursor) customCursor.style.visibility = originalCursorVisibility;
+        if (!pinching) {
+          if (!cursorInitialized) { cursorX = targetX; cursorY = targetY; cursorInitialized = true; }
+          cursorX = filterX.filter(targetX, now); cursorY = filterY.filter(targetY, now);
+          moveCursor(cursorX, cursorY);
+          const hit = document.elementFromPoint(cursorX, cursorY);
+          const target = hit?.closest<HTMLElement>("a, button, [role='button'], input, summary, [tabindex]");
+          const clickable = !!target && !target.closest("[data-control-ui]");
+          if (!clickable) { dwellStarted = 0; ring.hidden = true; dwellPoint = null; }
+          else if (!dwellPoint || distance({ x: cursorX, y: cursorY }, dwellPoint) > dwellRadius) { dwellStarted = now; dwellPoint = { x: cursorX, y: cursorY }; dwellLatched = false; }
+          if (clickable && !dwellLatched && dwellPoint) {
+            const progress = Math.min(1, (now - dwellStarted) / dwellDuration);
+            ring.hidden = false; ring.style.left = `${cursorX - 22}px`; ring.style.top = `${cursorY - 22}px`;
+            ring.style.setProperty("--dwell-progress", String(progress));
+            if (progress >= 1 && clickAt(cursorX, cursorY)) { dwellLatched = true; ring.hidden = true; announce("Click"); }
           }
-          flickOrigin = { y, at: now };
         }
-      } else flickOrigin = null;
+        lastHandY = undefined;
+      } else if (activePose === "fist") {
+        if (customCursor) customCursor.style.visibility = "hidden";
+        hideDwell();
+        const y = landmarks[9].y;
+        if (lastHandY !== undefined) {
+          scrollVelocity = scrollVelocity * 0.65 + (-(y - lastHandY) * window.innerHeight * 2.5) * 0.35;
+          scrollByPx(scrollVelocity, false);
+        }
+        lastHandY = y;
+      } else {
+        if (customCursor) customCursor.style.visibility = "hidden";
+        hideDwell(); lastHandY = undefined;
+        if (activePose === "open palm") { pinching = false; cursorInitialized = false; filterX.reset(); filterY.reset(); }
+      }
+      if (!pinching && activePose !== "fist" && Math.abs(scrollVelocity) > 1) {
+        scrollVelocity *= 0.92;
+        scrollByPx(scrollVelocity, false);
+      } else if (Math.abs(scrollVelocity) <= 1) scrollVelocity = 0;
     };
     frame = requestAnimationFrame(tick);
     return cleanup;
