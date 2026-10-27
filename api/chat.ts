@@ -1,4 +1,4 @@
-import { systemInstruction } from "./knowledge";
+import { systemInstruction } from "./knowledge.js"; // .js: Vercel runs these as native ES modules, which need the extension
 
 type ChatMessage = { role: "user" | "model"; text: string };
 type ChatRequest = { method?: string; body?: unknown; headers?: Record<string, string | string[] | undefined>; ip?: string; socket?: { remoteAddress?: string } };

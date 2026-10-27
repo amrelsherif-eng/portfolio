@@ -1,4 +1,4 @@
-import { config } from "../src/config";
+import { config } from "../src/config.js"; // .js: needed for native ES modules on Vercel
 
 const extraFacts = `
 Name: Amr Elsherif (Arabic: عمرو الشريف), nickname Sherif / シャリーフ. Final-year B.Eng. Electronics & Communications Engineering, Damanhour University, Sep 2022 – Jul 2027, GPA 3.47/4.00. Based in Alexandria, Egypt; open to Alexandria, Cairo, remote.
