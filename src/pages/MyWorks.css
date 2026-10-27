@@ -1,16 +1,13 @@
 .works-page {
-  height: 100vh;
-  height: 100svh;
-  overflow-y: auto;
+  min-height: 100vh;
+  min-height: 100svh;
   overflow-x: hidden;
   background-color: #0a0d10;
   color: #e6edf3;
   padding: 80px 48px 120px;
   box-sizing: border-box;
-  -webkit-overflow-scrolling: touch;
   width: 100%;
 }
-
 @media screen and (max-width: 699px) {
   .works-page {
     padding: 40px 24px 80px;
@@ -317,6 +314,7 @@
 .works-lab-link:focus-visible {
   color: #00f0ff;
 }
+@media (max-width: 1024px) { .works-page { padding-bottom: 112px; } }
 .works-lab-link:focus-visible {
   outline: 2px solid #00f0ff;
   outline-offset: 3px;

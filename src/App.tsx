@@ -15,10 +15,12 @@ const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const SherifChat = lazy(() => import("./components/SherifChat"));
 import { LoadingProvider } from "./context/LoadingProvider";
 import GlobalControlDock from "./components/control/GlobalControlDock";
+import RouteMeta from "./components/RouteMeta";
 
 const App = () => {
   return (
     <BrowserRouter>
+      <RouteMeta />
       <Suspense fallback={null}>
         <SherifChat />
       </Suspense>

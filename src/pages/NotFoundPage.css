@@ -189,3 +189,5 @@
     transform: none !important;
   }
 }
+@media (max-width: 1024px) { .nf-page { padding-bottom: 112px; } }
+@media (max-width: 1024px) { .nf-page { padding-bottom: 112px; } }

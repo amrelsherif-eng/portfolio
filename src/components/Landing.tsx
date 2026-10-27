@@ -7,8 +7,14 @@ const ROLES = ["Network", "Cloud", "Systems"];
 const Landing = ({ children }: PropsWithChildren) => {
   const [role, setRole] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setRole((r) => (r + 1) % ROLES.length), 2800);
-    return () => clearInterval(id);
+    let interval = 0;
+    const delay = window.setTimeout(() => {
+      interval = window.setInterval(() => setRole((r) => (r + 1) % ROLES.length), 2800);
+    }, 3000);
+    return () => {
+      window.clearTimeout(delay);
+      window.clearInterval(interval);
+    };
   }, []);
   const nameParts = config.developer.fullName.split(" ");
   const firstName = nameParts[0] || config.developer.name;
@@ -41,6 +47,10 @@ const Landing = ({ children }: PropsWithChildren) => {
           <div className="mobile-photo">
             <img
               src="/images/profile.webp"
+              srcSet="/images/profile-400.webp 400w, /images/profile-800.webp 800w, /images/profile.webp 900w"
+              sizes="(max-width: 1024px) 322px, 0px"
+              width={900}
+              height={900}
               alt="Amr Elsherif"
               loading="eager"
               fetchPriority="high"

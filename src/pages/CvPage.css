@@ -216,7 +216,7 @@
 .cv-draft-tag {
   font-family: var(--monoFont);
   font-size: 12px;
-  color: #666;
+  color: #9aa4ad;
   border: 1px solid #444;
   border-radius: 999px;
   padding: 2px 8px;
@@ -624,6 +624,7 @@ html.scroll-locked body {
 
 /* ── responsive: tablet + phone (≤ 1024px) ────────────────── */
 @media (max-width: 1024px) {
+  .cv-page { padding-bottom: 112px; }
   .cv-body {
     grid-template-columns: 1fr;
     max-width: 600px;
@@ -721,3 +722,4 @@ html.scroll-locked body {
     animation: none;
   }
 }
+@media (max-width: 1024px) { .cv-page { padding-bottom: 112px; } }
