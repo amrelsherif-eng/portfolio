@@ -8,9 +8,7 @@ const CharacterModel = lazy(() => import("./components/Character"));
 const MainContainer = lazy(() => import("./components/MainContainer"));
 const MyWorks = lazy(() => import("./pages/MyWorks"));
 const CertificationsPage = lazy(() => import("./pages/CertificationsPage"));
-// Full CV page (3 versions) returns when the real CVs are ready:
-// const CvPage = lazy(() => import("./pages/CvPage"));
-const CvTempPage = lazy(() => import("./pages/CvTempPage"));
+const CvPage = lazy(() => import("./pages/CvPage"));
 import { LoadingProvider } from "./context/LoadingProvider";
 
 const App = () => {
@@ -51,7 +49,7 @@ const App = () => {
           path="/resume"
           element={
             <Suspense fallback={null}>
-              <CvTempPage />
+              <CvPage />
             </Suspense>
           }
         />
