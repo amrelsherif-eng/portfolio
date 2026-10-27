@@ -1,5 +1,9 @@
+// Env: GROQ_API_KEY (primary, free at console.groq.com), GEMINI_API_KEY (fallback)
 import { knowledge } from "./knowledge.js";
 import { callGemini, isRateLimited } from "./_gemini.js";
+import { callGroqJson } from "./_groq.js";
+
+const env = (globalThis as typeof globalThis & { process?: { env: Record<string, string | undefined> } }).process?.env;
 
 type Request = { method?: string; body?: unknown; headers?: Record<string, string | string[] | undefined>; ip?: string; socket?: { remoteAddress?: string } };
 type Response = { statusCode: number; setHeader: (name: string, value: string) => void; end: (body?: string) => void; status?: (code: number) => Response; json?: (body: unknown) => void };
@@ -44,6 +48,11 @@ function parseModel(value: unknown, lang: "en" | "ar"): VoiceReply | null {
   if (lang === "ar" ? !/[\u0600-\u06FF]/.test(reply) : /[\u0600-\u06FF]/.test(reply)) return null;
   return { action: item.action as Action, ...(item.target ? { target: item.target as VoiceReply["target"] } : {}), ...(item.direction ? { direction: item.direction as VoiceReply["direction"] } : {}), reply };
 }
+function parseGroqModel(value: unknown, lang: "en" | "ar"): VoiceReply | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const item = value as Record<string, unknown>;
+  return parseModel({ candidates: [{ content: { parts: [{ text: JSON.stringify(item) }] } }] }, lang);
+}
 
 export default async function handler(req: Request, res: Response) {
   const langFallback = (req.body as { lang?: unknown } | undefined)?.lang === "ar" ? "ar" : "en";
@@ -54,7 +63,13 @@ export default async function handler(req: Request, res: Response) {
   if (!payload || typeof payload !== "object") return respond(res, 400, { action: "none", reply: fallback(langFallback) });
   const { text, lang } = payload as { text?: unknown; lang?: unknown };
   if (typeof text !== "string" || !text.trim() || text.length > 300 || (lang !== "en" && lang !== "ar")) return respond(res, 400, { action: "none", reply: fallback(langFallback) });
-  const instruction = `${catalogue}\n\nThe requested reply language is ${lang === "ar" ? "Egyptian Arabic" : "English"}.\n\nKNOWLEDGE:\n${knowledge}`;
+  if (!env?.GROQ_API_KEY && !env?.GEMINI_API_KEY) return respond(res, 200, { action: "none", reply: fallback(lang) });
+  const instruction = `Reply ONLY with a JSON object with keys action, target, direction, reply. Allowed action values: goto, scroll, resume, chat, answer, none. Allowed target values: top, about, work, techstack, certifications, contact. Allowed direction values: up, down. ${catalogue}\n\nThe requested reply language is ${lang === "ar" ? "Egyptian Arabic" : "English"}.\n\nKNOWLEDGE:\n${knowledge}`;
+  if (env?.GROQ_API_KEY) {
+    const groq = await callGroqJson(instruction, text.trim(), { temperature: 0.2, max_tokens: 300 });
+    const validatedGroq = parseGroqModel(groq, lang);
+    if (validatedGroq) return respond(res, 200, validatedGroq);
+  }
   const result = await callGemini([{ role: "user", parts: [{ text: text.trim() }] }], instruction, { temperature: 0.2, maxOutputTokens: 1024, responseMimeType: "application/json", responseSchema: schema });
   if (!result.ok) return respond(res, result.status, { action: "none", reply: fallback(lang) });
   const validated = parseModel(result.json, lang);
