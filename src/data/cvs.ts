@@ -12,7 +12,17 @@ export type CvVersion = {
   recommended?: boolean;
   updated: string;
   draft?: boolean; // true = placeholder file, shown with a small "Draft" note
+  filename: string; // shown in the preview window bar
+  emphasis: { roles: string; leadProject: string; keySkills: string; bestFor: string }; // comparison table
 };
+
+// row labels for the comparison table, in display order
+export const emphasisRows: { key: keyof CvVersion["emphasis"]; label: string }[] = [
+  { key: "roles", label: "Target roles" },
+  { key: "leadProject", label: "Lead project" },
+  { key: "keySkills", label: "Key skills" },
+  { key: "bestFor", label: "Best for" },
+];
 
 export const cvs: CvVersion[] = [
   {
@@ -27,6 +37,13 @@ export const cvs: CvVersion[] = [
     recommended: true,
     updated: "Oct 2026",
     draft: true,
+    filename: "Amr-Elsherif-Network-Cloud.pdf",
+    emphasis: {
+      roles: "Network, NOC, Cloud, SysAdmin, Junior DevOps",
+      leadProject: "Li-Fi graduation project (design phase)",
+      keySkills: "CCNA track, AWS (2 Academy badges), Linux, subnetting, VPC",
+      bestFor: "ISPs, telecoms, cloud and infrastructure teams",
+    },
   },
   {
     id: "embedded-ece",
@@ -39,6 +56,13 @@ export const cvs: CvVersion[] = [
     preview: "/images/cv/embedded-ece.webp",
     updated: "Oct 2026",
     draft: true,
+    filename: "Amr-Elsherif-Embedded-ECE.pdf",
+    emphasis: {
+      roles: "Embedded, IoT, Instrumentation & Control",
+      leadProject: "WeatherLink (ESP32-S3 + Flutter, team project)",
+      keySkills: "ESP32, Raspberry Pi, C / C++, PID tuning, calibration",
+      bestFor: "Industrial, IoT and hardware teams",
+    },
   },
   {
     id: "mobile-apps",
@@ -51,5 +75,12 @@ export const cvs: CvVersion[] = [
     preview: "/images/cv/mobile-apps.webp",
     updated: "Oct 2026",
     draft: true,
+    filename: "Amr-Elsherif-Mobile-Apps.pdf",
+    emphasis: {
+      roles: "Flutter developer, team lead",
+      leadProject: "DevSync (led the 5-member team)",
+      keySkills: "Flutter, Dart, Firebase, BLoC, REST APIs",
+      bestFor: "Product and app teams",
+    },
   },
 ];

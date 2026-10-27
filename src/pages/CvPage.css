@@ -1,14 +1,14 @@
 /* ── CV chooser page ──────────────────────────────────────── */
 
 .cv-page {
-  max-width: 1160px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 80px 40px 120px;
   min-height: 100vh;
   background-color: var(--backgroundColor);
 }
 
-/* back link (pill, matches .certs-back) */
+/* back link (pill) */
 .cv-back {
   display: inline-flex;
   align-items: center;
@@ -43,105 +43,135 @@
   font-family: "Inter", sans-serif;
   font-size: 1rem;
   color: #aaa;
+  margin-bottom: 12px;
+}
+.cv-page-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--monoFont);
+  font-size: 0.8rem;
+  color: #888;
   margin-bottom: 48px;
+  line-height: 1.45;
+}
+.cv-note-icon {
+  flex-shrink: 0;
+  color: var(--accentColor);
 }
 
-/* ── card grid ────────────────────────────────────────────── */
-.cv-grid {
+/* ── two-column body ─────────────────────────────────────── */
+.cv-body {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  grid-template-columns: 5fr 7fr;
+  gap: 32px;
+  margin-bottom: 64px;
 }
 
-/* ── card ─────────────────────────────────────────────────── */
-.cv-card {
-  position: relative;
+/* ── left: selector ──────────────────────────────────────── */
+.cv-selector {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+.cv-row {
+  display: grid;
+  grid-template-columns: 20px 28px 1fr auto;
+  gap: 12px;
+  align-items: start;
+  padding: 16px 18px;
   background: transparent;
   border: 1px solid #363636;
   border-radius: 10px;
-  padding: 20px;
-  transition: border-color 0.25s ease;
-}
-.cv-card:hover {
-  border-color: var(--accentColor);
-}
-
-/* recommended variant */
-.cv-card--recommended {
-  border-color: rgba(0, 240, 255, 0.35);
-}
-.cv-recommended-pill {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2; /* above the preview image */
-  background: var(--backgroundColor);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  font-family: var(--monoFont);
-  font-size: 12px;
-  color: var(--accentColor);
-  border: 1px solid var(--accentColor);
-  border-radius: 999px;
-  padding: 3px 10px;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-/* ── preview image frame ──────────────────────────────────── */
-.cv-preview-btn {
-  display: block;
-  width: 100%;
-  padding: 0;
-  margin: 0 0 16px;
-  background: none;
-  border: none;
   cursor: pointer;
-  border-radius: 6px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  min-height: 44px;
 }
-.cv-preview-frame {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 17 / 22;
-  overflow: hidden;
-  border-radius: 6px;
-  border: 1px solid #363636;
-  transition: border-color 0.25s ease;
+.cv-row:hover {
+  border-color: #555;
 }
-.cv-preview-btn:hover .cv-preview-frame,
-.cv-preview-btn:focus-visible .cv-preview-frame {
+.cv-row:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 2px;
+}
+.cv-row--selected {
   border-color: var(--accentColor);
-}
-.cv-preview-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-  display: block;
+  background: rgba(0, 240, 255, 0.05);
 }
 
-/* ── card text ────────────────────────────────────────────── */
-.cv-card-role {
-  font-family: var(--monoFont);
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 4px;
-  letter-spacing: 0.02em;
+/* radio dot */
+.cv-row-radio {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #555;
+  border-radius: 50%;
+  margin-top: 3px;
+  box-sizing: border-box;
+  position: relative;
+  transition: border-color 0.2s ease;
 }
-.cv-card-title {
+.cv-row-radio::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accentColor);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.cv-row--selected .cv-row-radio {
+  border-color: var(--accentColor);
+}
+.cv-row--selected .cv-row-radio::after {
+  opacity: 1;
+}
+
+/* mono index */
+.cv-row-index {
+  font-family: var(--monoFont);
+  font-size: 13px;
+  color: #555;
+  margin-top: 2px;
+}
+.cv-row--selected .cv-row-index {
+  color: var(--accentColor);
+}
+
+/* row body */
+.cv-row-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.cv-row-title {
   font-family: "Space Grotesk", sans-serif;
   font-size: 1.2rem;
   font-weight: 600;
   color: #fff;
-  margin-bottom: 8px;
+  margin: 0;
 }
-.cv-card-summary {
+.cv-row-role {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: #888;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+.cv-row-summary {
   font-family: "Inter", sans-serif;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   color: #aaa;
-  line-height: 1.55;
-  margin-bottom: 12px;
+  line-height: 1.5;
+  margin: 4px 0 6px;
 }
 
 /* focus tags */
@@ -149,7 +179,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 16px;
 }
 .cv-focus-tag {
   font-family: var(--monoFont);
@@ -162,18 +191,27 @@
   white-space: nowrap;
 }
 
-/* meta line */
-.cv-meta {
+/* row meta (right side) */
+.cv-row-meta {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  white-space: nowrap;
 }
 .cv-updated {
   font-family: var(--monoFont);
   font-size: 12px;
   color: #ffb300;
-  white-space: nowrap;
+}
+.cv-recommended-pill {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: var(--accentColor);
+  border: 1px solid var(--accentColor);
+  border-radius: 999px;
+  padding: 3px 10px;
+  line-height: 1;
 }
 .cv-draft-tag {
   font-family: var(--monoFont);
@@ -183,15 +221,119 @@
   border-radius: 999px;
   padding: 2px 8px;
   line-height: 1;
-  white-space: nowrap;
 }
 
-/* ── action buttons ───────────────────────────────────────── */
-.cv-actions {
+/* ── right: preview window ───────────────────────────────── */
+.cv-preview-window {
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #363636;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1a1a1a;
+  align-self: start;
+}
+
+/* top bar */
+.cv-pw-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #363636;
+  background: var(--backgroundColor);
+}
+.cv-pw-dots {
+  display: flex;
+  gap: 6px;
+}
+.cv-pw-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #363636;
+}
+.cv-pw-filename {
+  flex: 1;
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: #888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cv-pw-expand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px 12px;
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: #888;
+  background: transparent;
+  border: 1px solid #363636;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.cv-pw-expand:hover,
+.cv-pw-expand:focus-visible {
+  border-color: var(--accentColor);
+  color: var(--accentColor);
+}
+
+/* canvas area (holds all images for cross-fade) */
+.cv-pw-canvas {
+  position: relative;
+  width: 100%;
+  max-height: calc(100vh - 260px);
+  aspect-ratio: 17 / 22;
+  background: #222;
+  overflow: hidden;
+}
+.cv-pw-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  user-select: none;
+  pointer-events: none;
+}
+.cv-pw-img--active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* bottom status bar */
+.cv-pw-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-top: 1px solid #363636;
+  background: var(--backgroundColor);
+  flex-wrap: wrap;
+}
+.cv-pw-status-text {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+}
+.cv-pw-actions {
   display: flex;
   gap: 10px;
-  margin-top: auto;
 }
+
+/* ── action buttons (shared) ─────────────────────────────── */
 .cv-btn {
   display: inline-flex;
   align-items: center;
@@ -227,7 +369,177 @@
   color: var(--accentColor);
 }
 
-/* ── CV preview viewer (lightbox) ─────────────────────────── */
+/* ── comparison section ──────────────────────────────────── */
+.cv-comparison {
+  margin-top: 0;
+}
+.cv-comparison-heading {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 24px;
+}
+
+/* ── comparison table ────────────────────────────────────── */
+.cv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  table-layout: fixed;
+}
+.cv-table-caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cv-table-corner {
+  width: 20%;
+}
+
+.cv-table-colhead {
+  padding: 12px 14px;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: #ccc;
+  text-align: left;
+  border-bottom: 1px solid #363636;
+  vertical-align: bottom;
+}
+.cv-table-colhead--active {
+  background: rgba(0, 240, 255, 0.04);
+}
+.cv-table-colbtn {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 4px 2px;
+  border-radius: 4px;
+  min-height: 44px;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+.cv-table-colbtn:hover {
+  color: var(--accentColor);
+}
+.cv-table-colbtn:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 2px;
+}
+.cv-table-colhead--active .cv-table-colbtn {
+  color: var(--accentColor);
+}
+.cv-table-rec {
+  display: block;
+  font-family: var(--monoFont);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--accentColor);
+  line-height: 1;
+}
+
+.cv-table-rowlabel {
+  padding: 12px 14px;
+  font-family: var(--monoFont);
+  font-size: 13px;
+  font-weight: 400;
+  color: #888;
+  text-align: left;
+  border-bottom: 1px solid #363636;
+  vertical-align: top;
+}
+
+.cv-table-cell {
+  padding: 12px 14px;
+  color: #bbb;
+  border-bottom: 1px solid #363636;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.cv-table-cell--active {
+  background: rgba(0, 240, 255, 0.04);
+}
+
+/* ── stacked cards (phone only) ──────────────────────────── */
+.cv-cards-stack {
+  display: none;
+}
+.cv-stack-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid #363636;
+  border-radius: 10px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  width: 100%;
+  min-height: 44px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.cv-stack-card:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 2px;
+}
+.cv-stack-card--active {
+  border-color: var(--accentColor);
+  background: rgba(0, 240, 255, 0.05);
+}
+
+.cv-stack-card-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cv-stack-dl {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin: 0;
+}
+.cv-stack-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cv-stack-pair dt {
+  font-family: var(--monoFont);
+  font-size: 12px;
+  color: #888;
+}
+.cv-stack-pair dd {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: #bbb;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── CV preview viewer (full-size lightbox) ───────────────── */
 .cv-viewer-overlay {
   position: fixed;
   inset: 0;
@@ -304,42 +616,101 @@
   color: #888;
 }
 
-/* scroll lock (same rule as Certifications.css — duplicated so CvPage is self-contained) */
+/* scroll lock */
 html.scroll-locked,
 html.scroll-locked body {
   overflow: hidden !important;
 }
 
-/* ── responsive: tablet (≤1024px) ─────────────────────────── */
+/* ── responsive: tablet + phone (≤ 1024px) ────────────────── */
 @media (max-width: 1024px) {
-  .cv-grid {
+  .cv-body {
     grid-template-columns: 1fr;
-    max-width: 480px;
-    margin: 0 auto;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cv-preview-window {
+    position: static;
+  }
+
+  .cv-pw-canvas {
+    max-height: 70vh;
+  }
+
+  .cv-row {
+    grid-template-columns: 20px 28px 1fr auto;
+  }
+
+  .cv-comparison {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
-/* ── responsive: phone (≤640px) ───────────────────────────── */
+/* ── responsive: phone (≤ 640px) ──────────────────────────── */
 @media (max-width: 640px) {
   .cv-page {
     padding: 60px 20px 80px;
   }
-  .cv-actions {
-    flex-direction: column;
+
+  /* selector row collapses index + meta under body */
+  .cv-row {
+    grid-template-columns: 20px 1fr;
+    gap: 8px 10px;
   }
+  .cv-row-index {
+    display: none;
+  }
+  .cv-row-meta {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-top: 4px;
+  }
+
+  .cv-pw-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .cv-pw-status {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* hide table, show stacked cards */
+  .cv-table {
+    display: none;
+  }
+  .cv-cards-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .cv-viewer-close {
     top: 8px;
     right: 8px;
   }
 }
 
-/* ── reduced motion ───────────────────────────────────────── */
+/* ── reduced motion ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .cv-card,
+  .cv-row,
+  .cv-row-radio,
+  .cv-row-radio::after,
   .cv-back,
-  .cv-preview-frame,
   .cv-btn,
-  .cv-viewer-close {
+  .cv-pw-expand,
+  .cv-viewer-close,
+  .cv-stack-card,
+  .cv-table-colbtn {
+    transition: none;
+  }
+  .cv-pw-img {
     transition: none;
   }
   .cv-viewer-overlay {
