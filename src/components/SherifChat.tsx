@@ -4,7 +4,7 @@ import "./styles/SherifChat.css";
 
 type Message = { role: "user" | "model"; text: string; isError?: boolean };
 const suggestions = ["What is Amr working on now?", "Show me his projects", "How can I contact him?"];
-const welcome: Message = { role: "model", text: "Hi! I'm Sherif — ask me about Amr's skills, projects or experience.\nأهلاً! أنا شريف، اسألني عن خبرات عمرو ومشاريعه." };
+const welcome: Message = { role: "model", text: "Hi! I'm Ping — ask me about Amr's skills, projects or experience.\nأهلاً! أنا Ping، اسألني عن خبرات عمرو ومشاريعه." };
 const GENERIC_ERROR = "Sorry, I couldn't connect right now. Please try again, or email amrelsherif.eng@gmail.com.";
 
 export default function SherifChat() {
@@ -70,20 +70,20 @@ export default function SherifChat() {
   };
 
   return <>
-    <button className="sherif-launcher" type="button" aria-label="Chat with Sherif" aria-expanded={open} onClick={() => setOpen((value) => !value)} data-cursor="disable">
+    <button className="sherif-launcher" type="button" aria-label="Chat with Ping" aria-expanded={open} onClick={() => setOpen((value) => !value)} data-cursor="disable">
       <TbRobot aria-hidden="true" /><span className="sherif-pulse" />
     </button>
     {open && <>
       <div className="sherif-backdrop" onClick={() => setOpen(false)} />
-      <section className="sherif-panel" ref={panelRef} role="dialog" aria-label="Chat with Sherif" aria-modal="false">
-      <header className="sherif-header"><div><span className="sherif-online" /><span>Sherif <i>·</i> Amr's assistant</span></div>
+      <section className="sherif-panel" ref={panelRef} role="dialog" aria-label="Chat with Ping" aria-modal="false">
+      <header className="sherif-header"><div><span className="sherif-online" /><span>Ping <i>·</i> Amr's assistant</span></div>
         <button type="button" className="sherif-close" aria-label="Close chat" onClick={() => setOpen(false)} data-cursor="disable">×</button></header>
       <div className="sherif-messages" ref={listRef} aria-live="polite">
         {messages.map((message, index) => <div className={`sherif-message sherif-${message.role}${message.isError ? " sherif-error" : ""}`} key={`${index}-${message.role}`}>{message.text.split("\n").map((line, i) => <p dir="auto" key={i}>{line}</p>)}</div>)}
         {messages.length === 1 && <div className="sherif-suggestions">{suggestions.map((suggestion) => <button type="button" key={suggestion} onClick={() => void send(suggestion)} data-cursor="disable">{suggestion}</button>)}</div>}
-        {pending && <div className="sherif-message sherif-model sherif-typing" aria-label="Sherif is typing"><span /><span /><span /></div>}
+        {pending && <div className="sherif-message sherif-model sherif-typing" aria-label="Ping is typing"><span /><span /><span /></div>}
       </div>
-      <form className="sherif-form" onSubmit={submit}><textarea ref={inputRef} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={keyDown} placeholder="Message Sherif…" rows={1} maxLength={800} aria-label="Your message" data-cursor="disable" />
+      <form className="sherif-form" onSubmit={submit}><textarea ref={inputRef} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={keyDown} placeholder="Message Ping…" rows={1} maxLength={800} aria-label="Your message" data-cursor="disable" />
         <button type="submit" disabled={pending || !draft.trim()} aria-label="Send message" data-cursor="disable">Send</button></form>
       <div className="sherif-meta">Answers use information from Amr's portfolio</div>
     </section>

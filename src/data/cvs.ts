@@ -1,5 +1,6 @@
 // The three CV versions offered on /resume.
 // TEMPORARY: all three point to the same LinkedIn-export PDF until the real CVs are made.
+// TODO BEFORE PUSH: the preview images are placeholders (old CVs with banned items) — replace with the new CVs.
 export type CvVersion = {
   id: string;
   title: string;

@@ -31,7 +31,7 @@ function respond(res: ChatResponse, statusCode: number, body: { reply: string })
 export default async function handler(req: ChatRequest, res: ChatResponse) {
   if (req.method !== "POST") return respond(res, 405, { reply: "Please send a chat message using POST." });
   const key = runtime.process?.env.GEMINI_API_KEY;
-  if (!key) return respond(res, 503, { reply: "Sherif is offline right now — email amrelsherif.eng@gmail.com." });
+  if (!key) return respond(res, 503, { reply: "Ping is offline right now — email amrelsherif.eng@gmail.com." });
 
   // On Vercel the socket address is the proxy; the visitor's IP is the first x-forwarded-for entry.
   const fwd = req.headers?.["x-forwarded-for"];
@@ -98,7 +98,7 @@ export default async function handler(req: ChatRequest, res: ChatResponse) {
       g.clearTimeout(timer);
       if (!response.ok) {
         if (response.status === 404 || response.status === 429 || response.status === 503 || response.status === 500) continue;
-        return respond(res, 502, { reply: "Sherif couldn't answer just now. Please try again shortly." });
+        return respond(res, 502, { reply: "Ping couldn't answer just now. Please try again shortly." });
       }
       const result = await response.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
       // the chat shows plain text, so drop any markdown bold/bullets the model still adds
@@ -106,8 +106,8 @@ export default async function handler(req: ChatRequest, res: ChatResponse) {
         .replace(/\*\*(.+?)\*\*/g, "$1").replace(/^\s*[*-]\s+/gm, "• ").trim();
       return respond(res, 200, { reply: reply || "I don't have an answer for that right now. You can email Amr at amrelsherif.eng@gmail.com." });
     }
-    return respond(res, 503, { reply: "Sherif is very busy right now. Please try again in a minute, or email amrelsherif.eng@gmail.com." });
+    return respond(res, 503, { reply: "Ping is very busy right now. Please try again in a minute, or email amrelsherif.eng@gmail.com." });
   } catch {
-    return respond(res, 502, { reply: "Sherif couldn't connect just now. Please try again shortly." });
+    return respond(res, 502, { reply: "Ping couldn't connect just now. Please try again shortly." });
   }
 }
