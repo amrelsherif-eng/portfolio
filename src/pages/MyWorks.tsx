@@ -35,6 +35,7 @@ const MyWorks = () => {
       </header>
 
       <main className="works-grid-container">
+        <Link to="/lab" className="works-lab-link">Network Lab — play the mini-games →</Link>
         <div className="works-grid">
           {config.projects.map((project, index) => {
             const formattedIndex = String(index + 1).padStart(2, "0");
