@@ -697,6 +697,10 @@ html.scroll-locked body {
   }
 }
 
+@media (max-width: 480px) {
+  .cv-page { padding-bottom: 96px; }
+}
+
 /* ── reduced motion ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .cv-row,

@@ -485,6 +485,11 @@
   }
 }
 
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  .what-content p,
+  .what-tags { font-size: 12px; }
+}
+
 /* ---- What I Do (desktop): three cards need more room than the template's two ---- */
 @media only screen and (min-width: 1025px) {
   .what-box-in {

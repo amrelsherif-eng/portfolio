@@ -1,11 +1,11 @@
 /* Hands-free Control Dock */
 .control-dock-launcher {
   position: fixed;
-  right: 96px;
-  bottom: 96px;
+  right: 20px;
+  bottom: 78px;
   z-index: 9000;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -49,8 +49,8 @@
 /* Control Dock Panel (300px width, 16px padding, 16px radius, dark glass) */
 .control-dock-panel {
   position: fixed;
-  right: 28px;
-  bottom: 164px;
+  right: 80px;
+  bottom: 20px;
   z-index: 10001;
   width: 300px;
   box-sizing: border-box;
@@ -332,8 +332,8 @@
 /* Toast notification pill */
 .control-dock-toast {
   position: fixed;
-  right: 96px;
-  bottom: 160px;
+  right: 80px;
+  bottom: 20px;
   z-index: 10002;
   padding: 7px 14px;
   border-radius: 20px;
@@ -352,9 +352,6 @@
   -webkit-backdrop-filter: blur(12px);
 }
 
-.control-dock-toast.is-panel-open {
-  bottom: 430px;
-}
 
 @keyframes controlDockToastFade {
   from {

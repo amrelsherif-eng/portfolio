@@ -45,6 +45,9 @@
   font-size: 13px;
   letter-spacing: 0.2px;
 }
+.navbar-resume { display: inline-block; padding: 8px 14px; border: 1px solid rgba(0,240,255,.55); border-radius: 999px; color: var(--accentColor); font: 13px var(--monoFont); letter-spacing: 2px; white-space: nowrap; transition: background-color .2s ease; }
+.navbar-resume:hover { background: rgba(0,240,255,.1); }
+@media only screen and (max-width: 1024px) { .navbar-resume-item { display: none; } }
 @media only screen and (min-width: 500px) {
   .header {
     padding: 20px 0px;
@@ -110,6 +113,9 @@
     z-index: -1;
   }
 }
+@media only screen and (min-width: 1025px) {
+  .header::before { content: ""; position: absolute; left: 50%; top: 0; width: 100vw; height: 100%; transform: translateX(-50%); background: rgba(10, 13, 16, 0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.06); z-index: -1; }
+}
 @media only screen and (max-width: 499px) {
   /* links were stacked vertically on top of the hero name */
   .header ul {
@@ -135,5 +141,18 @@
     display: inline-block;
     padding: 13px 2px;
     margin: -3px -2px;
+  }
+}
+
+/* The RESUME pill adds a 4th nav item: tighten the gaps so the links never reach the centred email,
+   and drop the email where there is no room (it is still in Contact). */
+@media only screen and (min-width: 1200px) and (max-width: 1599px) {
+  .header ul {
+    column-gap: 40px;
+  }
+}
+@media only screen and (min-width: 1025px) and (max-width: 1279px) {
+  .navbar-connect {
+    display: none;
   }
 }
