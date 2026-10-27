@@ -25,6 +25,9 @@ const CallToAction = () => {
             View CV
           </Link>
         </div>
+        <Link to="/lab" className="cta-terminal-hint" data-cursor="disable">
+          $ ./network-lab — play 3 short networking games →
+        </Link>
       </div>
     </section>
   );
