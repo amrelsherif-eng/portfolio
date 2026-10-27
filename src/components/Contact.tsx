@@ -4,6 +4,7 @@ import { config } from "../config";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -76,9 +77,9 @@ const Contact = () => {
             </p>
             <div className="contact-label">Resume</div>
             <p>
-              <a href="/cv/Amr-Elsherif-CV.pdf" target="_blank" rel="noopener noreferrer" data-cursor="disable">
-                Download CV (PDF)
-              </a>
+              <Link to="/resume" data-cursor="disable">
+                Choose a CV →
+              </Link>
             </p>
             <div className="contact-label">Location</div>
             <p>

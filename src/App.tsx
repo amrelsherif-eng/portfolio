@@ -8,6 +8,7 @@ const CharacterModel = lazy(() => import("./components/Character"));
 const MainContainer = lazy(() => import("./components/MainContainer"));
 const MyWorks = lazy(() => import("./pages/MyWorks"));
 const CertificationsPage = lazy(() => import("./pages/CertificationsPage"));
+const CvPage = lazy(() => import("./pages/CvPage"));
 import { LoadingProvider } from "./context/LoadingProvider";
 
 const App = () => {
@@ -41,6 +42,14 @@ const App = () => {
           element={
             <Suspense fallback={null}>
               <CertificationsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/resume"
+          element={
+            <Suspense fallback={null}>
+              <CvPage />
             </Suspense>
           }
         />
