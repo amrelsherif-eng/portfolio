@@ -101,26 +101,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-top: 24px;
+  gap: 8px;
+  margin-top: 28px;
   min-height: 44px;
-  padding: 6px 14px;
+  padding: 10px 22px;
   font-family: var(--monoFont);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.6);
+  color: #00f0ff;
+  background: rgba(0, 240, 255, 0.06);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-radius: 999px;
   text-decoration: none;
   letter-spacing: 0.03em;
   box-sizing: border-box;
-  border-radius: 6px;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   max-width: 100%;
   text-align: center;
   word-break: break-word;
 }
 
 .cta-terminal-hint:hover {
-  color: #00f0ff;
+  background: rgba(0, 240, 255, 0.12);
+  border-color: #00f0ff;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.25);
 }
 
 .cta-terminal-hint:focus-visible {
