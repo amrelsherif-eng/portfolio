@@ -1,7 +1,7 @@
 // Gemini keys: GEMINI_API_KEY, GEMINI_API_KEY_2, GEMINI_API_KEY_3 (the latter two are optional).
 import type { Deadline } from "./_budget.js";
-type RequestLike = { headers?: Record<string, string | string[] | undefined>; ip?: string; socket?: { remoteAddress?: string } };
 type GeminiResponse = { ok: boolean; status?: number; json: () => Promise<unknown> };
+export { isRateLimited } from "./_ratelimit.js";
 const runtime = globalThis as typeof globalThis & {
   process?: { env: Record<string, string | undefined> };
   fetch: (url: string, init: { method: string; headers: Record<string, string>; body: string }) => Promise<GeminiResponse>;
@@ -9,28 +9,6 @@ const runtime = globalThis as typeof globalThis & {
   setTimeout: (fn: () => void, ms: number) => unknown;
   clearTimeout: (id: unknown) => void;
 };
-
-const requestLog = new Map<string, number[]>();
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_REQUESTS = 20;
-
-export function isRateLimited(req: RequestLike, weight = 1, bucket = "chat", max = MAX_REQUESTS): boolean {
-  const first = (h: string | string[] | undefined) => (Array.isArray(h) ? h[0] : h)?.split(",")[0].trim();
-  const ip = `${bucket}:${first(req.headers?.["x-real-ip"]) || first(req.headers?.["x-forwarded-for"]) || req.ip || req.socket?.remoteAddress || "unknown"}`;
-  const now = Date.now();
-  if (requestLog.size > 2000) for (const [key, times] of requestLog) if (!times.some((time) => now - time < WINDOW_MS)) requestLog.delete(key);
-  if (requestLog.size > 5000) {
-    for (const key of requestLog.keys()) {
-      requestLog.delete(key);
-      if (requestLog.size <= 4000) break;
-    }
-  }
-  const recent = (requestLog.get(ip) || []).filter((time) => now - time < WINDOW_MS);
-  if (recent.length + weight > max) { requestLog.set(ip, recent); return true; }
-  for (let i = 0; i < weight; i++) recent.push(now);
-  requestLog.set(ip, recent);
-  return false;
-}
 
 export async function callGemini(contents: unknown[], systemInstruction: string, generationConfig: unknown, deadline?: Deadline): Promise<{ ok: true; json: unknown } | { ok: false; status: number }> {
   const keys = [runtime.process?.env.GEMINI_API_KEY, runtime.process?.env.GEMINI_API_KEY_2, runtime.process?.env.GEMINI_API_KEY_3].filter((key): key is string => Boolean(key?.trim()));
