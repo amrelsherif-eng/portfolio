@@ -10,6 +10,7 @@ import WhatIDo from "./WhatIDo";
 import Work from "./Work";
 import TechStackNew from "./TechStackNew";
 import Certifications from "./Certifications";
+import MottoBand from "./MottoBand";
 import CallToAction from "./CallToAction";
 import setSplitText from "./utils/splitText";
 import SherifChat from "./SherifChat";
@@ -76,6 +77,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
         <Work />
         <TechStackNew />
         <Certifications />
+        <MottoBand />
         <CallToAction />
         <Contact />
       </div>
