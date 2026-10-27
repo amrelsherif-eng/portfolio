@@ -95,6 +95,10 @@ export default function ControlDock() {
         const stop = await startGesture((status, detail) => {
           if (!gestureWantedRef.current) return;
           setGestureStatus(detail ? `${status}: ${detail}` : status);
+          if (status === "error") {
+            gestureWantedRef.current = false;
+            setGestureActive(false);
+          }
         });
         if (!gestureWantedRef.current) {
           stop();

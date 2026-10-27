@@ -1,6 +1,6 @@
 .gesture-preview {
   position: fixed;
-  left: 24px;
+  left: 104px; /* clear of the social icons column */
   bottom: 24px;
   width: 160px;
   height: 120px;
