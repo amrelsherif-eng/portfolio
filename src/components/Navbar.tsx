@@ -37,14 +37,14 @@ const Navbar = () => {
 
     // Handle navigation links
     // Only in-page section links; route links (RESUME) must navigate normally.
-    let links = document.querySelectorAll(".header ul a[data-href]");
+    const links = document.querySelectorAll(".header ul a[data-href]");
     links.forEach((elem) => {
-      let element = elem as HTMLAnchorElement;
+      const element = elem as HTMLAnchorElement;
       element.addEventListener("click", (e) => {
         if (window.innerWidth > 1024) {
           e.preventDefault();
-          let elem = e.currentTarget as HTMLAnchorElement;
-          let section = elem.getAttribute("data-href");
+          const elem = e.currentTarget as HTMLAnchorElement;
+          const section = elem.getAttribute("data-href");
           if (section && lenis) {
             const target = document.querySelector(section) as HTMLElement;
             if (target) {

@@ -144,13 +144,6 @@ export default function ControlDock() {
     }
   };
 
-  if (!isDesktop) return null;
-
-  const isAnyActive = gestureActive || voiceActive;
-  const isThinking = voiceActive && voiceStatus.toLowerCase().includes("thinking");
-  const isListening = voiceActive && !isThinking;
-  const isIdle = !gestureActive && !voiceActive && !gestureStatus && !voiceStatus;
-
   const statusText = useMemo(() => {
     if (voiceStatus) return voiceStatus;
     if (gestureStatus) return gestureStatus;
@@ -158,6 +151,13 @@ export default function ControlDock() {
     if (gestureActive) return "Gestures active";
     return voiceLang === "ar" ? 'جرّب: "وريني مشاريعه"' : 'Try: "show me his projects"';
   }, [voiceStatus, gestureStatus, voiceActive, gestureActive, voiceLang]);
+
+  if (!isDesktop) return null;
+
+  const isAnyActive = gestureActive || voiceActive;
+  const isThinking = voiceActive && voiceStatus.toLowerCase().includes("thinking");
+  const isListening = voiceActive && !isThinking;
+  const isIdle = !gestureActive && !voiceActive && !gestureStatus && !voiceStatus;
 
   return (
     <>
