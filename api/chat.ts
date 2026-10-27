@@ -1,4 +1,5 @@
 import { systemInstruction } from "./knowledge.js"; // .js: Vercel runs these as native ES modules, which need the extension
+import { callGemini } from "./_gemini.js";
 
 type ChatMessage = { role: "user" | "model"; text: string };
 type ChatRequest = { method?: string; body?: unknown; headers?: Record<string, string | string[] | undefined>; ip?: string; socket?: { remoteAddress?: string } };
@@ -13,10 +14,8 @@ type ChatResponse = {
 const requestLog = new Map<string, number[]>();
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_REQUESTS = 20;
-type GeminiResponse = { ok: boolean; status?: number; json: () => Promise<unknown> };
 const runtime = globalThis as typeof globalThis & {
   process?: { env: Record<string, string | undefined> };
-  fetch: (url: string, init: { method: string; headers: Record<string, string>; body: string }) => Promise<GeminiResponse>;
 };
 
 function respond(res: ChatResponse, statusCode: number, body: { reply: string }) {
@@ -30,8 +29,8 @@ function respond(res: ChatResponse, statusCode: number, body: { reply: string })
 
 export default async function handler(req: ChatRequest, res: ChatResponse) {
   if (req.method !== "POST") return respond(res, 405, { reply: "Please send a chat message using POST." });
-  const key = runtime.process?.env.GEMINI_API_KEY;
-  if (!key) return respond(res, 503, { reply: "Ping is offline right now — email amrelsherif.eng@gmail.com." });
+  const hasGeminiKey = [runtime.process?.env.GEMINI_API_KEY, runtime.process?.env.GEMINI_API_KEY_2, runtime.process?.env.GEMINI_API_KEY_3].some((key) => key?.trim());
+  if (!hasGeminiKey) return respond(res, 503, { reply: "Ping is offline right now — email amrelsherif.eng@gmail.com." });
 
   // Prefer x-real-ip: Vercel's proxy sets it itself, so visitors can't spoof it to dodge the rate limit.
   const first = (h: string | string[] | undefined) => (Array.isArray(h) ? h[0] : h)?.split(",")[0].trim();
@@ -70,47 +69,17 @@ export default async function handler(req: ChatRequest, res: ChatResponse) {
     return respond(res, 400, { reply: "Please send a valid chat message." });
   }
 
-  // Try the configured model first, then fall back if one is busy (503/429) or retired (404).
-  const models = [...new Set([runtime.process?.env.GEMINI_MODEL, "gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-flash-lite-latest"].filter(Boolean) as string[])];
-  const g = globalThis as unknown as {
-    AbortController: new () => { signal: unknown; abort(): void };
-    setTimeout: (fn: () => void, ms: number) => unknown;
-    clearTimeout: (id: unknown) => void;
-  };
-  const Abort = g.AbortController;
   try {
-    for (const model of models) {
-      const controller = new Abort();
-      const timer = g.setTimeout(() => controller.abort(), 12000); // never leave the visitor waiting forever
-      let response: GeminiResponse & { status?: number };
-      try {
-        response = await runtime.fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: systemInstruction }] },
-            contents: contents.map(({ role, text }) => ({ role, parts: [{ text }] })),
-            // the model's hidden "thinking" counts toward this limit: keep it roomy so replies are never cut off
-            generationConfig: { temperature: 0.4, maxOutputTokens: 4096 },
-          }),
-          signal: controller.signal,
-        } as Parameters<typeof runtime.fetch>[1]);
-      } catch {
-        g.clearTimeout(timer);
-        continue; // timeout / network error -> next model
-      }
-      g.clearTimeout(timer);
-      if (!response.ok) {
-        if (response.status === 404 || response.status === 429 || response.status === 503 || response.status === 500) continue;
-        return respond(res, 502, { reply: "Ping couldn't answer just now. Please try again shortly." });
-      }
-      const result = await response.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
+    const result = await callGemini(contents.map(({ role, text }) => ({ role, parts: [{ text }] })), systemInstruction, { temperature: 0.4, maxOutputTokens: 4096 });
+    if (!result.ok) {
+      if (result.status === 502) return respond(res, 502, { reply: "Ping couldn't answer just now. Please try again shortly." });
+      return respond(res, 503, { reply: "Ping is very busy right now. Please try again in a minute, or email amrelsherif.eng@gmail.com." });
+    }
+    const resultJson = result.json as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
       // the chat shows plain text, so drop any markdown bold/bullets the model still adds
-      const reply = result.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("")
+      const reply = resultJson.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("")
         .replace(/\*\*(.+?)\*\*/g, "$1").replace(/^\s*[*-]\s+/gm, "• ").trim();
       return respond(res, 200, { reply: reply || "I don't have an answer for that right now. You can email Amr at amrelsherif.eng@gmail.com." });
-    }
-    return respond(res, 503, { reply: "Ping is very busy right now. Please try again in a minute, or email amrelsherif.eng@gmail.com." });
   } catch {
     return respond(res, 502, { reply: "Ping couldn't connect just now. Please try again shortly." });
   }

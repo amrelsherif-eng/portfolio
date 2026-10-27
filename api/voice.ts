@@ -64,7 +64,7 @@ export default async function handler(req: Request, res: Response) {
   if (!payload || typeof payload !== "object") return respond(res, 400, { action: "none", reply: fallback(langFallback) });
   const { text, lang } = payload as { text?: unknown; lang?: unknown };
   if (typeof text !== "string" || !text.trim() || text.length > 300 || (lang !== "en" && lang !== "ar")) return respond(res, 400, { action: "none", reply: fallback(langFallback) });
-  if (!env?.GROQ_API_KEY && !env?.GEMINI_API_KEY) return respond(res, 200, { action: "none", reply: fallback(lang) });
+  if (!env?.GROQ_API_KEY && ![env?.GEMINI_API_KEY, env?.GEMINI_API_KEY_2, env?.GEMINI_API_KEY_3].some((key) => key?.trim())) return respond(res, 200, { action: "none", reply: fallback(lang) });
   const instruction = `Reply ONLY with a JSON object with keys action, target, direction, reply. Allowed action values: goto, scroll, resume, chat, answer, none. Allowed target values: top, about, work, techstack, certifications, contact. Allowed direction values: up, down. ${catalogue}\n${answerRule}\n\nThe requested reply language is ${lang === "ar" ? "Egyptian Arabic" : "English"}.\n\nKNOWLEDGE:\n${knowledge}`;
   if (env?.GROQ_API_KEY) {
     const groq = await callGroqJson(instruction, text.trim(), { temperature: 0.2, max_tokens: 300 });

@@ -1,3 +1,4 @@
+// Gemini keys: GEMINI_API_KEY, GEMINI_API_KEY_2, GEMINI_API_KEY_3 (the latter two are optional).
 type RequestLike = { headers?: Record<string, string | string[] | undefined>; ip?: string; socket?: { remoteAddress?: string } };
 type GeminiResponse = { ok: boolean; status?: number; json: () => Promise<unknown> };
 const runtime = globalThis as typeof globalThis & {
@@ -25,10 +26,12 @@ export function isRateLimited(req: RequestLike): boolean {
 }
 
 export async function callGemini(contents: unknown[], systemInstruction: string, generationConfig: unknown): Promise<{ ok: true; json: unknown } | { ok: false; status: number }> {
-  const key = runtime.process?.env.GEMINI_API_KEY;
-  if (!key) return { ok: false, status: 503 };
+  const keys = [runtime.process?.env.GEMINI_API_KEY, runtime.process?.env.GEMINI_API_KEY_2, runtime.process?.env.GEMINI_API_KEY_3].filter((key): key is string => Boolean(key?.trim()));
+  if (!keys.length) return { ok: false, status: 503 };
   const models = [...new Set([runtime.process?.env.GEMINI_MODEL, "gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-flash-lite-latest"].filter(Boolean) as string[])];
-  for (const model of models) {
+  for (const key of keys) {
+    let quotaOnEveryModel = true;
+    for (const model of models) {
     const controller = new runtime.AbortController();
     const timer = runtime.setTimeout(() => controller.abort(), 12000);
     let response: GeminiResponse;
@@ -38,13 +41,16 @@ export async function callGemini(contents: unknown[], systemInstruction: string,
         body: JSON.stringify({ systemInstruction: { parts: [{ text: systemInstruction }] }, contents, generationConfig }),
         signal: controller.signal,
       } as Parameters<typeof runtime.fetch>[1]);
-    } catch { runtime.clearTimeout(timer); continue; }
+    } catch { runtime.clearTimeout(timer); quotaOnEveryModel = false; continue; }
     runtime.clearTimeout(timer);
     if (!response.ok) {
+      if (response.status !== 429) quotaOnEveryModel = false;
       if (response.status === 404 || response.status === 429 || response.status === 503 || response.status === 500) continue;
       return { ok: false, status: 502 };
     }
     return { ok: true, json: await response.json() };
+    }
+    if (!quotaOnEveryModel) break;
   }
   return { ok: false, status: 503 };
 }
