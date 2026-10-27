@@ -1,88 +1,61 @@
 import { announce, goToSection, openPing, openResume, scrollByPx, SectionId } from "./actions";
 
-interface SpeechRecognitionAlternative { readonly transcript: string; readonly confidence: number }
-interface SpeechRecognitionResult { readonly [index: number]: SpeechRecognitionAlternative; readonly length: number; readonly isFinal: boolean; item(index: number): SpeechRecognitionAlternative }
-interface SpeechRecognitionResultList { readonly [index: number]: SpeechRecognitionResult; readonly length: number; item(index: number): SpeechRecognitionResult }
-interface SpeechRecognitionEvent extends Event { readonly resultIndex: number; readonly results: SpeechRecognitionResultList }
-interface SpeechRecognitionErrorEvent extends Event { readonly error: string; readonly message?: string }
-interface ISpeechRecognition extends EventTarget {
-  continuous: boolean; interimResults: boolean; lang: string;
-  onstart: ((this: ISpeechRecognition, ev: Event) => void) | null;
-  onresult: ((this: ISpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
-  onerror: ((this: ISpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
-  onend: ((this: ISpeechRecognition, ev: Event) => void) | null;
-  start(): void; stop(): void; abort(): void;
-}
-type SpeechRecognitionConstructor = new () => ISpeechRecognition;
-interface SpeechRecognitionWindow extends Window { SpeechRecognition?: SpeechRecognitionConstructor; webkitSpeechRecognition?: SpeechRecognitionConstructor }
-type VoiceStatus = "listening" | "heard" | "interim" | "thinking" | "error" | "stopped";
-type VoiceAction = { action: "goto" | "scroll" | "resume" | "chat" | "answer" | "none"; target?: SectionId; direction?: "up" | "down"; reply: string };
-function getSpeechRecognition(): SpeechRecognitionConstructor | undefined {
-  if (typeof window === "undefined") return undefined;
-  const win = window as unknown as SpeechRecognitionWindow;
-  return win.SpeechRecognition ?? win.webkitSpeechRecognition;
-}
-export function isVoiceSupported(): boolean { return typeof window !== "undefined" && Boolean(getSpeechRecognition()); }
-
-function executeCommand(transcript: string, stop: () => void): boolean {
+type VoiceStatus = "listening" | "heard" | "thinking" | "error" | "stopped";
+type VoiceAction = { action: "goto" | "scroll" | "resume" | "chat" | "answer" | "none"; target?: SectionId; direction?: "up" | "down"; reply: string; transcript: string };
+export function isVoiceSupported(): boolean { return typeof navigator !== "undefined" && Boolean(navigator.mediaDevices?.getUserMedia) && typeof window !== "undefined" && typeof window.MediaRecorder !== "undefined"; }
+function executeCommand(transcript: string): boolean {
   const t = transcript.toLowerCase().trim();
-  if (t === "stop listening" || t === "stop") { announce("Stopped listening"); stop(); return true; }
   if (t === "scroll down") { scrollByPx(600); announce("Scrolling down"); return true; }
   if (t === "scroll up") { scrollByPx(-600); announce("Scrolling up"); return true; }
-  if (t === "resume" || t === "open resume" || t === "cv") { openResume(); announce("Opening Resume"); return true; }
-  if (t === "chat" || t === "open chat" || t === "ping") { openPing(); announce("Opening Ping"); return true; }
+  if (["resume", "open resume", "cv"].includes(t)) { openResume(); announce("Opening Resume"); return true; }
+  if (["chat", "open chat", "ping"].includes(t)) { openPing(); announce("Opening Ping"); return true; }
   const sections: Array<[string, SectionId]> = [["about", "about"], ["work", "work"], ["projects", "work"], ["stack", "techstack"], ["skills", "techstack"], ["tech", "techstack"], ["certifications", "certifications"], ["certificates", "certifications"], ["contact", "contact"], ["top", "top"], ["home", "top"]];
   for (const [word, section] of sections) if (t === word || t === `go to ${word}` || t === `show ${word}`) { goToSection(section); announce(`Going to ${section}`); return true; }
   return false;
 }
 function speak(reply: string, lang: "en" | "ar") {
-  if (typeof window === "undefined" || !window.speechSynthesis || typeof SpeechSynthesisUtterance === "undefined") return;
-  const voices = window.speechSynthesis.getVoices();
-  const voice = voices.find((item) => item.lang.toLowerCase().startsWith(lang));
+  if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === "undefined") return;
+  const voice = window.speechSynthesis.getVoices().find((item) => item.lang.toLowerCase().startsWith(lang));
   if (!voice) return;
-  const utterance = new SpeechSynthesisUtterance(reply); utterance.voice = voice; utterance.lang = voice.lang;
-  window.speechSynthesis.speak(utterance);
+  const utterance = new SpeechSynthesisUtterance(reply); utterance.voice = voice; utterance.lang = voice.lang; window.speechSynthesis.speak(utterance);
 }
 export function startVoice(onStatus: (s: VoiceStatus, text?: string) => void, lang: "en" | "ar"): () => void {
-  const SpeechRec = getSpeechRecognition();
-  if (!SpeechRec) { onStatus("error", "Voice recognition not supported"); return () => {}; }
-  const recognition = new SpeechRec();
-  recognition.continuous = true; recognition.interimResults = true; recognition.lang = lang === "ar" ? "ar-EG" : "en-US";
-  let active = true, inFlight = false, speaking = false, lastTranscript = "", lastAt = 0;
-  const stop = () => { if (!active) return; active = false; try { recognition.stop(); } catch {} onStatus("stopped"); };
-  const start = () => { if (!active || inFlight || speaking) return; try { recognition.start(); } catch {} };
-  recognition.onstart = () => { if (active && !inFlight && !speaking) onStatus("listening"); };
-  recognition.onerror = (event) => { if (event.error === "no-speech") return; if (event.error === "not-allowed" || event.error === "service-not-allowed") { active = false; onStatus("error", event.error); } else if (active) onStatus("error", event.error); };
-  recognition.onend = () => { if (active && !inFlight && !speaking) setTimeout(start, 150); };
-  recognition.onresult = (event) => {
-    if (inFlight || speaking) return;
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const result = event.results[i]; const transcript = result?.[0]?.transcript?.trim();
-      if (!transcript) continue;
-      if (!result.isFinal) { onStatus("interim", transcript); continue; }
-      const now = Date.now(); if (transcript.toLowerCase() === lastTranscript.toLowerCase() && now - lastAt < 2500) continue;
-      lastTranscript = transcript; lastAt = now; onStatus("heard", transcript);
-      if (executeCommand(transcript, stop)) continue;
-      inFlight = true; try { recognition.stop(); } catch {} onStatus("thinking");
-      void fetch("/api/voice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: transcript.slice(0, 300), lang }) })
-        .then(async (response) => { const data = await response.json() as VoiceAction; if (!response.ok) throw new Error("voice request failed"); return data; })
-        .then((data) => {
-          if (!active) return;
-          if (data.action === "goto" && data.target) goToSection(data.target);
-          else if (data.action === "scroll") scrollByPx(data.direction === "up" ? -600 : 600);
-          else if (data.action === "resume") openResume();
-          else if (data.action === "chat") openPing();
-          else if (data.action === "answer") window.dispatchEvent(new CustomEvent("sherif:ask", { detail: transcript }));
-          announce(data.reply); speaking = true; speak(data.reply, lang);
-          if (typeof window !== "undefined" && window.speechSynthesis) {
-            const wait = () => { if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) { speaking = false; start(); } else setTimeout(wait, 150); };
-            setTimeout(wait, 150);
-          } else { speaking = false; start(); }
-        })
-        .catch(() => { if (active) { announce(lang === "ar" ? "حصلت مشكلة، جرّب تاني." : "Something went wrong. Please try again."); inFlight = false; start(); } })
-        .finally(() => { inFlight = false; if (active && !speaking) start(); });
-    }
+  let stream: MediaStream | undefined, recorder: MediaRecorder | undefined, context: AudioContext | undefined, raf = 0, silenceSince = 0, speechDetected = false, stopped = false, chunks: Blob[] = [];
+  let maxTimer: ReturnType<typeof setTimeout> | undefined;
+  const cleanup = () => { if (maxTimer) clearTimeout(maxTimer); if (raf) cancelAnimationFrame(raf); if (recorder && recorder.state !== "inactive") recorder.stop(); stream?.getTracks().forEach((track) => track.stop()); void context?.close(); };
+  const stop = () => { if (stopped) return; stopped = true; cleanup(); onStatus("stopped"); };
+  const finish = () => { if (stopped || !recorder || recorder.state === "inactive") return; stopped = true; if (maxTimer) clearTimeout(maxTimer); cancelAnimationFrame(raf); recorder.stop(); };
+  const sendAudio = async (blob: Blob) => {
+    cleanup();
+    if (!blob.size) { onStatus("error", "No audio captured. Please try again."); return; }
+    onStatus("thinking");
+    try {
+      const audio = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(new Error("Unable to read recording")); reader.onload = () => resolve(String(reader.result).split(",")[1] || ""); reader.readAsDataURL(blob); });
+      const response = await fetch("/api/voice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ audio, mime: blob.type || "audio/webm", lang }) });
+      const data = await response.json() as VoiceAction; if (!response.ok) throw new Error("Voice request failed");
+      const transcript = data.transcript || ""; onStatus("heard", transcript);
+      if (!executeCommand(transcript)) {
+        if (data.action === "goto" && data.target) goToSection(data.target);
+        else if (data.action === "scroll") scrollByPx(data.direction === "up" ? -600 : 600);
+        else if (data.action === "resume") openResume(); else if (data.action === "chat") openPing();
+        else if (data.action === "answer") window.dispatchEvent(new CustomEvent("sherif:ask", { detail: transcript }));
+        announce(data.reply); speak(data.reply, lang);
+      }
+      setTimeout(() => onStatus("stopped"), 1800);
+    } catch { onStatus("error", lang === "ar" ? "حصلت مشكلة، جرّب تاني." : "Something went wrong. Please try again."); }
   };
-  try { recognition.start(); } catch (err) { active = false; onStatus("error", err instanceof Error ? err.message : String(err)); return () => {}; }
+  void (async () => {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+      if (stopped) { stream.getTracks().forEach((track) => track.stop()); return; }
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : undefined;
+      recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
+      recorder.onstop = () => { const blob = new Blob(chunks, { type: recorder?.mimeType || "audio/webm" }); void sendAudio(blob); };
+      context = new AudioContext(); const analyser = context.createAnalyser(); analyser.fftSize = 1024; context.createMediaStreamSource(stream).connect(analyser); const samples = new Float32Array(analyser.fftSize);
+      const monitor = () => { if (stopped) return; analyser.getFloatTimeDomainData(samples); let sum = 0; for (const value of samples) sum += value * value; const rms = Math.sqrt(sum / samples.length); const now = performance.now(); if (rms > 0.02) { speechDetected = true; silenceSince = 0; } else if (speechDetected) { if (!silenceSince) silenceSince = now; else if (now - silenceSince >= 1200) { finish(); return; } } raf = requestAnimationFrame(monitor); };
+      recorder.start(); onStatus("listening"); raf = requestAnimationFrame(monitor); maxTimer = setTimeout(finish, 7000);
+    } catch (error) { stopped = true; cleanup(); const denied = error instanceof DOMException && error.name === "NotAllowedError"; onStatus("error", denied ? "Microphone permission denied. Allow mic access and try again." : "Microphone unavailable. Please try again."); }
+  })();
   return stop;
 }

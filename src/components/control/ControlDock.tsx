@@ -116,14 +116,13 @@ export default function ControlDock() {
 
   const beginVoice = (lang: "en" | "ar") => {
     setVoiceActive(true);
-    setVoiceStatus("listening");
+    setVoiceStatus("Listening…");
     const stop = startVoice((status, text) => {
-      if (status === "listening") setVoiceStatus("listening");
-      else if (status === "heard") setVoiceStatus(text ? `heard: "${text}"` : "heard");
-      else if (status === "interim") setVoiceStatus(text || "listening");
-      else if (status === "thinking") setVoiceStatus("thinking…");
-      else if (status === "error") { setVoiceStatus(text ? `error: ${text}` : "error"); setVoiceActive(false); }
-      else if (status === "stopped") { setVoiceStatus(""); setVoiceActive(false); }
+      if (status === "listening") setVoiceStatus("Listening…");
+      else if (status === "heard") setVoiceStatus(text ? `“${text}”` : "");
+      else if (status === "thinking") setVoiceStatus("Thinking…");
+      else if (status === "error") { setVoiceStatus(text || "Something went wrong. Please try again."); setVoiceActive(false); }
+      else if (status === "stopped") setVoiceActive(false);
     }, lang);
     stopVoiceRef.current = stop;
   };
@@ -139,7 +138,7 @@ export default function ControlDock() {
       try {
         beginVoice(voiceLang);
       } catch {
-        setVoiceStatus("error");
+      setVoiceStatus("Microphone unavailable. Please try again.");
         setVoiceActive(false);
       }
     }
@@ -261,7 +260,7 @@ export default function ControlDock() {
                     Voice commands
                   </div>
                   <div className="control-dock-row-sub" data-control-ui="" data-cursor="disable">
-                    Chrome / Edge
+                    Works in any browser · EN / عربي
                   </div>
                   {voiceStatus && (
                     <div className="control-dock-status" data-control-ui="" data-cursor="disable">
@@ -270,22 +269,19 @@ export default function ControlDock() {
                   )}
                 </div>
                 <div className="control-dock-language" role="group" aria-label="Voice language" data-control-ui="">
-                  <button type="button" aria-pressed={voiceLang === "en"} onClick={() => { if (voiceLang !== "en") { setVoiceLang("en"); if (voiceActive) { stopVoiceRef.current?.(); beginVoice("en"); } } }} data-control-ui="">EN</button>
-                  <button type="button" aria-pressed={voiceLang === "ar"} onClick={() => { if (voiceLang !== "ar") { setVoiceLang("ar"); if (voiceActive) { stopVoiceRef.current?.(); beginVoice("ar"); } } }} data-control-ui="">عربي</button>
+                  <button type="button" aria-pressed={voiceLang === "en"} onClick={() => setVoiceLang("en")} data-control-ui="">EN</button>
+                  <button type="button" aria-pressed={voiceLang === "ar"} onClick={() => setVoiceLang("ar")} data-control-ui="">عربي</button>
                 </div>
                 <button
                   type="button"
-                  role="switch"
-                  aria-checked={voiceActive}
-                  aria-label="Toggle voice commands"
-                  className={`control-dock-switch ${voiceActive ? "is-checked" : ""}`}
+                  aria-label="Tap to talk"
+                  className={`control-dock-voice-button ${voiceActive ? "is-listening" : ""}`}
                   onClick={toggleVoice}
                   data-control-ui=""
                   data-cursor="disable"
                 >
-                  <span className="control-dock-switch-track" data-control-ui="" data-cursor="disable">
-                    <span className="control-dock-switch-thumb" data-control-ui="" data-cursor="disable" />
-                  </span>
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg>
+                  <span>Tap to talk</span>
                 </button>
               </div>
             )}

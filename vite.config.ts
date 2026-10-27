@@ -14,13 +14,17 @@ function localChatPlugin(): Plugin {
         // (vite.config has no Node/DOM typings here, so describe the two APIs we use)
         type Decoder = { decode(input?: Uint8Array, opts?: { stream: boolean }): string };
         const Decoder = (globalThis as unknown as { TextDecoder: new () => Decoder }).TextDecoder;
-        const stream = req as unknown as { on(event: string, cb: (chunk: Uint8Array) => void): void };
-        const body = await new Promise<string>((resolve) => {
+        const stream = req as unknown as { on(event: string, cb: (chunk: Uint8Array) => void): void; destroy?: () => void };
+        let body: string;
+        try { body = await new Promise<string>((resolve, reject) => {
           const decoder = new Decoder();
           let data = "";
-          stream.on("data", (chunk) => { data += decoder.decode(chunk, { stream: true }); });
+          let size = 0;
+          stream.on("data", (chunk) => { size += chunk.byteLength; if (size > (route === "/api/voice" ? 2 * 1024 * 1024 : 1024 * 1024)) { stream.destroy?.(); reject(new Error("Request body too large")); return; } data += decoder.decode(chunk, { stream: true }); });
           stream.on("end", () => resolve(data + decoder.decode()));
-        });
+        }); } catch {
+          res.statusCode = 413; res.setHeader("Content-Type", "application/json; charset=utf-8"); res.end(JSON.stringify({ error: "Request body too large" })); return;
+        }
         (req as typeof req & { body?: string }).body = body;
         const { default: handler } = route === "/api/chat" ? await import("./api/chat") : await import("./api/voice");
         await handler(req as unknown as Parameters<typeof handler>[0], res as unknown as Parameters<typeof handler>[1]);

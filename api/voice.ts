@@ -8,7 +8,9 @@ const env = (globalThis as typeof globalThis & { process?: { env: Record<string,
 type Request = { method?: string; body?: unknown; headers?: Record<string, string | string[] | undefined>; ip?: string; socket?: { remoteAddress?: string } };
 type Response = { statusCode: number; setHeader: (name: string, value: string) => void; end: (body?: string) => void; status?: (code: number) => Response; json?: (body: unknown) => void };
 type Action = "goto" | "scroll" | "resume" | "chat" | "answer" | "none";
-type VoiceReply = { action: Action; target?: "top" | "about" | "work" | "techstack" | "certifications" | "contact"; direction?: "up" | "down"; reply: string };
+type VoiceReply = { action: Action; target?: "top" | "about" | "work" | "techstack" | "certifications" | "contact"; direction?: "up" | "down"; reply: string; transcript?: string };
+type TranscriptionResponse = { ok: boolean; json: () => Promise<unknown> };
+const web = globalThis as unknown as { atob: (value: string) => string; FormData: new () => { append(name: string, value: unknown, filename?: string): void }; Blob: new (parts: Uint8Array[], options: { type: string }) => unknown; fetch: (url: string, init: { method: string; headers: Record<string, string>; body: unknown; signal: unknown }) => Promise<TranscriptionResponse>; AbortController: new () => { signal: unknown; abort(): void }; setTimeout: (fn: () => void, ms: number) => unknown; clearTimeout: (id: unknown) => void };
 const schema = {
   type: "OBJECT",
   properties: {
@@ -58,21 +60,39 @@ function parseGroqModel(value: unknown, lang: "en" | "ar"): VoiceReply | null {
 export default async function handler(req: Request, res: Response) {
   const langFallback = (req.body as { lang?: unknown } | undefined)?.lang === "ar" ? "ar" : "en";
   if (req.method !== "POST") return respond(res, 405, { action: "none", reply: fallback(langFallback) });
-  if (isRateLimited(req)) return respond(res, 429, { action: "none", reply: fallback(langFallback) });
   let payload: unknown = req.body;
   if (typeof payload === "string") { try { payload = JSON.parse(payload); } catch { return respond(res, 400, { action: "none", reply: fallback(langFallback) }); } }
   if (!payload || typeof payload !== "object") return respond(res, 400, { action: "none", reply: fallback(langFallback) });
-  const { text, lang } = payload as { text?: unknown; lang?: unknown };
-  if (typeof text !== "string" || !text.trim() || text.length > 300 || (lang !== "en" && lang !== "ar")) return respond(res, 400, { action: "none", reply: fallback(langFallback) });
-  if (!env?.GROQ_API_KEY && ![env?.GEMINI_API_KEY, env?.GEMINI_API_KEY_2, env?.GEMINI_API_KEY_3].some((key) => key?.trim())) return respond(res, 200, { action: "none", reply: fallback(lang) });
+  const { text, audio, mime, lang } = payload as { text?: unknown; audio?: unknown; mime?: unknown; lang?: unknown };
+  if (isRateLimited(req, audio !== undefined ? 2 : 1)) return respond(res, 429, { action: "none", reply: fallback(langFallback), transcript: "" });
+  if (lang !== "en" && lang !== "ar") return respond(res, 400, { action: "none", reply: fallback(langFallback), transcript: "" });
+  let transcript = typeof text === "string" ? text.trim() : "";
+  if (audio !== undefined) {
+    if (typeof audio !== "string" || typeof mime !== "string" || !/^audio\/[\w.+-]+(?:;[\w=.+-]+)*$/i.test(mime)) return respond(res, 400, { action: "none", reply: fallback(lang), transcript: "" });
+    let bytes: Uint8Array;
+    try { const binary = web.atob(audio); bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0)); } catch { return respond(res, 400, { action: "none", reply: fallback(lang), transcript: "" }); }
+    if (!bytes.length || bytes.length > 1.5 * 1024 * 1024) return respond(res, 413, { action: "none", reply: fallback(lang), transcript: "" });
+    if (!env?.GROQ_API_KEY) return respond(res, 200, { action: "none", reply: fallback(lang), transcript: "" });
+    const controller = new web.AbortController(); const timer = web.setTimeout(() => controller.abort(), 10000);
+    try {
+      const form = new web.FormData();
+      form.append("file", new web.Blob([bytes], { type: mime }), mime.includes("webm") ? "speech.webm" : `speech.${mime.split("/")[1]?.split(";")[0] || "bin"}`);
+      form.append("model", "whisper-large-v3-turbo"); form.append("language", lang); form.append("response_format", "json"); form.append("temperature", "0");
+      const response = await web.fetch("https://api.groq.com/openai/v1/audio/transcriptions", { method: "POST", headers: { Authorization: `Bearer ${env.GROQ_API_KEY}` }, body: form, signal: controller.signal });
+      if (response.ok) { const result = await response.json() as { text?: unknown }; transcript = typeof result.text === "string" ? result.text.trim() : ""; }
+    } catch { /* fall through to empty transcript */ } finally { web.clearTimeout(timer); }
+    if (!transcript) return respond(res, 200, { action: "none", reply: lang === "ar" ? "مسمعتش، جرّب تاني" : "I didn't catch that", transcript: "" });
+  }
+  if (!transcript || transcript.length > 300) return respond(res, 400, { action: "none", reply: fallback(lang), transcript });
+  if (!env?.GROQ_API_KEY && ![env?.GEMINI_API_KEY, env?.GEMINI_API_KEY_2, env?.GEMINI_API_KEY_3].some((key) => key?.trim())) return respond(res, 200, { action: "none", reply: fallback(lang), transcript });
   const instruction = `Reply ONLY with a JSON object with keys action, target, direction, reply. Allowed action values: goto, scroll, resume, chat, answer, none. Allowed target values: top, about, work, techstack, certifications, contact. Allowed direction values: up, down. ${catalogue}\n${answerRule}\n\nThe requested reply language is ${lang === "ar" ? "Egyptian Arabic" : "English"}.\n\nKNOWLEDGE:\n${knowledge}`;
   if (env?.GROQ_API_KEY) {
-    const groq = await callGroqJson(instruction, text.trim(), { temperature: 0.2, max_tokens: 300 });
+    const groq = await callGroqJson(instruction, transcript, { temperature: 0.2, max_tokens: 300 });
     const validatedGroq = parseGroqModel(groq, lang);
-    if (validatedGroq) return respond(res, 200, validatedGroq);
+    if (validatedGroq) return respond(res, 200, { ...validatedGroq, transcript });
   }
-  const result = await callGemini([{ role: "user", parts: [{ text: text.trim() }] }], instruction, { temperature: 0.2, maxOutputTokens: 1024, responseMimeType: "application/json", responseSchema: schema });
-  if (!result.ok) return respond(res, result.status, { action: "none", reply: fallback(lang) });
+  const result = await callGemini([{ role: "user", parts: [{ text: transcript }] }], instruction, { temperature: 0.2, maxOutputTokens: 1024, responseMimeType: "application/json", responseSchema: schema });
+  if (!result.ok) return respond(res, result.status, { action: "none", reply: fallback(lang), transcript });
   const validated = parseModel(result.json, lang);
-  return validated ? respond(res, 200, validated) : respond(res, 200, { action: "none", reply: fallback(lang) });
+  return validated ? respond(res, 200, { ...validated, transcript }) : respond(res, 200, { action: "none", reply: fallback(lang), transcript });
 }
