@@ -5,7 +5,8 @@ import "./subnetting.css";
 
 type Question = { prompt: string; answer: string; options: string[]; explain: string };
 const prefixes = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 16, 18, 19, 12, 8];
-const ip = () => `192.168.${Math.floor(Math.random() * 254)}.${1 + Math.floor(Math.random() * 254)}`;
+const r = (n: number) => Math.floor(Math.random() * n);
+const ip = () => { const k = r(3); return k === 0 ? `10.${r(256)}.${r(256)}.${1 + r(254)}` : k === 1 ? `172.${16 + r(16)}.${r(256)}.${1 + r(254)}` : `192.168.${r(256)}.${1 + r(254)}`; };
 function shuffled<T>(items: T[]): T[] { return [...items].sort(() => Math.random() - 0.5); }
 function makeQuestion(): Question {
   const p = prefixes[Math.floor(Math.random() * prefixes.length)];
@@ -18,7 +19,7 @@ function makeQuestion(): Question {
   if (type === "hosts") { prompt = `How many usable hosts are in a /${p} subnet?`; answer = String(hosts(p)); explain = `/${p} leaves ${32 - p} host bits → 2^${32 - p} − 2 = ${answer} usable hosts.`; }
   if (type === "mask") { prompt = `Which subnet mask is /${p}?`; answer = mask(p); explain = `/${p} means ${p} network bits → ${answer}.`; }
   if (type === "cidr") { prompt = `What CIDR prefix matches ${mask(p)}?`; answer = `/${p}`; explain = `${mask(p)} contains ${p} network bits → /${p}.`; }
-  if (type === "same") { const second = fromNumber((toNumber(net) + Math.floor(Math.random() * Math.max(1, block))) >>> 0); prompt = `Are ${address} and ${second} in the same /${p} subnet?`; answer = sameSubnet(address, second, p) ? "Yes" : "No"; explain = `Their /${p} network address is ${network(address, p)}.`; }
+  if (type === "same") { const second = fromNumber((toNumber(net) + Math.floor(Math.random() * Math.max(1, block))) >>> 0); prompt = `Are ${address} and ${second} in the same /${p} subnet?`; answer = sameSubnet(address, second, p) ? "Yes" : "No"; explain = `/${p}: ${address} → ${network(address, p)}, ${second} → ${network(second, p)}. ${answer === "Yes" ? "Same network." : "Different networks."}`; }
   if (type === "first") { prompt = `What is the first usable host in ${net}/${p}?`; answer = fromNumber((toNumber(net) + 1) >>> 0); explain = `Network ${net}; first usable is network + 1 → ${answer}.`; }
   if (type === "last") { prompt = `What is the last usable host in ${net}/${p}?`; answer = fromNumber((toNumber(broad) - 1) >>> 0); explain = `Broadcast ${broad}; last usable is broadcast − 1 → ${answer}.`; }
   let candidates: string[];
@@ -28,7 +29,8 @@ function makeQuestion(): Question {
   else if (type === "cidr") candidates = [`/${Math.max(0, p - 1)}`, `/${Math.min(32, p + 1)}`, "/24"];
   else candidates = [answer === "Yes" ? "No" : "Yes", answer === "Yes" ? "No" : "Yes", answer === "Yes" ? "No" : "Yes"];
   candidates = [...new Set(candidates.filter((v) => v !== answer))];
-  while (candidates.length < 3) candidates.push(type === "hosts" ? String(hosts(Math.max(0, (p + candidates.length + 3) % 31))) : type === "cidr" ? `/${(p + candidates.length + 1) % 31}` : `255.255.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`);
+  while (candidates.length < 3) candidates.push(type === "hosts" ? String(hosts(Math.max(0, (p + candidates.length + 3) % 31))) : type === "cidr" ? `/${(p + candidates.length + 1) % 31}` : mask(Math.max(8, (p + candidates.length + 2) % 31)));
+  if (type === "same") return { prompt, answer, options: ["Yes", "No"], explain };
   return { prompt, answer, options: shuffled([answer, ...candidates.slice(0, 3)]), explain };
 }
 
