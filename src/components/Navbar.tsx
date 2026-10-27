@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import Lenis from "lenis";
 import "./styles/Navbar.css";
 import { config } from "../config";
+import { Link } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger);
 export let lenis: Lenis | null = null;
@@ -95,6 +96,7 @@ const Navbar = () => {
               <HoverLinks text="CONTACT" />
             </a>
           </li>
+          <li className="navbar-resume-item"><Link className="navbar-resume" to="/resume">RESUME</Link></li>
         </ul>
       </div>
 

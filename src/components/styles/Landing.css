@@ -598,6 +598,12 @@
   .landing-info .landing-role { justify-content: center; }
 }
 
+@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  .landing-info { padding-bottom: 0; }
+  .mobile-photo { max-height: 180px; overflow: hidden; }
+  .mobile-photo img { height: 180px; object-fit: cover; object-position: center 35%; }
+}
+
 /* ---- Phase 1: remove the half-screen gap under the hero on tablet/phone ---- */
 @media only screen and (max-width: 1024px) {
   .landing-section,
