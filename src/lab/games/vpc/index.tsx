@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { GameProps } from "../../types";
 import { broadcast, network, parseIPv4, toNumber } from "../subnetting/ipv4";
+import { evaluate } from "./rules";
 import "./vpc.css";
 
 type Level = 0 | 1 | 2 | 3;
@@ -73,7 +74,7 @@ export default function VpcGame({ onFinish }: GameProps) {
   const setValue = (key: Key, value: string) => { setConfig((old) => ({ ...old, [key]: value })); setResult(null); };
   function test() {
     setAttempts((old) => old.map((n, i) => i === level ? n + 1 : n));
-    const hint = hintFor(level, config); const ok = !hint; setResult({ ok, hint });
+    const evaluated = evaluate((level + 1) as 1 | 2 | 3 | 4, config); const hint = evaluated.hint ?? hintFor(level, config); const ok = evaluated.ok; setResult({ ok, hint });
     if (ok) setPassed((old) => old.map((n, i) => i === level ? attempts[level] + 1 : n));
   }
   function advance() { if (!result?.ok) return; if (level === 3) { onFinish({ score: passed.reduce((sum, n) => sum + (n === 1 ? 3 : 1), 0), max: 12, seconds: Math.floor((Date.now() - started) / 1000) }); return; } const next = (level + 1) as Level; setLevel(next); setResult(null); setOptions((old) => old.map((row, i) => i === next ? setup[next].map((item) => shuffled(item.options)) : row)); }
