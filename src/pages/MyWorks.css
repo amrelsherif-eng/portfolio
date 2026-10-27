@@ -300,3 +300,24 @@
   border-radius: 9999px;
   letter-spacing: 0.03em;
 }
+
+.works-lab-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: 16px;
+  padding: 6px 0;
+  font-family: var(--monoFont, ui-monospace, monospace);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.works-lab-link:hover,
+.works-lab-link:focus-visible {
+  color: #00f0ff;
+}
+.works-lab-link:focus-visible {
+  outline: 2px solid #00f0ff;
+  outline-offset: 3px;
+}
