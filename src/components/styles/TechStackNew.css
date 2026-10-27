@@ -1,33 +1,28 @@
 .techstack-new {
   position: relative;
-  width: 100%;
-  min-height: auto;
   display: flex;
   justify-content: center;
-  align-items: center;
+  width: 100%;
   padding: 120px 0;
-  background-color: var(--backgroundColor);
   overflow: hidden;
+  background: var(--backgroundColor);
 }
 
-/* Subtle background accent glow */
 .techstack-new::before {
   content: "";
   position: absolute;
   top: 25%;
   left: 50%;
-  transform: translate(-50%, -50%);
   width: 800px;
   height: 450px;
-  background: radial-gradient(circle, rgba(0, 240, 255, 0.05) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.05), transparent 70%);
   pointer-events: none;
-  z-index: 1;
 }
 
-/* Container */
 .techstack-container {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
@@ -35,237 +30,197 @@
   box-sizing: border-box;
 }
 
-/* Section Title */
 .techstack-title {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 70px;
-  line-height: 1.1;
-  text-align: center;
-  font-weight: 400;
-  text-transform: uppercase;
-  margin: 0 0 60px 0;
-  background: linear-gradient(180deg, #ffffff 0%, var(--accentColor) 100%);
+  margin: 0 0 60px;
+  color: transparent;
+  background: linear-gradient(180deg, #fff 0%, var(--accentColor) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: transparent;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 70px;
+  font-weight: 400;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
 }
 
-/* Responsive Grid: 3 columns on desktop (>1024px), 2 on tablet, 1 on mobile */
 .techstack-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  align-items: stretch; /* same-height cards per row: tidy grid lines */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
   width: 100%;
-  box-sizing: border-box;
 }
 
-/* Glassy Dark Cards */
 .techstack-card {
-  background: rgba(255, 255, 255, 0.03);
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 28px 24px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  padding: 28px 24px;
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.025);
   -webkit-backdrop-filter: blur(12px);
-  display: flex;
-  flex-direction: column;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  box-sizing: border-box;
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+  transition-delay: calc(var(--card-index, 0) * 80ms), calc(var(--card-index, 0) * 80ms), 0s, 0s;
 }
 
-.techstack-card:hover {
-  border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+.techstack-card--visible { opacity: 1; transform: translateY(0); }
+
+.techstack-card::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(450px circle at var(--mx, -999px) var(--my, -999px), rgba(0, 240, 255, 0.08), transparent 65%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
-/* Small Mono Uppercase Label */
-.techstack-card-label {
+.techstack-card:hover { border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 240, 255, 0.05); }
+.techstack-card:hover::before { opacity: 1; }
+.techstack-card :focus-visible { outline: 2px solid var(--accentColor); outline-offset: 3px; }
+.techstack-card-header, .techstack-chips, .techstack-learning-list { position: relative; z-index: 1; }
+.techstack-card-header { margin: 0 0 20px; }
+
+.techstack-card-terminal {
+  display: block;
+  margin: 0 0 8px;
+  color: rgba(255, 255, 255, 0.48);
   font-family: var(--monoFont);
   font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 20px 0;
+  font-weight: 450;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.techstack-card-label {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: var(--monoFont);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .techstack-card-label::before {
-  content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
   border-radius: 50%;
-  background-color: var(--accentColor);
+  background: var(--accentColor);
   box-shadow: 0 0 8px var(--accentColor);
-  flex-shrink: 0;
+  content: "";
 }
 
-/* Wrap of Chips */
-.techstack-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-}
+.techstack-card--learning { border-color: rgba(255, 179, 0, 0.22); box-shadow: 0 4px 24px rgba(255, 179, 0, 0.04); }
+.techstack-card--learning::before { background: radial-gradient(450px circle at var(--mx, -999px) var(--my, -999px), rgba(255, 179, 0, 0.11), transparent 65%); }
+.techstack-card--learning:hover { border-color: rgba(255, 179, 0, 0.5); box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), 0 0 25px rgba(255, 179, 0, 0.12); }
+.techstack-card--learning .techstack-card-label::before { background: var(--accent2Color); box-shadow: 0 0 8px var(--accent2Color); }
 
-/* Chip with Subtle Border & Hover Lift */
+.techstack-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .techstack-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
-  background: rgba(255, 255, 255, 0.025);
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  color: #e6edf3;
   font-family: "Inter", sans-serif;
   font-size: 13px;
-  font-weight: 400;
-  color: #e6edf3;
   transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
-  cursor: default;
   user-select: none;
-  box-sizing: border-box;
 }
 
 .techstack-chip:hover {
   transform: translateY(-2px);
-  border-color: var(--accentColor);
-  background: rgba(0, 240, 255, 0.06);
-  box-shadow: 0 4px 16px rgba(0, 240, 255, 0.15);
-  color: #ffffff;
+  border-color: color-mix(in srgb, var(--brand) 65%, rgba(255, 255, 255, 0.15));
+  background: color-mix(in srgb, var(--brand) 9%, rgba(255, 255, 255, 0.025));
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--brand) 20%, transparent);
+  color: #fff;
 }
 
-/* Chip Icon */
-.techstack-chip-icon {
-  display: inline-flex;
+.techstack-chip-icon { flex: 0 0 auto; color: rgba(255, 255, 255, 0.55); font-size: 16px; transition: color 0.2s ease, transform 0.2s ease; }
+.techstack-chip:hover .techstack-chip-icon { transform: scale(1.12); color: var(--brand); }
+.techstack-chip-name { font-size: 13px; line-height: 1.25; overflow-wrap: anywhere; }
+
+.techstack-learning-list { display: flex; width: 100%; flex-direction: column; gap: 10px; }
+.techstack-learning-row {
+  display: flex;
+  min-width: 0;
   align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.75);
-  transition: color 0.2s ease, transform 0.2s ease;
-  flex-shrink: 0;
+  justify-content: space-between;
+  gap: 10px;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.techstack-chip:hover .techstack-chip-icon {
-  color: var(--accentColor);
-  transform: scale(1.1);
+.techstack-learning-row:hover { transform: translateX(3px); border-color: rgba(255, 179, 0, 0.3); background: rgba(255, 255, 255, 0.04); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); }
+.techstack-learning-name { min-width: 0; flex: 1; color: #e6edf3; font-size: 13px; line-height: 1.35; overflow-wrap: anywhere; }
+.techstack-learning-pill { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 20px; font-family: var(--monoFont); font-size: 12px; font-weight: 600; line-height: 1.2; white-space: nowrap; }
+.techstack-learning-pill--progress { border: 1px solid rgba(0, 240, 255, 0.45); background: rgba(0, 240, 255, 0.09); box-shadow: 0 0 10px rgba(0, 240, 255, 0.12); color: var(--accentColor); }
+.techstack-learning-pill--pending { border: 1px solid rgba(255, 179, 0, 0.55); background: transparent; color: var(--accent2Color); }
+.techstack-learning-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accentColor); box-shadow: 0 0 6px var(--accentColor); animation: techstackPulse 2s infinite ease-in-out; }
+
+@keyframes techstackPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.8); } }
+
+@media (max-width: 1100px) {
+  .techstack-new { padding: 90px 0; }
+  .techstack-title { margin-bottom: 45px; font-size: 52px; }
+  .techstack-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .techstack-card { padding: 24px 20px; }
 }
 
-/* Chip Name */
-.techstack-chip-name {
-  font-size: 13px;
-  line-height: 1.2;
-  white-space: nowrap;
+@media (max-width: 699px) {
+  .techstack-new { padding: 60px 0; }
+  .techstack-container { padding: 0 16px; }
+  .techstack-title { margin-bottom: 30px; font-size: 34px; }
+  .techstack-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .techstack-card { padding: 20px 16px; border-radius: 14px; }
+  .techstack-card-header { margin-bottom: 16px; }
+  .techstack-chips { gap: 8px; }
+  .techstack-chip { gap: 6px; padding: 8px 10px; }
+  .techstack-learning-row { gap: 8px; padding: 10px; }
 }
 
-/* Amber "NEXT" Badge */
-.techstack-chip-badge {
-  font-family: var(--monoFont);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent2Color);
-  background: rgba(255, 179, 0, 0.12);
-  border: 1px solid rgba(255, 179, 0, 0.4);
-  padding: 2px 6px;
-  border-radius: 4px;
-  line-height: 1;
-  margin-left: 2px;
-  flex-shrink: 0;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+@media (max-width: 360px) {
+  .techstack-container { padding: 0 12px; }
+  .techstack-card { padding: 16px 12px; }
+  .techstack-learning-row { align-items: flex-start; flex-direction: column; }
+  .techstack-learning-pill { align-self: flex-start; }
 }
 
-.techstack-chip:hover .techstack-chip-badge {
-  border-color: var(--accent2Color);
-  box-shadow: 0 0 8px rgba(255, 179, 0, 0.3);
+@media (prefers-reduced-motion: reduce) {
+  .techstack-card { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .techstack-card::before, .techstack-chip, .techstack-chip-icon, .techstack-learning-row { transition: none !important; }
+  .techstack-learning-dot { animation: none !important; }
 }
 
-/* Tablet: 2 columns */
-@media screen and (max-width: 1024px) {
-  .techstack-new {
-    padding: 90px 0;
-  }
-
-  .techstack-title {
-    font-size: 52px;
-    margin-bottom: 45px;
-  }
-
-  .techstack-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  .techstack-card {
-    padding: 24px 20px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .techstack-new {
-    padding: 75px 0;
-  }
-
-  .techstack-title {
-    font-size: 42px;
-    margin-bottom: 35px;
-  }
-
-  .techstack-container {
-    padding: 0 16px;
-  }
-}
-
-/* Mobile: 1 column */
-@media screen and (max-width: 640px) {
-  .techstack-new {
-    padding: 60px 0;
-  }
-
-  .techstack-title {
-    font-size: 34px;
-    margin-bottom: 30px;
-  }
-
-  .techstack-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .techstack-card {
-    padding: 20px 16px;
-    border-radius: 14px;
-  }
-
-  .techstack-card-label {
-    font-size: 11px;
-    margin-bottom: 16px;
-  }
-
-  .techstack-chips {
-    gap: 8px;
-  }
-
-  .techstack-chip {
-    padding: 7px 12px;
-    gap: 6px;
-  }
-
-  .techstack-chip-icon {
-    font-size: 14px;
-  }
-
-  .techstack-chip-name {
-    font-size: 12px;
-  }
-
-  .techstack-chip-badge {
-    font-size: 8px;
-    padding: 1px 4px;
-  }
+/* desktop: put the tall "Currently Learning" card in the top row so both rows hold similar amounts
+   (Networking · Cloud · Learning / Embedded · Linux & Tools · Code & Mobile) */
+@media (min-width: 1025px) {
+  .techstack-grid > .techstack-card { order: 3; }
+  .techstack-grid > .techstack-card:nth-child(-n + 2) { order: 1; }
+  .techstack-grid > .techstack-card--learning { order: 2; }
 }
