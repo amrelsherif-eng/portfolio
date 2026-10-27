@@ -80,9 +80,11 @@
 
 /* ── shared CertRow (used here + page) ────────────────────── */
 .cert-row {
-  display: flex;
+  /* fixed columns: badge | name | thumbnail | date | links -> every row lines up */
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 76px 72px 124px;
   align-items: center;
-  gap: 16px;
+  column-gap: 16px;
   padding: 20px 12px;
   border-bottom: 1px solid #363636;
   transition: background 0.25s ease;
@@ -164,12 +166,17 @@
   border-color: var(--accentColor);
 }
 
-/* right-aligned meta */
-.cert-row-end {
+.cert-row-thumb-slot {
+  display: flex;
+  justify-content: center;
+}
+.cert-row-info .cert-progress-pill {
+  margin-top: 8px;
+}
+.cert-row-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
+  gap: 14px;
 }
 
 .cert-progress-pill {
@@ -186,6 +193,7 @@
 }
 
 .cert-row-date {
+  text-align: right;
   font-family: var(--monoFont);
   font-size: 0.82rem;
   color: #ffb300;
@@ -375,20 +383,21 @@
     padding: 64px 20px;
   }
 
+  /* phones: badge + name on top, date + links on a second line under the name */
   .cert-row {
-    flex-wrap: wrap;
-    gap: 10px;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "badge info info"
+      ".     date actions";
+    column-gap: 12px;
+    row-gap: 4px;
     padding: 16px 8px;
   }
-  .cert-row-end {
-    width: 100%;
-    padding-left: 64px; /* align under the name (48px tile + 16px gap) */
-  }
-
-  /* Hide thumbnail on phones — Preview button still works */
-  .cert-row-thumb-btn {
-    display: none;
-  }
+  .cert-row-monogram { grid-area: badge; width: 40px; height: 40px; }
+  .cert-row-info { grid-area: info; }
+  .cert-row-date { grid-area: date; text-align: left; }
+  .cert-row-actions { grid-area: actions; justify-content: flex-end; }
+  .cert-row-thumb-slot { display: none; }
 
   .cert-viewer-prev {
     left: 4px;

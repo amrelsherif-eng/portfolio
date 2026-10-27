@@ -204,36 +204,31 @@ export function CertRow({
       <div className="cert-row-info">
         <h3 className="cert-row-name">{cert.name}</h3>
         {cert.issuer && <p className="cert-row-issuer">{cert.issuer}</p>}
-      </div>
-
-      {/* Thumbnail (desktop only, hidden on ≤640px via CSS) */}
-      {cert.image && (
-        <button
-          className="cert-row-thumb-btn"
-          onClick={handlePreview}
-          aria-label={`Preview certificate: ${cert.name}`}
-          type="button"
-        >
-          <img
-            src={cert.image}
-            alt=""
-            className="cert-row-thumb"
-            loading="lazy"
-          />
-        </button>
-      )}
-
-      <div className="cert-row-end">
         {cert.status === "in-progress" && (
           <span className="cert-progress-pill">In progress</span>
         )}
-        {cert.date && <span className="cert-row-date">{cert.date}</span>}
+      </div>
+
+      {/* fixed-width slot keeps every row's columns aligned, image or not
+          (the thumbnail is hidden on phones; the Preview link still works) */}
+      <div className="cert-row-thumb-slot">
         {cert.image && (
           <button
-            className="cert-row-preview"
+            className="cert-row-thumb-btn"
             onClick={handlePreview}
+            aria-label={`Preview certificate: ${cert.name}`}
             type="button"
           >
+            <img src={cert.image} alt="" className="cert-row-thumb" loading="lazy" />
+          </button>
+        )}
+      </div>
+
+      <span className="cert-row-date">{cert.date}</span>
+
+      <div className="cert-row-actions">
+        {cert.image && (
+          <button className="cert-row-preview" onClick={handlePreview} type="button">
             Preview
           </button>
         )}
