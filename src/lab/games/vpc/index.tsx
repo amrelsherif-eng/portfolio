@@ -67,7 +67,7 @@ export default function VpcGame({ onFinish }: GameProps) {
   const [options, setOptions] = useState(() => setup.map((items) => items.map((item) => shuffled(item.options))));
   const [attempts, setAttempts] = useState([0, 0, 0, 0]); const [result, setResult] = useState<{ ok: boolean; hint: string } | null>(null); const [passed, setPassed] = useState([0, 0, 0, 0]); const [started] = useState(() => Date.now()); const [seconds, setSeconds] = useState(180);
   useEffect(() => { const timer = window.setInterval(() => setSeconds((s) => Math.max(0, s - 1)), 1000); return () => window.clearInterval(timer); }, []);
-  useEffect(() => { if (seconds === 0) onFinish({ score: passed.reduce((sum, n) => sum + (n === 1 ? 3 : 1), 0), max: 12, seconds: Math.floor((Date.now() - started) / 1000) }); }, [seconds, onFinish, passed, started]);
+  useEffect(() => { if (seconds === 0) onFinish({ score: passed.reduce((sum, n) => sum + (n === 0 ? 0 : n === 1 ? 3 : 1), 0), max: 12, seconds: Math.floor((Date.now() - started) / 1000) }); }, [seconds, onFinish, passed, started]);
   const active = level < 3 ? setup[level] : [];
   const allSet = level === 3 ? config.cidrs.every(Boolean) : active.every((setting) => Boolean(config[setting.key]));
   const setValue = (key: Key, value: string) => { setConfig((old) => ({ ...old, [key]: value })); setResult(null); };
@@ -76,7 +76,7 @@ export default function VpcGame({ onFinish }: GameProps) {
     const hint = hintFor(level, config); const ok = !hint; setResult({ ok, hint });
     if (ok) setPassed((old) => old.map((n, i) => i === level ? attempts[level] + 1 : n));
   }
-  function advance() { if (!result?.ok) return; if (level === 3) { onFinish({ score: passed.reduce((sum, n) => sum + (n === 1 ? 3 : 1), 0), max: 12, seconds: Math.floor((Date.now() - started) / 1000) }); return; } const next = (level + 1) as Level; setLevel(next); setResult(null); setOptions((old) => old.map((row, i) => i === next ? setup[next].map((item) => shuffled(item.options)) : row)); }
+  function advance() { if (!result?.ok) return; if (level === 3) { onFinish({ score: passed.reduce((sum, n) => sum + (n === 0 ? 0 : n === 1 ? 3 : 1), 0), max: 12, seconds: Math.floor((Date.now() - started) / 1000) }); return; } const next = (level + 1) as Level; setLevel(next); setResult(null); setOptions((old) => old.map((row, i) => i === next ? setup[next].map((item) => shuffled(item.options)) : row)); }
   const routes = useMemo(() => ({ publicRoute: config.publicRoute === "igw-web", privateRoute: config.privateRoute === "nat-gw" }), [config.publicRoute, config.privateRoute]);
   const reducedMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const path = level === 0 ? "M48 145 H150 M225 145 V200" : level === 1 ? "M48 145 H150 M225 145 V200 M280 200 H385 M460 200 V145" : "M225 220 H385 M460 200 V145";
