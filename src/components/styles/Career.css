@@ -108,25 +108,15 @@
   border-radius: 50px;
   box-shadow: 0px 0px 5px 2px #5ff6ff, 0px 0px 15px 8px #5ff6ff,
     0px 0px 110px 20px #ffd27a;
-  animation: timeline 0.8s linear infinite forwards;
+  animation: timeline 2.8s ease-in-out infinite alternate; /* slow breathing glow (was a fast 0.8s flicker) */
 }
 
 @keyframes timeline {
-
-  10%,
-  20%,
-  50%,
-  70%,
-  90% {
-    box-shadow: 0px 0px 5px 2px #5ff6ff;
+  0% {
+    box-shadow: 0px 0px 5px 2px #5ff6ff, 0px 0px 10px 3px rgba(95, 246, 255, 0.5),
+      0px 0px 60px 10px rgba(255, 210, 122, 0.35);
   }
-
-  10%,
-  30%,
-  0%,
-  100%,
-  64%,
-  80% {
+  100% {
     box-shadow: 0px 0px 5px 2px #5ff6ff, 0px 0px 15px 5px #5ff6ff,
       0px 0px 110px 20px #ffd27a;
   }
