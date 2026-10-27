@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { certifications } from "../data/certifications";
-import { CertRow } from "../components/Certifications";
+import { certifications, Certification } from "../data/certifications";
+import { CertRow, CertViewer } from "../components/Certifications";
 import "./CertificationsPage.css";
 
 /* ── helpers ──────────────────────────────────────────────── */
@@ -32,6 +32,8 @@ function groupByCategory(
 /* ── page component ───────────────────────────────────────── */
 export default function CertificationsPage() {
   const [active, setActive] = useState(ALL);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -47,7 +49,22 @@ export default function CertificationsPage() {
     [active]
   );
 
+  const filteredWithImage = useMemo(
+    () => filtered.filter((c) => c.image),
+    [filtered]
+  );
+
   const groups = useMemo(() => groupByCategory(filtered), [filtered]);
+
+  const openPreview = useCallback(
+    (cert: Certification, trigger: HTMLElement) => {
+      const idx = filteredWithImage.findIndex((c) => c.id === cert.id);
+      if (idx === -1) return;
+      triggerRef.current = trigger;
+      setViewerIndex(idx);
+    },
+    [filteredWithImage]
+  );
 
   return (
     <main className="certs-page">
@@ -95,11 +112,21 @@ export default function CertificationsPage() {
 
           <div className="certs-list">
             {items.map((cert) => (
-              <CertRow cert={cert} key={cert.name} />
+              <CertRow cert={cert} key={cert.name} onPreview={openPreview} />
             ))}
           </div>
         </section>
       ))}
+
+      {/* Lightbox viewer */}
+      {viewerIndex !== null && (
+        <CertViewer
+          items={filtered}
+          activeIndex={viewerIndex}
+          onClose={() => setViewerIndex(null)}
+          triggerRef={triggerRef}
+        />
+      )}
     </main>
   );
 }
