@@ -8,8 +8,23 @@ const Loading = ({ percent }: { percent: number }) => {
   const [loaded, setLoaded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [clicked, setClicked] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   const displayPercent = Math.min(100, Math.max(0, Math.round(percent)));
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handler = (event: MediaQueryListEvent) => {
+      setPrefersReducedMotion(event.matches);
+    };
+    mediaQuery.addEventListener("change", handler);
+    return () => {
+      mediaQuery.removeEventListener("change", handler);
+    };
+  }, []);
 
   if (percent >= 100) {
     setTimeout(() => {
@@ -43,11 +58,14 @@ const Loading = ({ percent }: { percent: number }) => {
     target.style.setProperty("--mouse-y", `${y}px`);
   }
 
+  const isComplete = loaded || percent >= 100;
+  const marqueeSpeed = clicked ? 160 : isComplete ? 120 : 35;
+
   return (
     <>
       <div className={`loading-header ${clicked ? "loading-clicked" : ""}`}>
         <a href="/#" className="loader-title" data-cursor="disable">
-          AmrElsherif
+          <img src="/wordmark.svg" alt="シャリーフ · Amr Elsherif" className="loader-logo" />
         </a>
         <div className="loader-status">
           <span className="loader-status-dot" />
@@ -58,12 +76,28 @@ const Loading = ({ percent }: { percent: number }) => {
         className={`loading-screen ${clicked ? "loading-clicked" : ""}`}
         onMouseMove={handleMouseMove}
       >
-        <div className="loading-marquee" aria-hidden="true">
-          <Marquee autoFill speed={35} gradient={false}>
-            <span>Network Engineer</span>
-            <span>Cloud Engineer</span>
-            <span>Systems Telemetry</span>
-            <span>Infrastructure</span>
+        <div
+          className={`loading-marquee ${isComplete ? "loading-marquee--fast" : ""}`}
+          aria-hidden="true"
+        >
+          <Marquee
+            autoFill
+            speed={marqueeSpeed}
+            play={!prefersReducedMotion}
+            gradient={false}
+          >
+            <span className="loading-marquee-cycle">
+              <span className="loading-marquee-word">NETWORK</span>
+              <span className="loading-marquee-sep">·</span>
+              <span className="loading-marquee-word loading-marquee-word--filled">
+                CLOUD
+              </span>
+              <span className="loading-marquee-sep">·</span>
+              <span className="loading-marquee-word">LINUX</span>
+              <span className="loading-marquee-sep">·</span>
+              <span className="loading-marquee-word">DEVOPS</span>
+              <span className="loading-marquee-sep">·</span>
+            </span>
           </Marquee>
         </div>
         <div
