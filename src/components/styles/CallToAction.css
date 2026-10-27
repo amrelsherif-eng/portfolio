@@ -97,16 +97,6 @@
   outline-offset: 3px;
 }
 
-/* screen-reader-only live message for "copied" */
-.cta-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
 @media only screen and (max-width: 768px) {
   .cta-section {
     padding: 70px 16px;
