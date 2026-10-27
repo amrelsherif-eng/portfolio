@@ -311,6 +311,22 @@
   color: #9aa4b2;
 }
 
+.control-dock-guide-button {
+  align-self: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 8px;
+  background: rgba(0, 240, 255, 0.06);
+  color: var(--accentColor);
+  font: 500 12px var(--monoFont);
+  cursor: pointer;
+}
+
+.control-dock-guide-button:hover {
+  background: rgba(0, 240, 255, 0.12);
+}
+
 /* Status line under tiles (12px, mono, min-height 18px, ellipsis) */
 .control-dock-status-line {
   font: 400 12px var(--monoFont);

@@ -298,7 +298,7 @@ export default function ControlDock() {
                 Gestures
               </span>
               <span className="control-dock-tile-sub" data-control-ui="" data-cursor="disable">
-                Camera stays local
+                ☝ move · 🤏 click · 👍👎 scroll · ✋ rest
               </span>
             </button>
 
@@ -347,6 +347,16 @@ export default function ControlDock() {
               </span>
             </button>
           </div>
+
+          <button
+            type="button"
+            className="control-dock-guide-button"
+            onClick={() => void import("./gesture").then(({ showGestureGuide }) => showGestureGuide())}
+            data-control-ui=""
+            data-cursor="disable"
+          >
+            How it works
+          </button>
 
           <div
             className={`control-dock-status-line ${isIdle ? "is-hint" : ""}`}
