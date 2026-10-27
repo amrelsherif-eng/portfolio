@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, initial-scale=1">
+  <title>Amr Elsherif — Network &amp; Cloud Infrastructure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+    body {
+      position: relative; color: #fff; background: #0a0d10;
+      font-family: "Space Grotesk", sans-serif;
+    }
+    body::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 520px 440px at 78% 48%, rgba(0,240,255,.075), transparent 72%);
+    }
+    body::after {
+      content: ""; position: absolute; inset: 0;
+      background-image: radial-gradient(rgba(154,164,178,.17) .65px, transparent .65px);
+      background-size: 22px 22px; opacity: .24;
+    }
+    .frame { position:absolute; inset:32px; border:1px solid #363636; z-index:1; }
+    .wordmark { position:absolute; left:60px; top:58px; width:198px; height:45px; z-index:2; }
+    .wordmark svg { display:block; width:100%; height:100%; }
+    .content { position:absolute; left:60px; top:50%; transform:translateY(-48%); z-index:2; }
+    .who, .stack, .url, .degree { font-family:"JetBrains Mono", monospace; }
+    .who { color:#00f0ff; opacity:.8; font-size:22px; line-height:1.35; margin-bottom:12px; }
+    h1 { font-size:84px; font-weight:600; line-height:1.04; letter-spacing:-3.7px; margin:0 0 13px; }
+    .role { font-size:40px; line-height:1.16; font-weight:500; letter-spacing:-1.2px; white-space:nowrap; }
+    .role span { color:#00f0ff; }
+    .stack { font-size:22px; color:#9aa4b2; margin-top:20px; letter-spacing:-.5px; }
+    .footer { position:absolute; left:60px; right:60px; bottom:55px; display:flex; justify-content:space-between; align-items:center; z-index:2; }
+    .url, .degree { font-size:20px; color:#9aa4b2; }
+    .degree { display:flex; align-items:center; gap:11px; }
+    .dot { width:9px; height:9px; background:#ffb300; border-radius:50%; box-shadow:0 0 12px rgba(255,179,0,.35); }
+    .network { position:absolute; width:390px; height:390px; right:68px; top:117px; z-index:2; opacity:.56; }
+  </style>
+</head>
+<body>
+  <div class="frame"></div>
+  <div class="wordmark" aria-label="Amr Elsherif wordmark">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4800 1080" role="img" aria-label="Amr Elsherif"><path transform="translate(40,920) scale(1,-1)" fill="#ffffff" d="M311 798Q336 785 367.5 766.0Q399 747 431.0 726.5Q463 706 492.5 687.5Q522 669 542 655L460 533Q438 547 409.0 566.0Q380 585 348.5 605.0Q317 625 286.5 643.5Q256 662 231 676ZM116 90Q172 100 230.0 114.5Q288 129 345.0 150.0Q402 171 457 201Q543 249 617.0 309.5Q691 370 750.5 438.5Q810 507 849 579L934 428Q864 323 760.5 230.5Q657 138 533 67Q482 39 421.0 13.5Q360 -12 301.0 -30.0Q242 -48 199 -56ZM156 569Q182 556 213.5 537.0Q245 518 277.0 498.0Q309 478 338.0 459.5Q367 441 387 427L306 303Q284 318 255.0 337.0Q226 356 194.5 376.5Q163 397 132.5 415.5Q102 434 76 447Z"/><path transform="translate(970,920) scale(1,-1)" fill="#ffffff" d="M405 642Q408 623 412.5 603.0Q417 583 421 563Q430 530 443.0 483.5Q456 437 471.0 382.5Q486 328 501.5 272.5Q517 217 531.0 166.5Q545 116 556.0 77.0Q567 38 574 16Q577 7 582.0 -9.5Q587 -26 592.5 -43.0Q598 -60 602 -70L452 -107Q449 -86 444.5 -61.5Q440 -37 433 -15Q426 7 415.5 48.5Q405 90 391.0 142.0Q377 194 362.5 250.5Q348 307 333.5 361.0Q319 415 307.0 460.0Q295 505 286 533Q281 552 273.0 571.0Q265 590 256 607ZM885 482Q869 450 844.0 407.0Q819 364 788.5 319.0Q758 274 728.0 233.5Q698 193 672 164L550 225Q574 247 602.0 278.5Q630 310 654.5 342.0Q679 374 691 397Q679 395 649.0 389.0Q619 383 577.5 374.0Q536 365 487.0 355.0Q438 345 388.5 334.5Q339 324 293.5 314.5Q248 305 213.5 297.5Q179 290 161 286L127 417Q152 419 174.0 422.0Q196 425 222 429Q233 431 263.5 436.5Q294 442 336.0 450.0Q378 458 426.0 467.0Q474 476 523.0 485.0Q572 494 616.0 503.0Q660 512 693.0 518.5Q726 525 742 528Q756 531 770.5 536.0Q785 541 795 545Z"/><path transform="translate(1900,920) scale(1,-1)" fill="#ffffff" d="M810 781Q809 760 808.0 734.0Q807 708 807 677Q807 650 807.0 611.0Q807 572 807.0 533.5Q807 495 807 469Q807 391 798.5 332.5Q790 274 775.0 229.0Q760 184 737.5 149.0Q715 114 687 84Q654 48 611.0 19.5Q568 -9 524.0 -29.0Q480 -49 443 -61L327 62Q404 79 463.5 108.5Q523 138 569 186Q594 213 610.0 241.5Q626 270 634.5 304.0Q643 338 646.5 380.5Q650 423 650 479Q650 506 650.0 543.5Q650 581 650.0 617.5Q650 654 650 677Q650 708 648.0 734.0Q646 760 643 781ZM347 772Q346 754 344.5 737.0Q343 720 343 695Q343 683 343.0 657.5Q343 632 343.0 599.0Q343 566 343.0 530.0Q343 494 343.0 459.5Q343 425 343.0 398.0Q343 371 343 356Q343 337 344.5 311.0Q346 285 347 266H186Q188 280 189.5 307Q191 334 191 357Q191 372 191.0 399Q191 426 191.0 460.5Q191 495 191.0 530.5Q191 566 191.0 599.0Q191 632 191.0 657.5Q191 683 191 695Q191 708 190.0 731Q189 754 187 772Z"/><path transform="translate(2830,920) scale(1,-1)" fill="#00f0ff" d="M89 472Q108 471 138.0 469.0Q168 467 199.5 466.0Q231 465 256 465Q284 465 321.5 465Q359 465 402.5 465Q446 465 491.5 465Q537 465 581.5 465Q626 465 666.0 465Q706 465 738.0 465Q770 465 790 465Q825 465 857.0 468Q889 471 910 472V297Q892 298 856.5 300.5Q821 303 790 303Q770 303 737.5 303Q705 303 665.0 303Q625 303 580.5 303Q536 303 490.5 303Q445 303 402.0 303Q359 303 321.0 303Q283 303 256 303Q213 303 166.0 301Q119 299 89 297Z"/><path transform="translate(3760,920) scale(1,-1)" fill="#ffffff" d="M897 666Q890 651 884.0 629.5Q878 608 873 591Q864 555 851.5 510Q839 465 821.0 416.5Q803 368 778.5 319.5Q754 271 722 228Q677 168 616.5 115Q556 62 481.0 20Q406 -22 318 -51L197 82Q298 105 370.5 140Q443 175 496.5 220Q550 265 590 314Q622 355 645.0 402Q668 449 682.5 496Q697 543 704 585Q689 585 655.0 585Q621 585 577.0 585Q533 585 484.5 585Q436 585 390.0 585Q344 585 307.0 585Q270 585 251 585Q215 585 180.5 583Q146 582 126 580V736Q142 734 164.5 732Q187 730 211.0 729Q235 728 251 728Q268 728 297.5 728Q327 728 364.5 728Q402 728 443.5 728Q485 728 525.5 728Q566 728 601.5 728Q637 728 663.5 728Q690 728 703 728Q719 728 742.5 729Q766 730 788 736Z"/></svg>
+  </div>
+  <svg class="network" viewBox="0 0 390 390" fill="none" aria-hidden="true">
+    <g stroke="#00f0ff" stroke-width="1.4" opacity=".56">
+      <path d="M54 112 132 68 212 104 302 62M54 112 91 213 178 188 212 104M91 213 143 307 237 278 178 188M178 188 278 204 302 62M178 188 237 278 328 306 278 204M237 278 302 62"/>
+    </g>
+    <g fill="#0a0d10" stroke="#00f0ff" stroke-width="2">
+      <circle cx="54" cy="112" r="6"/><circle cx="132" cy="68" r="5"/><circle cx="212" cy="104" r="6"/>
+      <circle cx="91" cy="213" r="5"/><circle cx="178" cy="188" r="8"/><circle cx="278" cy="204" r="5"/>
+      <circle cx="237" cy="278" r="6"/><circle cx="328" cy="306" r="5"/><circle cx="143" cy="307" r="5"/>
+    </g>
+    <circle cx="302" cy="62" r="6" fill="#ffb300"/>
+  </svg>
+  <main class="content">
+    <div class="who">$ whoami</div>
+    <h1>Amr Elsherif</h1>
+    <div class="role">Network &amp; Cloud <span>Infrastructure</span></div>
+    <div class="stack">CCNA track · AWS · Linux → DevOps</div>
+  </main>
+  <footer class="footer">
+    <div class="url">amrelsherif-eng.vercel.app</div>
+    <div class="degree"><i class="dot"></i>ECE '27</div>
+  </footer>
+</body>
+</html>
