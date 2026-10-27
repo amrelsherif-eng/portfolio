@@ -5,11 +5,15 @@
   width: 160px;
   height: 120px;
   overflow: visible;
-  border: 1px solid rgba(0, 240, 255, 0.4);
-  border-radius: 12px;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 14px;
   z-index: 9001;
   pointer-events: none;
-  background: #071014;
+  background: rgba(10, 14, 20, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.1);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .gesture-preview__video,
@@ -18,43 +22,278 @@
   inset: 0;
   width: 160px;
   height: 120px;
-  border-radius: 12px;
+  border-radius: 13px;
+  display: block;
 }
 
 .gesture-preview__video {
   object-fit: cover;
   transform: scaleX(-1);
+  background: #000;
 }
 
 .gesture-preview__canvas {
   z-index: 1;
+  pointer-events: none;
 }
 
 .gesture-preview__label {
   position: absolute;
   z-index: 2;
-  left: 6px;
-  bottom: 5px;
+  left: 8px;
+  bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: rgba(10, 14, 20, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 240, 255, 0.25);
   color: #00f0ff;
-  font: 12px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+  font: 500 12px/1.2 var(--monoFont, "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace);
   text-transform: uppercase;
-  text-shadow: 0 1px 4px #000;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: calc(100% - 16px);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.gesture-preview__help { position: absolute; z-index: 3; top: 4px; right: 4px; width: 44px; height: 44px; border: 1px solid rgba(0, 240, 255, .7); border-radius: 50%; background: rgba(7, 16, 20, .9); color: #00f0ff; font: 600 15px ui-monospace, SFMono-Regular, Consolas, monospace; cursor: pointer; pointer-events: auto; }
-.gesture-guide { position: fixed; z-index: 10003; left: 104px; bottom: 20px; width: max-content; max-width: min(390px, calc(100vw - 124px)); padding: 14px; border: 1px solid rgba(0, 240, 255, 0.45); border-radius: 12px; background: rgba(7, 16, 20, .97); color: #d8faff; font: 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55); pointer-events: auto; backdrop-filter: blur(14px); }
-.gesture-guide--preview { position: absolute; left: 170px; bottom: 0; }
-.gesture-guide__title { display: block; margin-bottom: 8px; color: #00f0ff; font-size: 14px; }
-.gesture-guide__row { display: grid; grid-template-columns: 28px 98px auto; gap: 8px; align-items: center; min-height: 28px; white-space: nowrap; }
-.gesture-guide__row span:first-child { font-size: 18px; }
-.gesture-guide button { display: block; min-width: 88px; min-height: 44px; margin-top: 10px; border: 1px solid #00f0ff; border-radius: 6px; background: rgba(0, 240, 255, 0.12); color: #00f0ff; font: inherit; cursor: pointer; }
-.gesture-dwell-ring { position: fixed; z-index: 9002; width: 44px; height: 44px; pointer-events: none; }
-.gesture-dwell-ring[hidden] { display: none; }
-.gesture-dwell-ring svg { display: block; width: 44px; height: 44px; transform: rotate(-90deg); }
-.gesture-dwell-ring circle { fill: none; stroke-width: 3; }
-.gesture-dwell-ring__track { stroke: rgba(0, 240, 255, 0.22); }
-.gesture-dwell-ring__progress { stroke: #00f0ff; stroke-dasharray: 119.38; stroke-dashoffset: calc(119.38 * (1 - var(--dwell-progress, 0))); }
-.gesture-dwell-ring.is-pinching svg { transform: none; }
-.gesture-dwell-ring.is-pinching circle { stroke-dasharray: none; }
-.gesture-dwell-ring.is-pinching .gesture-dwell-ring__track { fill: rgba(0, 240, 255, .15); stroke: rgba(0, 240, 255, .5); }
-.gesture-dwell-ring.is-pinching .gesture-dwell-ring__progress { fill: rgba(0, 240, 255, .35); stroke: #00f0ff; transform: scale(calc(1 - var(--pinch-strength, 0) * .45)); transform-origin: center; }
+.gesture-preview__help {
+  position: absolute;
+  z-index: 3;
+  top: 6px;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 50%;
+  background: rgba(10, 14, 20, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #00f0ff;
+  font: 600 13px/1 var(--monoFont, "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace);
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+/* 44px minimum touch/click hit area via pseudo-element */
+.gesture-preview__help::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  pointer-events: auto;
+}
+
+.gesture-preview__help:hover {
+  background: rgba(0, 240, 255, 0.18);
+  border-color: #00f0ff;
+  transform: scale(1.06);
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+}
+
+.gesture-preview__help:focus-visible {
+  border-color: #00f0ff;
+  box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.45);
+}
+
+.gesture-preview__help:active {
+  transform: scale(0.96);
+}
+
+.gesture-guide {
+  position: fixed;
+  z-index: 10003;
+  left: 104px;
+  bottom: 20px;
+  width: 300px;
+  max-width: 300px;
+  box-sizing: border-box;
+  padding: 16px;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 14px;
+  background: rgba(10, 14, 20, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #e6edf3;
+  font: 12px/1.5 var(--monoFont, "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.65), 0 0 24px rgba(0, 240, 255, 0.08);
+  pointer-events: auto;
+}
+
+.gesture-guide--preview {
+  position: absolute;
+  left: 172px;
+  bottom: 0;
+}
+
+.gesture-guide__title {
+  display: block;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  color: #00f0ff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.gesture-guide__row {
+  display: grid;
+  grid-template-columns: 44px auto 1fr;
+  gap: 6px 8px;
+  align-items: center;
+  min-height: 28px;
+  white-space: nowrap;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+.gesture-guide__row span:first-child {
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.gesture-guide__row span:nth-child(2) {
+  color: #00f0ff;
+  font-weight: 500;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.gesture-guide__row span:nth-child(3) {
+  color: #9aa4b2;
+  font-size: 12px;
+}
+
+.gesture-guide button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 40px;
+  margin-top: 14px;
+  padding: 8px 16px;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-radius: 10px;
+  background: rgba(0, 240, 255, 0.12);
+  color: #00f0ff;
+  font: 600 12px/1.2 var(--monoFont, "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.gesture-guide button:hover {
+  background: rgba(0, 240, 255, 0.22);
+  border-color: #00f0ff;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+}
+
+.gesture-guide button:focus-visible {
+  border-color: #00f0ff;
+  box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.45);
+}
+
+.gesture-guide button:active {
+  transform: scale(0.98);
+}
+
+.gesture-dwell-ring {
+  position: fixed;
+  z-index: 9002;
+  width: 44px;
+  height: 44px;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.45));
+}
+
+.gesture-dwell-ring[hidden] {
+  display: none;
+}
+
+.gesture-dwell-ring svg {
+  display: block;
+  width: 44px;
+  height: 44px;
+  transform: rotate(-90deg);
+  transition: transform 0.15s ease;
+}
+
+.gesture-dwell-ring circle {
+  fill: none;
+  stroke-width: 3;
+}
+
+.gesture-dwell-ring__track {
+  stroke: rgba(0, 240, 255, 0.2);
+}
+
+.gesture-dwell-ring__progress {
+  stroke: #00f0ff;
+  stroke-dasharray: 119.38;
+  stroke-dashoffset: calc(119.38 * (1 - var(--dwell-progress, 0)));
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.05s linear;
+}
+
+.gesture-dwell-ring.is-pinching {
+  filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.65));
+}
+
+.gesture-dwell-ring.is-pinching svg {
+  transform: none;
+}
+
+.gesture-dwell-ring.is-pinching circle {
+  stroke-dasharray: none;
+}
+
+.gesture-dwell-ring.is-pinching .gesture-dwell-ring__track {
+  fill: rgba(0, 240, 255, 0.12);
+  stroke: rgba(0, 240, 255, 0.45);
+  stroke-width: 2;
+}
+
+.gesture-dwell-ring.is-pinching .gesture-dwell-ring__progress {
+  fill: rgba(0, 240, 255, calc(0.25 + var(--pinch-strength, 0) * 0.4));
+  stroke: #00f0ff;
+  stroke-width: calc(2px + var(--pinch-strength, 0) * 2px);
+  transform: scale(calc(1 - var(--pinch-strength, 0) * 0.45));
+  transform-origin: center;
+  transition: transform 0.05s linear, fill 0.05s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gesture-preview,
+  .gesture-preview__help,
+  .gesture-guide,
+  .gesture-guide button,
+  .gesture-dwell-ring,
+  .gesture-dwell-ring svg,
+  .gesture-dwell-ring__progress,
+  .gesture-dwell-ring.is-pinching .gesture-dwell-ring__progress {
+    transition: none !important;
+    animation: none !important;
+  }
+}
