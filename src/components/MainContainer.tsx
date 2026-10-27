@@ -13,7 +13,6 @@ import Certifications from "./Certifications";
 import MottoBand from "./MottoBand";
 import CallToAction from "./CallToAction";
 import setSplitText from "./utils/splitText";
-import SherifChat from "./SherifChat";
 import ControlDock from "./control/ControlDock";
 
 const MainContainer = ({ children }: PropsWithChildren) => {
@@ -68,7 +67,6 @@ const MainContainer = ({ children }: PropsWithChildren) => {
       <Cursor />
       <Navbar />
       <SocialIcons />
-      <SherifChat />
       <ControlDock />
       {isDesktopView && !isMobile && shouldRenderCharacter && children}
       <div className="container-main">

@@ -3,18 +3,47 @@ import { TbRobot } from "react-icons/tb";
 import "./styles/SherifChat.css";
 
 type Message = { role: "user" | "model"; text: string; isError?: boolean };
+const STORAGE_KEY = "ping-chat-v1";
 const suggestions = ["What is Amr working on now?", "Show me his projects", "How can I contact him?"];
 const welcome: Message = { role: "model", text: "Hi! I'm Ping — ask me about Amr's skills, projects or experience.\nأهلاً! أنا Ping، اسألني عن خبرات عمرو ومشاريعه." };
 const GENERIC_ERROR = "Sorry, I couldn't connect right now. Please try again, or email amrelsherif.eng@gmail.com.";
 
+function restoreChat(): { messages: Message[]; open: boolean } {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "null") as unknown;
+    if (!saved || typeof saved !== "object") return { messages: [welcome], open: false };
+    const data = saved as { messages?: unknown; open?: unknown };
+    const messages = Array.isArray(data.messages)
+      ? data.messages.filter((item): item is { role: "user" | "model"; text: string } =>
+          !!item && typeof item === "object" &&
+          ((item as { role?: unknown }).role === "user" || (item as { role?: unknown }).role === "model") &&
+          typeof (item as { text?: unknown }).text === "string" &&
+          (item as { text: string }).text.length <= 800
+        ).slice(-30).map(({ role, text }) => ({ role, text }))
+      : [];
+    return { messages: messages.length ? messages : [welcome], open: typeof data.open === "boolean" ? data.open : false };
+  } catch {
+    return { messages: [welcome], open: false };
+  }
+}
+
 export default function SherifChat() {
-  const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([welcome]);
+  const [restored] = useState(restoreChat);
+  const [open, setOpen] = useState(restored.open);
+  const [messages, setMessages] = useState<Message[]>(restored.messages);
   const [draft, setDraft] = useState("");
   const [pending, setPending] = useState(false);
   const panelRef = useRef<HTMLElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    try {
+      const savedMessages = messages.filter((message) => !message.isError && message !== welcome)
+        .slice(-30).map(({ role, text }) => ({ role, text }));
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ messages: savedMessages, open }));
+    } catch { /* session storage may be unavailable */ }
+  }, [messages, open]);
 
   useEffect(() => {
     const show = () => setOpen(true);

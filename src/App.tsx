@@ -12,11 +12,15 @@ const CvPage = lazy(() => import("./pages/CvPage"));
 const LabIndex = lazy(() => import("./lab/LabIndex"));
 const GameShell = lazy(() => import("./lab/GameShell"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const SherifChat = lazy(() => import("./components/SherifChat"));
 import { LoadingProvider } from "./context/LoadingProvider";
 
 const App = () => {
   return (
     <BrowserRouter>
+      <Suspense fallback={null}>
+        <SherifChat />
+      </Suspense>
       <Routes>
         <Route
           path="/"
