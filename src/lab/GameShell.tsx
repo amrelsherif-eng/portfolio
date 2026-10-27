@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { labGames } from "./games";
 import type { GameProps } from "./types";
 import "./lab.css";
+import SherifChat from "../components/SherifChat";
 
 type Stats = { best: number; attempts: number };
 function readStats(id: string): Stats { try { return JSON.parse(localStorage.getItem(`lab-stats-${id}`) || "null") || { best: 0, attempts: 0 }; } catch { return { best: 0, attempts: 0 }; } }
@@ -38,5 +39,5 @@ export default function GameShell() {
     {stage === "intro" && <section className="lab-panel"><p className="lab-kicker">{game.minutes} MINUTE GAME</p><h2>What you’ll do</h2><p>{game.tagline} Answer ten quick questions before the timer runs out.</p><button className="lab-button" onClick={() => setStage("game")}>Start game</button></section>}
     {stage === "game" && <Suspense fallback={<div className="lab-panel" role="status">Loading game…</div>}><Game onFinish={finish} /></Suspense>}
     {stage === "result" && result && <section className="lab-panel"><p className="lab-kicker">SESSION COMPLETE</p><h2>{result.score} / {result.max}</h2><p>Time: {result.seconds}s · Best: {stats.best} · Attempts: {stats.attempts}</p><div className="lab-actions"><button className="lab-button" onClick={() => { setResult(null); setStage("game"); }}>Play again</button><button className="lab-button lab-button-secondary" onClick={share}>Share score</button><button className="lab-button lab-button-secondary" onClick={() => window.dispatchEvent(new CustomEvent("sherif:ask", { detail: `Explain the ${game.title} game and the networking idea behind it` }))}>Ask Ping to explain</button></div>{toast && <p role="status" className="lab-toast">{toast}</p>}</section>}
-  </main>;
+  <SherifChat /></main>;
 }
