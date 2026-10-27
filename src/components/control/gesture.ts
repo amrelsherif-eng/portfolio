@@ -80,7 +80,13 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
   };
 
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" } });
+    if (!navigator.mediaDevices?.getUserMedia) throw new Error("Camera needs a secure page (https or localhost).");
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" } }); }
+    catch (first) {
+      const name = first instanceof DOMException ? first.name : "";
+      if (name === "NotAllowedError" || name === "SecurityError") throw first;
+      stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
+    }
     video.srcObject = stream; document.body.append(wrapper); await video.play();
     const vision = await FilesetResolver.forVisionTasks("/mediapipe/wasm");
     try {
@@ -164,7 +170,11 @@ export async function startGesture(onStatus: (s: GestureStatus, detail?: string)
     return cleanup;
   } catch (error) {
     cleanup();
-    const reason = error instanceof Error ? error.message : "Unable to start hand gesture control";
+    const name = error instanceof DOMException ? error.name : "";
+    const reason = name === "NotAllowedError" || name === "SecurityError" ? "Camera blocked. Click the camera icon in the address bar, allow it, then try again."
+      : name === "NotFoundError" || name === "OverconstrainedError" ? "No camera found on this device."
+      : name === "NotReadableError" || name === "AbortError" ? "Camera is busy in another app (Zoom, Teams, Camera). Close it and try again."
+      : error instanceof Error ? error.message : "Unable to start hand gesture control";
     onStatus("error", reason); return () => undefined;
   }
 }

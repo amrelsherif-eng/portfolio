@@ -22,7 +22,7 @@ const schema = {
   required: ["action", "reply"],
   propertyOrdering: ["action", "target", "direction", "reply"],
 };
-const catalogue = `Allowed actions: goto (requires target top/about/work/techstack/certifications/contact); scroll (requires direction up/down); resume; chat; answer; none. Use goto for section requests, scroll for scrolling, resume for CV/resume, chat to open Ping, answer for a factual question about Amr supported by the knowledge, and none for unrelated or unclear speech. Visitors speak casually in English or Egyptian Arabic. Examples: “show me his AWS stuff” => goto certifications; “وريني مشاريعه” => goto work; “what is he studying” / “هو بيدرس ايه” => answer with a brief fact from knowledge; “kalam fadi” => none. Return exactly one short reply sentence (at most 25 words) in the requested language (lang), plain text; use only knowledge facts, never invent. Navigation replies are short confirmations.`;
+const catalogue = `Allowed actions: goto (requires target top/about/work/techstack/certifications/contact); scroll (requires direction up/down); resume; chat; answer; none. Use goto for section requests, scroll for scrolling, resume for CV/resume, chat to open Ping, answer for a factual question about Amr supported by the knowledge, and none for unrelated or unclear speech. Visitors speak casually in English or Egyptian Arabic. Examples: “show me his AWS stuff” => goto certifications; “وريني مشاريعه” => goto work; “افتح السي في” / “الـ CV” => resume; “what is he studying” / “هو بيدرس ايه” => answer with a brief fact from knowledge; “kalam fadi” => none. Return exactly one short reply sentence (at most 25 words) in the requested language (lang), plain text; use only knowledge facts, never invent. Navigation replies are short confirmations. In Arabic, always write his name as عمرو.`;
 const fallback = (lang: string) => lang === "ar" ? "معلش، ماقدرتش أفهم طلبك. جرّب تاني." : "Sorry, I couldn't understand that. Please try again.";
 const answerRule = `For action "answer", reply ONLY with facts explicitly present in the knowledge. If the exact thing asked about (including a tool such as Kubernetes) is not explicitly listed, say plainly that it is not listed on Amr's portfolio and suggest asking him by email. Never imply future plans or skills that are not written there, and do not infer adjacent experience.`;
 function respond(res: Response, code: number, body: VoiceReply) {
@@ -53,7 +53,11 @@ function parseModel(value: unknown, lang: "en" | "ar"): VoiceReply | null {
 }
 function parseGroqModel(value: unknown, lang: "en" | "ar"): VoiceReply | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  const item = value as Record<string, unknown>;
+  const raw = value as Record<string, unknown>;
+  const item: Record<string, unknown> = {};
+  for (const key of ["action", "target", "direction", "reply"]) if (raw[key] !== null && raw[key] !== undefined && raw[key] !== "") item[key] = raw[key];
+  if (item.action !== "goto") delete item.target;
+  if (item.action !== "scroll") delete item.direction;
   return parseModel({ candidates: [{ content: { parts: [{ text: JSON.stringify(item) }] } }] }, lang);
 }
 
@@ -64,7 +68,7 @@ export default async function handler(req: Request, res: Response) {
   if (typeof payload === "string") { try { payload = JSON.parse(payload); } catch { return respond(res, 400, { action: "none", reply: fallback(langFallback) }); } }
   if (!payload || typeof payload !== "object") return respond(res, 400, { action: "none", reply: fallback(langFallback) });
   const { text, audio, mime, lang } = payload as { text?: unknown; audio?: unknown; mime?: unknown; lang?: unknown };
-  if (isRateLimited(req, audio !== undefined ? 2 : 1)) return respond(res, 429, { action: "none", reply: fallback(langFallback), transcript: "" });
+  if (isRateLimited(req, 1, "voice", 40)) return respond(res, 429, { action: "none", reply: (lang === "ar" || langFallback === "ar") ? "أوامر كتير ورا بعض، استنى دقيقة وجرّب تاني." : "Too many commands in a row. Wait a minute and try again.", transcript: "" });
   if (lang !== "en" && lang !== "ar") return respond(res, 400, { action: "none", reply: fallback(langFallback), transcript: "" });
   let transcript = typeof text === "string" ? text.trim() : "";
   if (audio !== undefined) {
@@ -77,7 +81,7 @@ export default async function handler(req: Request, res: Response) {
     try {
       const form = new web.FormData();
       form.append("file", new web.Blob([bytes], { type: mime }), mime.includes("webm") ? "speech.webm" : `speech.${mime.split("/")[1]?.split(";")[0] || "bin"}`);
-      form.append("model", "whisper-large-v3-turbo"); form.append("language", lang); form.append("response_format", "json"); form.append("temperature", "0");
+      form.append("model", "whisper-large-v3-turbo"); form.append("language", lang); form.append("response_format", "json"); form.append("temperature", "0"); form.append("prompt", lang === "ar" ? "عمرو، وريني مشاريعه، الشهادات، بيدرس ايه، السي في، التواصل، انزل تحت، اطلع فوق" : "Amr, projects, certifications, tech stack, resume, contact, scroll down");
       const response = await web.fetch("https://api.groq.com/openai/v1/audio/transcriptions", { method: "POST", headers: { Authorization: `Bearer ${env.GROQ_API_KEY}` }, body: form, signal: controller.signal });
       if (response.ok) { const result = await response.json() as { text?: unknown }; transcript = typeof result.text === "string" ? result.text.trim() : ""; }
     } catch { /* fall through to empty transcript */ } finally { web.clearTimeout(timer); }

@@ -10,7 +10,7 @@ const runtime = globalThis as typeof globalThis & {
 export async function callGroqJson(system: string, user: string, opts: { temperature?: number; max_tokens?: number } = {}): Promise<unknown | null> {
   const key = runtime.process?.env.GROQ_API_KEY;
   if (!key) return null;
-  const models = [...new Set([runtime.process?.env.GROQ_MODEL, "llama-3.3-70b-versatile", "llama-3.1-8b-instant"].filter(Boolean) as string[])];
+  const models = [...new Set([runtime.process?.env.GROQ_MODEL, "openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"].filter(Boolean) as string[])];
   for (const model of models) {
     const controller = new runtime.AbortController();
     const timer = runtime.setTimeout(() => controller.abort(), 8000);
@@ -19,13 +19,13 @@ export async function callGroqJson(system: string, user: string, opts: { tempera
       response = await runtime.fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-        body: JSON.stringify({ model, messages: [{ role: "system", content: system }, { role: "user", content: user }], response_format: { type: "json_object" }, temperature: opts.temperature ?? 0.2, max_tokens: opts.max_tokens ?? 300 }),
+        body: JSON.stringify({ model, messages: [{ role: "system", content: system }, { role: "user", content: user }], response_format: { type: "json_object" }, temperature: opts.temperature ?? 0.2, max_completion_tokens: Math.max(opts.max_tokens ?? 300, 1200), ...(model.startsWith("openai/gpt-oss") ? { reasoning_effort: "low" } : {}) }),
         signal: controller.signal,
       });
     } catch { runtime.clearTimeout(timer); continue; }
     runtime.clearTimeout(timer);
     if (!response.ok) {
-      if (response.status === 404 || response.status === 429 || (response.status !== undefined && response.status >= 500)) continue;
+      if (response.status === 400 || response.status === 404 || response.status === 429 || (response.status !== undefined && response.status >= 500)) continue;
       return null;
     }
     try {

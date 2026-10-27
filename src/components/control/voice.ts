@@ -32,7 +32,7 @@ export function startVoice(onStatus: (s: VoiceStatus, text?: string) => void, la
     try {
       const audio = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(new Error("Unable to read recording")); reader.onload = () => resolve(String(reader.result).split(",")[1] || ""); reader.readAsDataURL(blob); });
       const response = await fetch("/api/voice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ audio, mime: blob.type || "audio/webm", lang }) });
-      const data = await response.json() as VoiceAction; if (!response.ok) throw new Error("Voice request failed");
+      const data = await response.json() as VoiceAction; if (response.status === 429) { onStatus("error", data.reply); return; } if (!response.ok) throw new Error("Voice request failed");
       const transcript = data.transcript || ""; onStatus("heard", transcript);
       if (!executeCommand(transcript)) {
         if (data.action === "goto" && data.target) goToSection(data.target);
