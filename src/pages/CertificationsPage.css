@@ -122,7 +122,7 @@
 }
 .cpg-aws-card {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 220px 1fr;
   gap: 24px;
   padding: 24px;
   border: 1px solid #1e1e1e;
@@ -147,15 +147,22 @@
   overflow: hidden;
   transition: border-color 0.2s ease;
   min-height: 44px;
+  /* frame = the certificate's own shape, centred: no empty bars above/below */
+  align-self: center;
+  aspect-ratio: 1598 / 1237;
 }
 .cpg-aws-thumb-btn:hover {
   border-color: var(--accentColor);
 }
 .cpg-aws-thumb {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
-  object-fit: contain;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.cpg-aws-thumb-btn:hover .cpg-aws-thumb {
+  transform: scale(1.03);
 }
 
 /* body */
