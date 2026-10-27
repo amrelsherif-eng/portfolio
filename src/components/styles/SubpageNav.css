@@ -103,10 +103,11 @@
   .subpage-nav-link {
     font-size: 12px;
     padding: 0 2px;
+    min-width: 44px; /* 44px tap target even for short labels (CV, Lab) */
   }
 
   .subpage-nav-sep {
-    font-size: 11px;
+    font-size: 12px;
     padding: 0 1px;
   }
 }
