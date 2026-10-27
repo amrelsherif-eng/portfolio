@@ -33,10 +33,14 @@ export default async function handler(req: ChatRequest, res: ChatResponse) {
   const key = runtime.process?.env.GEMINI_API_KEY;
   if (!key) return respond(res, 503, { reply: "Ping is offline right now — email amrelsherif.eng@gmail.com." });
 
-  // On Vercel the socket address is the proxy; the visitor's IP is the first x-forwarded-for entry.
-  const fwd = req.headers?.["x-forwarded-for"];
-  const ip = (Array.isArray(fwd) ? fwd[0] : fwd)?.split(",")[0].trim() || req.ip || req.socket?.remoteAddress || "unknown";
+  // Prefer x-real-ip: Vercel's proxy sets it itself, so visitors can't spoof it to dodge the rate limit.
+  const first = (h: string | string[] | undefined) => (Array.isArray(h) ? h[0] : h)?.split(",")[0].trim();
+  const ip = first(req.headers?.["x-real-ip"]) || first(req.headers?.["x-forwarded-for"]) || req.ip || req.socket?.remoteAddress || "unknown";
   const now = Date.now();
+  // keep memory bounded: drop visitors with no requests in the current window
+  if (requestLog.size > 2000) {
+    for (const [key, times] of requestLog) if (!times.some((time) => now - time < WINDOW_MS)) requestLog.delete(key);
+  }
   const recent = (requestLog.get(ip) || []).filter((time) => now - time < WINDOW_MS);
   if (recent.length >= MAX_REQUESTS) {
     requestLog.set(ip, recent);

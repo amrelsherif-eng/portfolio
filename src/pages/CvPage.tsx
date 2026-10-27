@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { trapTab } from "../components/utils/focusTrap";
 import { Link } from "react-router-dom";
 import { cvs, CvVersion, emphasisRows } from "../data/cvs";
 import { lenis } from "../components/Navbar";
@@ -31,6 +32,7 @@ function CvViewer({
 
   const handleKey = useCallback(
     (e: React.KeyboardEvent) => {
+      trapTab(e, overlayRef.current); // keep Tab inside the dialog
       if (e.key === "Escape") onClose();
     },
     [onClose]

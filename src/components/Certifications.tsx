@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from "react";
+import { trapTab } from "./utils/focusTrap";
 import { certifications, Certification } from "../data/certifications";
 import { Link } from "react-router-dom";
 import { lenis } from "./Navbar";
@@ -89,6 +90,7 @@ export function CertViewer({
   // Keyboard navigation
   const handleKey = useCallback(
     (e: React.KeyboardEvent) => {
+      trapTab(e, overlayRef.current); // keep Tab inside the dialog
       if (e.key === "Escape") {
         onClose();
       } else if (e.key === "ArrowLeft") {
