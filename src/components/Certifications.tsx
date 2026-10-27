@@ -209,21 +209,6 @@ export function CertRow({
         )}
       </div>
 
-      {/* fixed-width slot keeps every row's columns aligned, image or not
-          (the thumbnail is hidden on phones; the Preview link still works) */}
-      <div className="cert-row-thumb-slot">
-        {cert.image && (
-          <button
-            className="cert-row-thumb-btn"
-            onClick={handlePreview}
-            aria-label={`Preview certificate: ${cert.name}`}
-            type="button"
-          >
-            <img src={cert.image} alt="" className="cert-row-thumb" loading="lazy" />
-          </button>
-        )}
-      </div>
-
       <span className="cert-row-date">{cert.date}</span>
 
       <div className="cert-row-actions">

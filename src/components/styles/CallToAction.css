@@ -1,67 +1,130 @@
 .cta-section {
   width: 100%;
-  padding: 80px 20px;
+  padding: 110px 20px;
   background-color: var(--backgroundColor);
   display: flex;
   justify-content: center;
-  align-items: center;
+  box-sizing: border-box;
+}
+
+.cta-inner {
+  width: 100%;
+  max-width: 760px;
+  text-align: center;
+  padding: 56px 32px;
+  border: 1px solid #363636;
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(0, 240, 255, 0.07), transparent 65%),
+    rgba(255, 255, 255, 0.015);
+  box-sizing: border-box;
+}
+
+.cta-eyebrow {
+  margin: 0 0 14px;
+  font-family: var(--monoFont);
+  font-size: 13px;
+  color: var(--accentColor);
+  letter-spacing: 0.04em;
+}
+
+.cta-title {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(32px, 4.4vw, 52px);
+  font-weight: 600;
+  line-height: 1.1;
+  color: #fff;
+}
+.cta-title span {
+  color: var(--accentColor);
+}
+
+.cta-text {
+  margin: 16px auto 32px;
+  max-width: 520px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.68);
 }
 
 .cta-buttons {
   display: flex;
   justify-content: center;
-  gap: 25px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
 .cta-btn {
   display: inline-flex;
   align-items: center;
-  padding: 14px 32px;
-  font-size: 15px;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 28px;
+  font-family: var(--monoFont);
+  font-size: 14px;
   font-weight: 500;
   text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  letter-spacing: 0.3px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
 
-.cta-btn-play {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.cta-btn-play:hover {
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-.cta-btn-hire {
+.cta-btn-primary {
   background: var(--accentColor);
-  color: #000;
+  color: #061014;
   border: 1px solid var(--accentColor);
 }
-
-.cta-btn-hire:hover {
-  box-shadow: 0 8px 30px rgba(0, 240, 255, 0.35);
+.cta-btn-primary:hover {
+  color: #061014;
+  box-shadow: 0 8px 28px rgba(0, 240, 255, 0.3);
   transform: translateY(-2px);
 }
 
-/* Responsive */
+.cta-btn-ghost {
+  background: transparent;
+  color: var(--accentColor);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+}
+.cta-btn-ghost:hover {
+  color: var(--accentColor);
+  background: rgba(0, 240, 255, 0.08);
+}
+
+.cta-btn:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 3px;
+}
+
+/* screen-reader-only live message for "copied" */
+.cta-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 @media only screen and (max-width: 768px) {
   .cta-section {
-    padding: 60px 20px;
+    padding: 70px 16px;
   }
-
+  .cta-inner {
+    padding: 40px 20px;
+  }
   .cta-buttons {
     flex-direction: column;
-    gap: 15px;
+    align-items: stretch;
   }
+}
 
+@media (prefers-reduced-motion: reduce) {
   .cta-btn {
-    justify-content: center;
-    padding: 12px 28px;
+    transition: none;
+  }
+  .cta-btn-primary:hover {
+    transform: none;
   }
 }

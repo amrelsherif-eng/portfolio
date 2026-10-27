@@ -80,9 +80,9 @@
 
 /* ── shared CertRow (used here + page) ────────────────────── */
 .cert-row {
-  /* fixed columns: badge | name | thumbnail | date | links -> every row lines up */
+  /* fixed columns: badge | name | date | links -> every row lines up */
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 76px 72px 124px;
+  grid-template-columns: 48px minmax(0, 1fr) 72px 124px;
   align-items: center;
   column-gap: 16px;
   padding: 20px 12px;
