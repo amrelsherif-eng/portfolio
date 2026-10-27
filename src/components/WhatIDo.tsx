@@ -94,11 +94,14 @@ const WhatIDo = () => {
               <p>
                 {config.skills.develop.details}
               </p>
-              <ul className="what-highlights">
-                {config.skills.develop.highlights.map((point, index) => (
-                  <li key={index}>{point}</li>
+              <div className="what-stats" aria-label="Key statistics">
+                {config.skills.develop.stats.map((stat) => (
+                  <div className="what-stat" key={stat.label}>
+                    <span className="what-stat-value">{stat.value}</span>
+                    <span className="what-stat-label">{stat.label}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
               <div className="what-label">Skillset &amp; tools</div>
               <div className="what-content-flex">
                 {config.skills.develop.tools.map((tool, index) => (
@@ -133,11 +136,14 @@ const WhatIDo = () => {
               <p>
                 {config.skills.design.details}
               </p>
-              <ul className="what-highlights">
-                {config.skills.design.highlights.map((point, index) => (
-                  <li key={index}>{point}</li>
+              <div className="what-stats" aria-label="Key statistics">
+                {config.skills.design.stats.map((stat) => (
+                  <div className="what-stat" key={stat.label}>
+                    <span className="what-stat-value">{stat.value}</span>
+                    <span className="what-stat-label">{stat.label}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
               <div className="what-label">Skillset &amp; tools</div>
               <div className="what-content-flex">
                 {config.skills.design.tools.map((tool, index) => (
@@ -172,11 +178,14 @@ const WhatIDo = () => {
               <p>
                 {config.skills.mobile.details}
               </p>
-              <ul className="what-highlights">
-                {config.skills.mobile.highlights.map((point, index) => (
-                  <li key={index}>{point}</li>
+              <div className="what-stats" aria-label="Key statistics">
+                {config.skills.mobile.stats.map((stat) => (
+                  <div className="what-stat" key={stat.label}>
+                    <span className="what-stat-value">{stat.value}</span>
+                    <span className="what-stat-label">{stat.label}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
               <div className="what-label">Skillset &amp; tools</div>
               <div className="what-content-flex">
                 {config.skills.mobile.tools.map((tool, index) => (
