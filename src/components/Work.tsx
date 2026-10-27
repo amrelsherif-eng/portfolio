@@ -86,7 +86,7 @@ const Work = () => {
                 <div className="work-label">Stack</div>
                 <p className="work-stack">{project.technologies}</p>
               </div>
-              <WorkImage image={project.image} alt={project.title} link={project.link} priority={index === 0} />
+              <WorkImage image={project.image} alt={project.title} link={project.link} />
             </div>
           ))}
           {/* See All Works Button */}

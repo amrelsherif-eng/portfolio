@@ -33,6 +33,55 @@ function localChatPlugin(): Plugin {
   };
 }
 
+function homePreloadPlugin(): Plugin {
+  return {
+    name: "home-route-preload",
+    enforce: "post",
+    apply: "build",
+    generateBundle(_options, bundle) {
+      const chunks = Object.values(bundle).filter((item) => item.type === "chunk");
+      const findChunk = (suffix: string) => chunks.find((chunk) => chunk.facadeModuleId?.replace(/\\/g, "/").endsWith(suffix));
+      const roots = [findChunk("src/components/MainContainer.tsx"), findChunk("src/components/utils/initialFX.ts")].filter((chunk): chunk is import("rollup").OutputChunk => Boolean(chunk));
+      const js = new Set<string>();
+      const css = new Set<string>();
+      const visited = new Set<string>();
+      const visit = (chunk: import("rollup").OutputChunk) => {
+        if (visited.has(chunk.fileName)) return;
+        visited.add(chunk.fileName);
+        js.add(`/${chunk.fileName}`);
+        for (const file of chunk.viteMetadata?.importedCss ?? []) css.add(`/${file}`);
+        for (const imported of chunk.imports) {
+          const dependency = bundle[imported];
+          if (dependency?.type === "chunk") visit(dependency);
+        }
+      };
+      roots.forEach(visit);
+
+      const html = Object.values(bundle).find((item) => item.type === "asset" && item.fileName.endsWith("index.html"));
+      if (!html || html.type !== "asset") return;
+      const source = typeof html.source === "string" ? html.source : String.fromCharCode(...html.source);
+      const existing = new Set<string>();
+      for (const tag of source.match(/<link\b[^>]*>/g) ?? []) {
+        if (/\brel=["'](?:modulepreload|stylesheet)["']/.test(tag)) {
+          const href = tag.match(/\bhref=["']([^"']+)["']/)?.[1];
+          if (href) existing.add(href);
+        }
+      }
+      for (const tag of source.match(/<script\b[^>]*>/g) ?? []) {
+        if (/\btype=["']module["']/.test(tag)) {
+          const src = tag.match(/\bsrc=["']([^"']+)["']/)?.[1];
+          if (src) existing.add(src);
+        }
+      }
+      const urls = [...js].filter((url) => !existing.has(url) && !existing.has(url.slice(1)));
+      const cssUrls = [...css].filter((url) => !existing.has(url) && !existing.has(url.slice(1)));
+      const ref = this.emitFile({ type: "asset", name: "home-preload.js", source: `if(location.pathname==="/"){const js=${JSON.stringify(urls)},css=${JSON.stringify(cssUrls)};for(const href of js){const l=document.createElement("link");l.rel="modulepreload";l.href=href;document.head.appendChild(l)}for(const href of css){const l=document.createElement("link");l.rel="preload";l.as="style";l.href=href;document.head.appendChild(l)}}` });
+      const loaderUrl = `/${this.getFileName(ref)}`;
+      html.source = source.replace(/(<head(?:\s[^>]*)?>)/i, `$1\n    <script async src="${loaderUrl}"></script>`);
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   const runtime = globalThis as typeof globalThis & { process: { cwd: () => string; env: Record<string, string | undefined> } };
   const env = loadEnv(mode, runtime.process.cwd(), "");
@@ -43,7 +92,7 @@ export default defineConfig(({ mode }) => {
   if (env.GROQ_API_KEY) runtime.process.env.GROQ_API_KEY = env.GROQ_API_KEY;
   if (env.GROQ_MODEL) runtime.process.env.GROQ_MODEL = env.GROQ_MODEL;
   return {
-  plugins: [react(), localChatPlugin()],
+  plugins: [react(), localChatPlugin(), homePreloadPlugin()],
   build: {
     rollupOptions: {
       output: {
