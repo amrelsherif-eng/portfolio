@@ -1,7 +1,7 @@
-// Env: GROQ_API_KEY (primary, free at console.groq.com), GEMINI_API_KEY (fallback)
+// Env: GROQ_API_KEY, GROQ_API_KEY_2 (optional), GEMINI_API_KEY (fallback)
 import { knowledge } from "./knowledge.js";
 import { callGemini, isRateLimited } from "./_gemini.js";
-import { callGroqJson } from "./_groq.js";
+import { callGroqJson, groqKeys } from "./_groq.js";
 import { matchIntent } from "./_intent.js";
 
 const env = (globalThis as typeof globalThis & { process?: { env: Record<string, string | undefined> } }).process?.env;
@@ -12,7 +12,7 @@ type Request = { method?: string; body?: unknown; headers?: Record<string, strin
 type Response = { statusCode: number; setHeader: (name: string, value: string) => void; end: (body?: string) => void; status?: (code: number) => Response; json?: (body: unknown) => void };
 type Action = "goto" | "scroll" | "resume" | "chat" | "answer" | "none";
 type VoiceReply = { action: Action; target?: "top" | "about" | "work" | "techstack" | "certifications" | "contact"; direction?: "up" | "down"; reply: string; transcript?: string };
-type TranscriptionResponse = { ok: boolean; json: () => Promise<unknown> };
+type TranscriptionResponse = { ok: boolean; status?: number; json: () => Promise<unknown> };
 const web = globalThis as unknown as { atob: (value: string) => string; FormData: new () => { append(name: string, value: unknown, filename?: string): void }; Blob: new (parts: Uint8Array[], options: { type: string }) => unknown; fetch: (url: string, init: { method: string; headers: Record<string, string>; body: unknown; signal: unknown }) => Promise<TranscriptionResponse>; AbortController: new () => { signal: unknown; abort(): void }; setTimeout: (fn: () => void, ms: number) => unknown; clearTimeout: (id: unknown) => void };
 const schema = {
   type: "OBJECT",
@@ -91,23 +91,27 @@ export default async function handler(req: Request, res: Response) {
     let bytes: Uint8Array;
     try { const binary = web.atob(audio); bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0)); } catch { return respond(res, 400, { action: "none", reply: fallback(lang), transcript: "" }); }
     if (!bytes.length || bytes.length > 1.5 * 1024 * 1024) return respond(res, 413, { action: "none", reply: fallback(lang), transcript: "" });
-    if (!env?.GROQ_API_KEY) return respond(res, 200, { action: "none", reply: fallback(lang), transcript: "" });
-    const controller = new web.AbortController(); const timer = web.setTimeout(() => controller.abort(), 10000);
-    try {
-      const form = new web.FormData();
-      form.append("file", new web.Blob([bytes], { type: mime }), mime.includes("webm") ? "speech.webm" : `speech.${mime.split("/")[1]?.split(";")[0] || "bin"}`);
-      form.append("model", lang === "ar" ? "whisper-large-v3" : "whisper-large-v3-turbo"); form.append("language", lang); form.append("response_format", "verbose_json"); form.append("temperature", "0"); form.append("prompt", transcriptionPrompt[lang]);
-      const response = await web.fetch("https://api.groq.com/openai/v1/audio/transcriptions", { method: "POST", headers: { Authorization: `Bearer ${env.GROQ_API_KEY}` }, body: form, signal: controller.signal });
-      if (response.ok) { const result = await response.json() as { text?: unknown; segments?: Array<{ text?: unknown; no_speech_prob?: unknown; avg_logprob?: unknown }> }; transcript = Array.isArray(result.segments) ? result.segments.filter((segment) => typeof segment.no_speech_prob === "number" && segment.no_speech_prob < 0.6 && typeof segment.avg_logprob === "number" && segment.avg_logprob > -1.0).map((segment) => typeof segment.text === "string" ? segment.text : "").join(" ").trim() : typeof result.text === "string" ? result.text.trim() : ""; transcript = cleanTranscript(transcript, lang); }
-    } catch { /* fall through to empty transcript */ } finally { web.clearTimeout(timer); }
+    const keys = groqKeys();
+    if (!keys.length) return respond(res, 200, { action: "none", reply: fallback(lang), transcript: "" });
+    for (const key of keys) {
+      const controller = new web.AbortController(); const timer = web.setTimeout(() => controller.abort(), 8000);
+      try {
+        const form = new web.FormData();
+        form.append("file", new web.Blob([bytes], { type: mime }), mime.includes("webm") ? "speech.webm" : `speech.${mime.split("/")[1]?.split(";")[0] || "bin"}`);
+        form.append("model", lang === "ar" ? "whisper-large-v3" : "whisper-large-v3-turbo"); form.append("language", lang); form.append("response_format", "verbose_json"); form.append("temperature", "0"); form.append("prompt", transcriptionPrompt[lang]);
+        const response = await web.fetch("https://api.groq.com/openai/v1/audio/transcriptions", { method: "POST", headers: { Authorization: `Bearer ${key}` }, body: form, signal: controller.signal });
+        if (response.ok) { const result = await response.json() as { text?: unknown; segments?: Array<{ text?: unknown; no_speech_prob?: unknown; avg_logprob?: unknown }> }; transcript = Array.isArray(result.segments) ? result.segments.filter((segment) => typeof segment.no_speech_prob === "number" && segment.no_speech_prob < 0.6 && typeof segment.avg_logprob === "number" && segment.avg_logprob > -1.0).map((segment) => typeof segment.text === "string" ? segment.text : "").join(" ").trim() : typeof result.text === "string" ? result.text.trim() : ""; transcript = cleanTranscript(transcript, lang); break; }
+        if (response.status !== 401 && response.status !== 403 && response.status !== 429 && (response.status === undefined || response.status < 500)) break;
+      } catch { /* try the next key */ } finally { web.clearTimeout(timer); }
+    }
     if (!transcript) return respond(res, 200, { action: "none", reply: lang === "ar" ? "مسمعتش كويس، جرّب تاني وقرّب من المايك" : "I didn't catch that. Try again a little closer to the mic.", transcript: "" });
   }
   if (!transcript || transcript.length > 300) return respond(res, 400, { action: "none", reply: fallback(lang), transcript });
   const intent = matchIntent(transcript, lang);
   if (intent) return respond(res, 200, { ...intent, transcript });
-  if (!env?.GROQ_API_KEY && ![env?.GEMINI_API_KEY, env?.GEMINI_API_KEY_2, env?.GEMINI_API_KEY_3].some((key) => key?.trim())) return respond(res, 200, { action: "none", reply: fallback(lang), transcript });
+  if (!groqKeys().length && ![env?.GEMINI_API_KEY, env?.GEMINI_API_KEY_2, env?.GEMINI_API_KEY_3].some((key) => key?.trim())) return respond(res, 200, { action: "none", reply: fallback(lang), transcript });
   const instruction = `Reply ONLY with a JSON object with keys action, target, direction, reply. Allowed action values: goto, scroll, resume, chat, answer, none. Allowed target values: top, about, work, techstack, certifications, contact. Allowed direction values: up, down. ${catalogue}\n${answerRule}\n\nThe requested reply language is ${lang === "ar" ? "Egyptian Arabic" : "English"}.\n\nKNOWLEDGE:\n${knowledge}`;
-  if (env?.GROQ_API_KEY) {
+  if (groqKeys().length > 0) {
     const groq = await callGroqJson(instruction, transcript, { temperature: 0.2, max_tokens: 300 });
     const validatedGroq = parseGroqModel(groq, lang);
     if (validatedGroq) return respond(res, 200, { ...validatedGroq, transcript });
