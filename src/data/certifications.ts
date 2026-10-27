@@ -14,6 +14,7 @@ export type Certification = {
   featured?: boolean; // shown in the home section (max 4)
   verifyUrl: string; // "" = not added yet -> UI shows no verify link
   image?: string; // certificate preview (public/images/certs/<id>.webp)
+  endDate?: string; // in-progress courses: planned end
 };
 
 export const certifications: Certification[] = [
@@ -44,6 +45,7 @@ export const certifications: Certification[] = [
     date: "Oct 2026", // course start; ends Dec 2026
     category: "Cloud & Networking",
     status: "in-progress",
+    endDate: "Dec 2026",
     featured: true,
     verifyUrl: "", // TODO: add the Cisco badge link + preview when finished
   },
@@ -54,6 +56,7 @@ export const certifications: Certification[] = [
     date: "Oct 2026", // course start; ends Jan 2027
     category: "Cloud & Networking",
     status: "in-progress",
+    endDate: "Jan 2027",
     verifyUrl: "", // TODO: add the Cisco badge link + preview when finished
   },
   {
@@ -63,6 +66,7 @@ export const certifications: Certification[] = [
     date: "Oct 2026", // course start; ends Jan 2027
     category: "Cloud & Networking",
     status: "in-progress",
+    endDate: "Jan 2027",
     verifyUrl: "", // TODO: add the Cisco badge link + preview when finished
   },
   {
