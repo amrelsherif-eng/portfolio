@@ -53,7 +53,7 @@ function buildScenarios(): Scenario[] {
   return [
     {
       topology: "pc-sw-rtr-inet",
-      complaint: "\"I can't reach anything on the network or the internet.\"",
+      complaint: "\"I can still print to the office printer, but no website or remote server works.\"",
       commands: [
         { label: "ipconfig", output: "IPv4 Address. . . . . . : 192.168.1.50\nSubnet Mask . . . . . . : 255.255.255.0\nDefault Gateway . . . . : 192.168.1.254" },
         { label: "ping 192.168.1.254", output: "Pinging 192.168.1.254 with 32 bytes of data:\nRequest timed out.\nRequest timed out.\n\nPackets: Sent = 2, Received = 0, Lost = 2 (100% loss)" },
