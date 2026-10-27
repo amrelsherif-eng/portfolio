@@ -1,4 +1,5 @@
 type GroqResponse = { ok: boolean; status?: number; json: () => Promise<unknown> };
+import type { Deadline } from "./_budget.js";
 // Env: GROQ_API_KEY, GROQ_API_KEY_2, GROQ_API_KEY_3 (the last two are optional).
 const runtime = globalThis as typeof globalThis & {
   process?: { env: Record<string, string | undefined> };
@@ -12,13 +13,16 @@ export function groqKeys(): string[] {
   return [...new Set([runtime.process?.env.GROQ_API_KEY, runtime.process?.env.GROQ_API_KEY_2, runtime.process?.env.GROQ_API_KEY_3].map((key) => key?.trim()).filter((key): key is string => Boolean(key)))];
 }
 
-export async function callGroqJson(system: string, user: string, opts: { temperature?: number; max_tokens?: number } = {}): Promise<unknown | null> {
+export async function callGroqJson(system: string, user: string, opts: { temperature?: number; max_tokens?: number } = {}, deadline?: Deadline): Promise<unknown | null> {
   const keys = groqKeys();
   if (!keys.length) return null;
   const models = [...new Set([runtime.process?.env.GROQ_MODEL, "openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"].filter(Boolean) as string[])];
+  let attempts = 0;
   for (const key of keys) for (const model of models) {
+    if (attempts >= 4 || (deadline && deadline.remaining() < 1500)) return null;
+    attempts++;
     const controller = new runtime.AbortController();
-    const timer = runtime.setTimeout(() => controller.abort(), 8000);
+    const timer = runtime.setTimeout(() => controller.abort(), deadline ? Math.min(8000, deadline.remaining() - 300) : 8000);
     let response: GroqResponse;
     try {
       response = await runtime.fetch("https://api.groq.com/openai/v1/chat/completions", {

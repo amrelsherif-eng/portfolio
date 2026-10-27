@@ -1,5 +1,6 @@
 import { systemInstruction } from "./knowledge.js"; // .js: Vercel runs these as native ES modules, which need the extension
 import { callGemini } from "./_gemini.js";
+import { makeDeadline } from "./_budget.js";
 
 type ChatMessage = { role: "user" | "model"; text: string };
 type ChatRequest = { method?: string; body?: unknown; headers?: Record<string, string | string[] | undefined>; ip?: string; socket?: { remoteAddress?: string } };
@@ -28,6 +29,7 @@ function respond(res: ChatResponse, statusCode: number, body: { reply: string })
 }
 
 export default async function handler(req: ChatRequest, res: ChatResponse) {
+  const deadline = makeDeadline(20_000);
   if (req.method !== "POST") return respond(res, 405, { reply: "Please send a chat message using POST." });
   const contentLength = req.headers?.["content-length"];
   const contentLengthValue = Array.isArray(contentLength) ? contentLength[0] : contentLength;
@@ -79,7 +81,7 @@ export default async function handler(req: ChatRequest, res: ChatResponse) {
   }
 
   try {
-    const result = await callGemini(contents.map(({ role, text }) => ({ role, parts: [{ text }] })), systemInstruction, { temperature: 0.4, maxOutputTokens: 4096 });
+    const result = await callGemini(contents.map(({ role, text }) => ({ role, parts: [{ text }] })), systemInstruction, { temperature: 0.4, maxOutputTokens: 4096 }, deadline);
     if (!result.ok) {
       if (result.status === 502) return respond(res, 502, { reply: "Ping couldn't answer just now. Please try again shortly." });
       return respond(res, 503, { reply: "Ping is very busy right now. Please try again in a minute, or email amrelsherif.eng@gmail.com." });
