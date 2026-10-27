@@ -51,6 +51,15 @@ function includesPhrase(text: string, phrase: string): boolean {
   return (` ${text} `).includes(` ${phrase} `);
 }
 
+// Whisper often glues or swallows Arabic prefixes ("اشهادات", "للمشاريع", "والشهادات"), so a one-word
+// Arabic keyword (4+ letters) also matches a word that is only a short prefix + the keyword.
+const arabicPrefixes = ["ا", "ل", "لل", "ب", "و", "ف", "وال", "بال", "فال", "ال"];
+function includesKeyword(text: string, phrase: string, lang: "en" | "ar"): boolean {
+  if (includesPhrase(text, phrase)) return true;
+  if (lang !== "ar" || phrase.includes(" ") || phrase.length < 4) return false;
+  return text.split(" ").some((word) => word.endsWith(phrase) && arabicPrefixes.includes(word.slice(0, word.length - phrase.length)));
+}
+
 export function matchIntent(transcript: string, lang: "en" | "ar"): IntentReply | null {
   const text = normalize(transcript, lang);
   if (!text) return null;
@@ -65,7 +74,7 @@ export function matchIntent(transcript: string, lang: "en" | "ar"): IntentReply 
 
   // Egyptian speakers mix English words into Arabic ("وريني الـ projects"), so Arabic mode also checks the English list.
   const keywordsFor = (action: IntentAction) => lang === "ar" ? [...arabicKeywords[action], ...englishKeywords[action]] : englishKeywords[action];
-  const matched = actions.filter((action) => keywordsFor(action).some((phrase) => includesPhrase(text, normalize(phrase, lang))));
+  const matched = actions.filter((action) => keywordsFor(action).some((phrase) => includesKeyword(text, normalize(phrase, lang), lang)));
   if (matched.length !== 1) return null;
   const action = matched[0];
   if (!action) return null;

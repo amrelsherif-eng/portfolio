@@ -52,6 +52,12 @@ const cases = [
   ["ar", "افتح السي في بتاع عمرو من فضلك دلوقتي", null],
   ["ar", "افتح ايميل", { action: "goto", target: "contact", reply: "تمام، رايح للتواصل." }],
   ["ar", "فوق خالص", { action: "goto", target: "top", reply: "تمام، رايح لأول الصفحة." }],
+  ["ar", "وريني اشهادات بترعته", { action: "goto", target: "certifications", reply: "تمام، رايح للشهادات." }],
+  ["ar", "روح للمشاريع", { action: "goto", target: "work", reply: "تمام، رايح للمشاريع." }],
+  ["ar", "عايز اتواصل معاه", { action: "goto", target: "contact", reply: "تمام، رايح للتواصل." }],
+  ["ar", "ترون تواصل ماما", { action: "goto", target: "contact", reply: "تمام، رايح للتواصل." }],
+  ["ar", "وريني المشاريع اللي عملها", { action: "goto", target: "work", reply: "تمام، رايح للمشاريع." }],
+  ["ar", "عايز اتواصل معاده ازئي", { action: "goto", target: "contact", reply: "تمام، رايح للتواصل." }],
 ];
 
 for (const [lang, transcript, expected] of cases) {

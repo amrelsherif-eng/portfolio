@@ -96,7 +96,7 @@ export default async function handler(req: Request, res: Response) {
     try {
       const form = new web.FormData();
       form.append("file", new web.Blob([bytes], { type: mime }), mime.includes("webm") ? "speech.webm" : `speech.${mime.split("/")[1]?.split(";")[0] || "bin"}`);
-      form.append("model", "whisper-large-v3-turbo"); form.append("language", lang); form.append("response_format", "verbose_json"); form.append("temperature", "0"); form.append("prompt", transcriptionPrompt[lang]);
+      form.append("model", lang === "ar" ? "whisper-large-v3" : "whisper-large-v3-turbo"); form.append("language", lang); form.append("response_format", "verbose_json"); form.append("temperature", "0"); form.append("prompt", transcriptionPrompt[lang]);
       const response = await web.fetch("https://api.groq.com/openai/v1/audio/transcriptions", { method: "POST", headers: { Authorization: `Bearer ${env.GROQ_API_KEY}` }, body: form, signal: controller.signal });
       if (response.ok) { const result = await response.json() as { text?: unknown; segments?: Array<{ text?: unknown; no_speech_prob?: unknown; avg_logprob?: unknown }> }; transcript = Array.isArray(result.segments) ? result.segments.filter((segment) => typeof segment.no_speech_prob === "number" && segment.no_speech_prob < 0.6 && typeof segment.avg_logprob === "number" && segment.avg_logprob > -1.0).map((segment) => typeof segment.text === "string" ? segment.text : "").join(" ").trim() : typeof result.text === "string" ? result.text.trim() : ""; transcript = cleanTranscript(transcript, lang); }
     } catch { /* fall through to empty transcript */ } finally { web.clearTimeout(timer); }
