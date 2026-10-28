@@ -492,12 +492,6 @@
     margin: 0;
   }
 
-  .what-box h2 {
-    font-size: 44px;
-    line-height: 44px;
-    margin: 30px 0;
-  }
-
   .what-box:last-child {
     height: 480px;
   }
@@ -752,5 +746,13 @@
 @media only screen and (max-width: 1024px) {
   .what-stats {
     display: none !important;
+  }
+}
+
+/* Phones/tablets: a collapsed card (another one is open) shows only title + subtitle, never a half-cut text line */
+@media only screen and (max-width: 1024px) {
+  .what-content.what-sibling p,
+  .what-content.what-sibling .what-content-flex {
+    visibility: hidden;
   }
 }
