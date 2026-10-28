@@ -78,7 +78,7 @@ function homePreloadPlugin(): Plugin {
       }
       const urls = [...js].filter((url) => !existing.has(url) && !existing.has(url.slice(1)));
       const cssUrls = [...css].filter((url) => !existing.has(url) && !existing.has(url.slice(1)));
-      const ref = this.emitFile({ type: "asset", name: "home-preload.js", source: `if(location.pathname==="/"){const js=${JSON.stringify(urls)},css=${JSON.stringify(cssUrls)};for(const href of js){const l=document.createElement("link");l.rel="modulepreload";l.href=href;document.head.appendChild(l)}for(const href of css){const l=document.createElement("link");l.rel="preload";l.as="style";l.href=href;document.head.appendChild(l)}}` });
+      const ref = this.emitFile({ type: "asset", name: "home-preload.js", source: `if(location.pathname==="/"){const js=${JSON.stringify(urls)},css=${JSON.stringify(cssUrls)};for(const href of js){const l=document.createElement("link");l.rel="modulepreload";l.href=href;document.head.appendChild(l)}for(const href of css){const l=document.createElement("link");l.rel="preload";l.as="style";l.crossOrigin="";l.href=href;document.head.appendChild(l)}}` });
       const loaderUrl = `/${this.getFileName(ref)}`;
       html.source = source.replace(/(<head(?:\s[^>]*)?>)/i, `$1\n    <script async src="${loaderUrl}"></script>`);
     },
