@@ -26,8 +26,9 @@ const Navbar = () => {
       infinite: false,
     });
 
-    // Start paused until the intro runs; preserve scrolling across remounts.
-    if (introStarted) lenis.start();
+    // Start paused until the intro runs. Phones/tablets only: if the intro already ran, never leave scroll stopped.
+    // Desktop keeps the original behaviour (the loader + initialFX start Lenis).
+    if (introStarted && window.innerWidth <= 1024) lenis.start();
     else lenis.stop();
 
     // Handle smooth scroll animation frame
