@@ -1,99 +1,92 @@
-# 🚀 3D Developer Portfolio Website (React + TypeScript + Three.js)
+# Amr Elsherif — Portfolio
 
-[![3D portfolio preview (click to watch video)](./Screenshot_2026-04-08_22-10-00.png)](./video.mp4)
+Personal portfolio of Amr Elsherif, Network & Cloud Infrastructure (CCNA track, AWS, Linux), aspiring DevOps engineer, ECE '27.
 
-A modern, high-performance **3D developer portfolio website** built with **React**, **TypeScript**, **Three.js**, **GSAP**, and **WebGL**.
+Live: https://amrelsherif-eng.vercel.app
 
-If you’re a developer looking for a **portfolio template** that feels premium, interactive, and memorable—this repo is for you.
+## What it is
 
-> Live preview: https://www.redoyanulhaque.me/
+A portfolio presenting Amr's background, work, certifications, resume, and networking/cloud learning through an interactive 3D site.
 
----
+Pages: `/` (home), `/works`, `/certifications`, `/resume`, `/lab`, and `/lab/:id`.
 
-## ✨ Highlights
+## Features
 
-- **3D / WebGL experience** powered by **Three.js**
-- Smooth animations with **GSAP**
-- Modern **React + TypeScript** codebase
-- Fast, responsive UI (desktop + mobile)
-- Designed for developers, engineers, programmers, and creators
+- **3D landing page:** An animated character rendered with Three.js and React Three Fiber, with GSAP animation and Lenis smooth scrolling.
+- **Network Lab:** Three browser mini-games: Subnetting Sprint, Fix the Network, and Build a VPC.
+- **Ping assistant:** Answers questions using information in the portfolio. Chat requests use Gemini; voice requests use Groq with Gemini fallback. The Vercel serverless endpoints apply rate limits and request time budgets. Upstash Redis can provide shared rate limiting when configured.
+- **Hands-free control dock:** Voice commands navigate sections, open the resume or Ping, and answer portfolio questions. Hand-gesture controls use MediaPipe and the camera for pointer, click, and scroll interactions.
+- **Portfolio pages:** Works, certifications, and a resume/CV page.
+- **Discovery and metadata:** Generates `llms.txt` during the build and provides JSON-LD metadata.
+- **Deployment security:** `vercel.json` configures a Content Security Policy and other security headers.
+- **Continuous integration:** GitHub Actions runs lint, build, and the three Node test scripts listed below.
 
----
+## Tech stack
 
-## 🧰 Tech Stack
+- React 18, TypeScript, and Vite 8
+- Three.js, React Three Fiber, Drei, and React Three Postprocessing
+- GSAP and Lenis
+- MediaPipe Tasks Vision
+- Vercel Analytics and Speed Insights
+- Vercel serverless functions in `api/`
+- Node.js 24.x
 
-- **React**
-- **TypeScript**
-- **Three.js / WebGL**
-- **GSAP**
-- **HTML / CSS / JavaScript**
+## Local setup
 
----
-
-## 🚀 Getting Started
-
-### 1) Clone
-
-```bash
-git clone https://github.com/red1-for-hek/portfolio-website.git
-cd portfolio-website
-```
-
-### 2) Install
+Requirements: Node.js 24 and npm.
 
 ```bash
-npm install
+git clone https://github.com/amrelsherif-eng/portfolio.git
+cd portfolio
+npm ci
 ```
 
-### 3) Run locally
+Copy `.env.example` to `.env.local` and add provider credentials. Ping chat requires `GEMINI_API_KEY`. Voice requests use `GROQ_API_KEY` and can fall back to Gemini; configure both for that fallback. The numbered key variants are optional. Upstash Redis is optional and enables shared rate limiting across function instances.
 
 ```bash
 npm run dev
 ```
 
-### 4) Build
+The `api/` endpoints are Vercel functions. Use `vercel dev` to run the Vercel functions locally alongside the site; `npm run dev` starts the Vite frontend.
+
+Available project checks and build commands:
 
 ```bash
 npm run build
+npm run lint
+node scripts/test-vpc-rules.mjs
+node scripts/test-subnetting.mjs
+node scripts/test-voice-intent.mjs
 ```
 
----
+## Project structure
 
-## 🧩 Customize (Quick Guide)
+```text
+api/                  Vercel chat and voice functions
+public/               Static assets and MediaPipe model files
+scripts/              Build and test scripts
+src/components/       Shared interface, character, chat, and control dock
+src/lab/              Network Lab index, games, and game shell
+src/pages/            Works, certifications, and resume pages
+src/data/             Portfolio data
+```
 
-Typical things you’ll want to update:
+## Credits
 
-- **Your name + hero section text**
-- **Projects list**
-- **Social links** (GitHub, LinkedIn, email)
-- **SEO meta title/description**
+Based on the open-source 3D portfolio template by Redoyanul Haque (https://github.com/red1-for-hek/portfolio-website), MIT License. The content, Network Lab, assistant, control dock, and redesign are Amr's additions.
 
----
+## License
 
-## ⭐ Support
+MIT. See [LICENSE](LICENSE), which retains the original copyright notice.
 
-If you found this useful:
+## Contact
 
-- Please **star** the repository (it helps a lot)
-- Share it with a friend who needs a portfolio template
-- Sponsor via the **Sponsor** button on GitHub (if available in your region)
+amrelsherif.eng@gmail.com · https://www.linkedin.com/in/amrelsherif-eng · https://github.com/amrelsherif-eng
 
----
+## Report
 
-## 🤝 Connect
-
-- LinkedIn: https://www.linkedin.com/in/red1-for-hek/
-
----
-
-## 🏷️ Recommended GitHub Topics (add in repo settings)
-
-Add these topics to improve GitHub search visibility:
-
-`portfolio` `developer-portfolio` `portfolio-website` `portfolio-template` `3d-portfolio` `react` `typescript` `threejs` `webgl` `gsap` `frontend` `vite`
-
----
-
-## 🪪 License
-
-This project is open source and available under the **MIT License**. See [LICENSE](LICENSE).
+- Replaced the template README with a portfolio-specific overview.
+- Documented the routes, interactive features, and verified game names.
+- Listed the current stack, local commands, environment variables, and CI checks.
+- Added project structure, attribution, license, live link, and contact details.
+- Unsure: none; the README claims above were checked against the requested source files.

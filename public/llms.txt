@@ -22,7 +22,7 @@ Final-year Electronics & Communications Engineering student at Damanhour Univers
 - Beam-steered Li-Fi System: 4-member graduation project: beam-steered Li-Fi with seamless Wi-Fi failover, using Raspberry Pi 5, PPP, WireGuard and OpenCV tracking. Currently in the design phase.
 - WeatherLink — [GitHub](https://github.com/amrelsherif-eng/weatherlink): Built as a 5-member team, WeatherLink connects an ESP32-S3 sensor station to Blynk Cloud with a cross-platform Flutter dashboard using Clean Architecture and BLoC.
 - DevSync — [GitHub](https://github.com/amrelsherif-eng/devsync_flutter): Led the team that designed and built an AI-powered developer–project matching application integrating Firebase services, GitHub API, and Gemini API.
-- ATS LaTeX Resume Template — [GitHub](https://github.com/amrelsherif-eng/software-engineer-resume-template): Open-source ATS-friendly LaTeX resume template on Overleaf and GitHub, with an AI prompt; the release post reached 12K+ impressions and the tutorial 6.3K.
+- ATS LaTeX Resume Template — [GitHub](https://github.com/amrelsherif-eng/ats-resume-templates): Open-source ATS-friendly LaTeX resume template on Overleaf and GitHub, with an AI prompt; the release post reached 12K+ impressions and the tutorial 6.3K.
 - Flutter & Dart Specialization — [GitHub](https://github.com/amrelsherif-eng/Flutter-Dart-Specialization-Packt): Packt Flutter & Dart Specialization on Coursera: 5 apps and 55 commits of hands-on practice.
 
 ## Certifications

@@ -137,7 +137,7 @@ export const config = {
             technologies: "LaTeX, Overleaf, Git, GitHub",
             image: "/images/projects/resume-template.webp",
             description: "Open-source ATS-friendly LaTeX resume template on Overleaf and GitHub, with an AI prompt; the release post reached 12K+ impressions and the tutorial 6.3K.",
-            link: "https://github.com/amrelsherif-eng/software-engineer-resume-template"
+            link: "https://github.com/amrelsherif-eng/ats-resume-templates"
         },
         {
             id: 5,
@@ -154,6 +154,7 @@ export const config = {
         github: "https://github.com/amrelsherif-eng",
         linkedin: "https://www.linkedin.com/in/amrelsherif-eng",
         whatsapp: "https://wa.me/201013946047",
+        credly: "", // TODO credly: Credly profile URL (chat B). When set, Contact shows a Credly link.
         twitter: "",
         facebook: "",
         instagram: ""
