@@ -17,6 +17,7 @@ import MottoBand from "./MottoBand";
 import LabTeaser from "./LabTeaser";
 import CallToAction from "./CallToAction";
 import setSplitText from "./utils/splitText";
+import { initialFX } from "./utils/initialFX";
 
 const MainContainer = ({ children }: PropsWithChildren) => {
   const { isLoading } = useLoading();
@@ -25,6 +26,16 @@ const MainContainer = ({ children }: PropsWithChildren) => {
   );
   const [isMobile] = useState<boolean>(window.innerWidth <= 768);
   const [shouldRenderCharacter, setShouldRenderCharacter] = useState(false);
+
+  // Phones/tablets have no loader: start the intro once the home content (Navbar's Lenis, hero) is mounted.
+  // Runs on every arrival at "/" like before; the cleanup cancels StrictMode's first, discarded run.
+  useEffect(() => {
+    if (window.innerWidth > 1024) return;
+    const timer = window.setTimeout(() => {
+      if (document.querySelector(".landing-section")) initialFX();
+    }, 100);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const resizeHandler = () => {

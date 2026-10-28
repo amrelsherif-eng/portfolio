@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv, Plugin } from "vite";
+import { defineConfig, loadEnv, Plugin, type Rolldown } from "vite";
 import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
@@ -40,12 +40,15 @@ function homePreloadPlugin(): Plugin {
     apply: "build",
     generateBundle(_options, bundle) {
       const chunks = Object.values(bundle).filter((item) => item.type === "chunk");
-      const findChunk = (suffix: string) => chunks.find((chunk) => chunk.facadeModuleId?.replace(/\\/g, "/").endsWith(suffix));
-      const roots = [findChunk("src/components/MainContainer.tsx"), findChunk("src/components/utils/initialFX.ts")].filter((chunk): chunk is import("rollup").OutputChunk => Boolean(chunk));
+      // Match by the chunk's entry module, or by any module inside it (Rolldown may name a shared chunk after another module).
+      const findChunk = (suffix: string) =>
+        chunks.find((chunk) => chunk.facadeModuleId?.replace(/\\/g, "/").endsWith(suffix)) ??
+        chunks.find((chunk) => chunk.moduleIds.some((id) => id.replace(/\\/g, "/").endsWith(suffix)));
+      const roots = [findChunk("src/components/MainContainer.tsx"), findChunk("src/components/utils/initialFX.ts")].filter((chunk): chunk is Rolldown.OutputChunk => Boolean(chunk));
       const js = new Set<string>();
       const css = new Set<string>();
       const visited = new Set<string>();
-      const visit = (chunk: import("rollup").OutputChunk) => {
+      const visit = (chunk: Rolldown.OutputChunk) => {
         if (visited.has(chunk.fileName)) return;
         visited.add(chunk.fileName);
         js.add(`/${chunk.fileName}`);
@@ -94,13 +97,18 @@ export default defineConfig(({ mode }) => {
   return {
   plugins: [react(), localChatPlugin(), homePreloadPlugin()],
   build: {
-    rollupOptions: {
+    // Vite 5's default browser target; Vite 7+ raised it. Kept so the same browsers are supported.
+    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+    rolldownOptions: {
       output: {
-        manualChunks: {
-          'three': ['three', 'three-stdlib'],
-          'react-three': ['@react-three/fiber', '@react-three/drei'],
-          'gsap': ['gsap'],
-          'vendor': ['react', 'react-dom', 'react-router-dom']
+        // Same four vendor chunks as before (Vite 8 / Rolldown has no object-form manualChunks).
+        codeSplitting: {
+          groups: [
+            { name: 'three', test: /[\\/]node_modules[\\/](three|three-stdlib)[\\/]/, priority: 4 },
+            { name: 'react-three', test: /[\\/]node_modules[\\/]@react-three[\\/](fiber|drei)[\\/]/, priority: 3 },
+            { name: 'gsap', test: /[\\/]node_modules[\\/]gsap[\\/]/, priority: 2 },
+            { name: 'vendor', test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/, priority: 1 }
+          ]
         }
       }
     },

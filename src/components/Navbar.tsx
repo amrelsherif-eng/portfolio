@@ -6,6 +6,7 @@ import Lenis from "lenis";
 import "./styles/Navbar.css";
 import { config } from "../config";
 import { Link } from "react-router-dom";
+import { introStarted } from "./utils/initialFX";
 
 gsap.registerPlugin(ScrollTrigger);
 export let lenis: Lenis | null = null;
@@ -25,8 +26,10 @@ const Navbar = () => {
       infinite: false,
     });
 
-    // Start paused
-    lenis.stop();
+    // Start paused until the intro runs. Phones/tablets only: if the intro already ran, never leave scroll stopped.
+    // Desktop keeps the original behaviour (the loader + initialFX start Lenis).
+    if (introStarted && window.innerWidth <= 1024) lenis.start();
+    else lenis.stop();
 
     // Handle smooth scroll animation frame
     function raf(time: number) {

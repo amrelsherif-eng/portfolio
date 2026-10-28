@@ -2,7 +2,10 @@ import { TextSplitter } from "../../utils/textSplitter";
 import gsap from "gsap";
 import { lenis } from "../Navbar";
 
+export let introStarted = false;
+
 export function initialFX() {
+  introStarted = true;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   document.body.style.overflowY = "auto";
   if (lenis) {

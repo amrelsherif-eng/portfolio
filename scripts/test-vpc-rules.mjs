@@ -1,16 +1,21 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
-import os from "node:os";
-import path from "node:path";
-import { pathToFileURL } from "node:url";
-import { build } from "esbuild";
+import { registerHooks } from "node:module";
 
-const root = process.cwd();
-const temp = await mkdtemp(path.join(os.tmpdir(), "vpc-rules-"));
-const compiled = path.join(temp, "rules.mjs");
-try {
-  await build({ entryPoints: [path.join(root, "src/lab/games/vpc/rules.ts")], outfile: compiled, bundle: true, platform: "node", format: "esm" });
-  const { evaluate, levelOptions, cidrOptions } = await import(pathToFileURL(compiled).href);
+// Node 24 runs the .ts files directly (type stripping); the source uses extensionless relative imports
+// (Vite style), so retry those with ".ts". No bundler needed (esbuild is no longer installed since Vite 8).
+registerHooks({
+  resolve(specifier, context, nextResolve) {
+    try {
+      return nextResolve(specifier, context);
+    } catch (error) {
+      if (specifier.startsWith(".") && !/\.[cm]?[jt]s$/.test(specifier)) return nextResolve(`${specifier}.ts`, context);
+      throw error;
+    }
+  },
+});
+
+{
+  const { evaluate, levelOptions, cidrOptions } = await import("../src/lab/games/vpc/rules.ts");
   const counts = [];
 
   for (let level = 1; level <= 3; level++) {
@@ -62,6 +67,4 @@ try {
   counts.push({ level: 4, tested, passes });
   console.log(`VPC rules exhaustive check passed (${counts.reduce((sum, row) => sum + row.tested, 0)} combinations)`);
   for (const row of counts) console.log(`Level ${row.level}: ${row.tested} combinations, ${row.passes} passes`);
-} finally {
-  await rm(temp, { recursive: true, force: true });
 }
