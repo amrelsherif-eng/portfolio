@@ -28,19 +28,6 @@ export const LoadingProvider = ({ children }: PropsWithChildren) => {
     setIsLoading,
     setLoading,
   };
-  useEffect(() => {
-    // Auto-start animations on mobile since there's no 3D model
-    if (window.innerWidth <= 1024) {
-      import("../components/utils/initialFX").then((module) => {
-        if (module.initialFX) {
-          setTimeout(() => {
-            module.initialFX();
-          }, 100);
-        }
-      });
-    }
-  }, []);
-
   useEffect(() => {}, [loading]);
 
   return (

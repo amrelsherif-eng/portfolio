@@ -9,20 +9,26 @@ const WhatIDo = () => {
     containerRef.current[index] = el;
   };
   useEffect(() => {
-    if (ScrollTrigger.isTouch) {
+    const isTouchOrMobile =
+      ScrollTrigger.isTouch ||
+      (typeof window !== "undefined" && window.innerWidth <= 1024);
+
+    const cleanups: (() => void)[] = [];
+
+    if (isTouchOrMobile) {
       containerRef.current.forEach((container) => {
         if (container) {
           container.classList.remove("what-noTouch");
-          container.addEventListener("click", () => handleClick(container));
+          const onCardClick = () => handleClick(container);
+          container.addEventListener("click", onCardClick);
+          cleanups.push(() =>
+            container.removeEventListener("click", onCardClick)
+          );
         }
       });
     }
     return () => {
-      containerRef.current.forEach((container) => {
-        if (container) {
-          container.removeEventListener("click", () => handleClick(container));
-        }
-      });
+      cleanups.forEach((cleanup) => cleanup());
     };
   }, []);
   return (
@@ -204,16 +210,27 @@ const WhatIDo = () => {
 export default WhatIDo;
 
 function handleClick(container: HTMLDivElement) {
-  container.classList.toggle("what-content-active");
-  container.classList.remove("what-sibling");
+  const isOpening = !container.classList.contains("what-content-active");
   if (container.parentElement) {
     const siblings = Array.from(container.parentElement.children);
 
     siblings.forEach((sibling) => {
-      if (sibling !== container) {
-        sibling.classList.remove("what-content-active");
-        sibling.classList.toggle("what-sibling");
+      sibling.classList.remove("what-content-active");
+      if (isOpening) {
+        if (sibling !== container) {
+          sibling.classList.add("what-sibling");
+        } else {
+          sibling.classList.remove("what-sibling");
+        }
+      } else {
+        sibling.classList.remove("what-sibling");
       }
     });
+  }
+
+  if (isOpening) {
+    container.classList.add("what-content-active");
+  } else {
+    container.classList.remove("what-content-active");
   }
 }
