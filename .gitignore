@@ -34,3 +34,6 @@ docs/
 # local test assets
 public/models/avatar-raw.glb
 public/viewer.html
+
+# TypeScript build info
+*.tsbuildinfo

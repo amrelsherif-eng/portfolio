@@ -106,6 +106,17 @@ const Contact = () => {
             >
               Linkedin <MdArrowOutward />
             </a>
+            {config.contact.credly && (
+              <a
+                href={config.contact.credly}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="disable"
+                className="contact-social"
+              >
+                Credly <MdArrowOutward />
+              </a>
+            )}
             <a
               href={config.contact.whatsapp}
               target="_blank"

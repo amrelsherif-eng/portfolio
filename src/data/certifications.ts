@@ -55,7 +55,7 @@ export const certifications: Certification[] = [
     date: "Aug 2026",
     category: "Programs & Training",
     hours: "120 h",
-    verifyUrl: "", // TODO: verify link from LinkedIn
+    verifyUrl: "", // no public verify page; NTI records it under the student ID (kept private)
     image: "/images/certs/nti-cloud.webp",
   },
   {
@@ -65,7 +65,7 @@ export const certifications: Certification[] = [
     date: "Jul 2026",
     category: "Programs & Training",
     featured: true,
-    verifyUrl: "", // TODO: verify link from LinkedIn
+    verifyUrl: "", // no public verify page; DEPI records it under the student ID (kept private)
     image: "/images/certs/depi-appreciation.webp",
   },
   {
@@ -74,7 +74,7 @@ export const certifications: Certification[] = [
     issuer: "MCIT · DEPI",
     date: "Jul 2026",
     category: "Programs & Training",
-    verifyUrl: "", // TODO: verify link from LinkedIn
+    verifyUrl: "", // no public verify page; DEPI records it under the student ID (kept private)
     image: "/images/certs/depi-achievement.webp",
   },
   {
@@ -84,7 +84,7 @@ export const certifications: Certification[] = [
     date: "Jul 2025",
     category: "Programs & Training",
     hours: "120 h",
-    verifyUrl: "", // TODO: verify link from LinkedIn
+    verifyUrl: "", // no public verify page; NTI records it under the student ID (kept private)
     image: "/images/certs/nti-php.webp",
   },
   {
@@ -121,7 +121,7 @@ export const certifications: Certification[] = [
     issuer: "MCIT · DEPI",
     date: "Jul 2026",
     category: "Languages & Skills",
-    verifyUrl: "", // TODO: verify link from LinkedIn
+    verifyUrl: "", // no public verify page; DEPI records it under the student ID (kept private)
     image: "/images/certs/depi-english.webp",
   },
   {
