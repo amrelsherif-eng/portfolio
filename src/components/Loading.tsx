@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import "./styles/Loading.css";
 import { useLoading } from "../context/LoadingProvider";
-import Marquee from "react-fast-marquee";
+import MarqueeModule from "react-fast-marquee";
+
+// react-fast-marquee is CommonJS-only. Since Vite 8 the default import can be the whole
+// module object ({ default: Marquee }) instead of the component, so unwrap it.
+const Marquee = ((MarqueeModule as unknown as { default?: typeof MarqueeModule }).default ?? MarqueeModule) as typeof MarqueeModule;
 
 const Loading = ({ percent }: { percent: number }) => {
   const { setIsLoading } = useLoading();
