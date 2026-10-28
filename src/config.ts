@@ -154,7 +154,7 @@ export const config = {
         github: "https://github.com/amrelsherif-eng",
         linkedin: "https://www.linkedin.com/in/amrelsherif-eng",
         whatsapp: "https://wa.me/201013946047",
-        credly: "", // TODO credly: Credly profile URL (chat B). When set, Contact shows a Credly link.
+        credly: "https://www.credly.com/users/amrelsherif-eng",
         twitter: "",
         facebook: "",
         instagram: ""
